@@ -44,7 +44,9 @@ jobs:
 
       - name: 重建歷史與個股頁
         working-directory: scripts
-        run: python rebuild_history.py
+        run: |
+          python build_pe_periods.py
+          python rebuild_history.py
 
       - name: commit 資料
         run: |

@@ -15,6 +15,9 @@ on:
       - "scripts/ps_history.py"
       - "scripts/rebuild_history.py"
       - "scripts/test_ps_history.py"
+      - "scripts/build_pe_periods.py"
+      - "scripts/pe_periods.py"
+      - "scripts/test_pe_periods.py"
   schedule:
     - cron: "37 13,14,16 * * 1-5"
       timezone: "Asia/Taipei"
@@ -47,7 +50,7 @@ jobs:
 
       - name: 營收與歷史估值回歸測試
         working-directory: scripts
-        run: python -m unittest test_revenue test_ps_history
+        run: python -m unittest test_revenue test_ps_history test_pe_history test_pe_evidence test_pe_periods
 
       - name: 抓取並計算最新快照
         working-directory: scripts
@@ -55,7 +58,9 @@ jobs:
 
       - name: 每月重建歷史與個股頁
         working-directory: scripts
-        run: python rebuild_history.py
+        run: |
+          python build_pe_periods.py
+          python rebuild_history.py
 
       # 集保每週五結算、隔週公布。天天跑無妨：資料日期沒變就只是覆蓋同一筆，
       # 不會在歷史裡多長一週。集保掛掉也不該讓整個更新失敗。

@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 from pe_evidence import with_pe_evidence
+from pe_periods import with_period_evidence
 
 import json
 from collections import defaultdict
@@ -105,10 +106,14 @@ def main() -> None:
 
     ps_months = merge_history(load_reconstructed(), read_json(PS_HISTORY, {}) or {})
     pe_evidence = read_json(DATA_DIR / "pe_evidence.json", {}) or {}
+    report_periods = (read_json(DATA_DIR / 'pe_report_periods.json', {}) or {}).get('months', {})
+    eps_data = read_json(DATA_DIR / 'pe_eps.json', {}) or {}
     per_stock: dict[str, list] = defaultdict(list)
     for ym, snap in months.items():
         for code, vals in snap.get("s", {}).items():
-            per_stock[code].append([ym] + with_pe_evidence(vals, code, snap.get("d"), pe_evidence))
+            values = with_pe_evidence(vals, code, snap.get("d"), pe_evidence)
+            values = with_period_evidence(values, code, snap.get('d'), report_periods.get(ym, {}), eps_data)
+            per_stock[code].append([ym] + values)
 
     written = 0
     for code, s in meta.items():
