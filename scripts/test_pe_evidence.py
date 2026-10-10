@@ -88,7 +88,12 @@ class EvidenceTests(unittest.TestCase):
             snapshot = json.loads((ROOT / f'docs/data/history/{month[:4]}.json').read_text())[month]
             values = snapshot['s']['2409']
             self.assertEqual(with_pe_evidence(values, '2409', snapshot['d'], EVIDENCE), values)
-            self.assertEqual(hist[month], values)
+            # Manual announcement-date evidence still fails closed. The exchange's
+            # dated report-period evidence may independently establish the period.
+            from pe_periods import with_period_evidence
+            periods = json.loads((ROOT / 'docs/data/pe_report_periods.json').read_text())['months'] if (ROOT / 'docs/data/pe_report_periods.json').exists() else {}
+            eps = json.loads((ROOT / 'docs/data/pe_eps.json').read_text()) if (ROOT / 'docs/data/pe_eps.json').exists() else {}
+            self.assertEqual(hist[month], with_period_evidence(values, '2409', snapshot['d'], periods.get(month, {}), eps))
         self.assertEqual(hist['2021-02'][0], 52.5)
 
     def test_actual_last_four_quarters_can_be_negative_despite_latest_profit(self):

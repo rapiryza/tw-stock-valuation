@@ -34,10 +34,10 @@ test('isolated negative month draws dashed zero and breaks the solid path', () =
   assert.equal((solid.attrs.d.match(/M/g) || []).length, 2);
   assert.ok(!solid.attrs.d.includes('L'));
   hover({clientX:437,clientY:100});
-  assert.match(tip.innerHTML, /該期間本益比為負，無資料/);
+  assert.match(tip.innerHTML, /該期間 EPS 為負，不予顯示/);
   hover({clientX:44,clientY:100});
   assert.match(tip.innerHTML, /10.00倍/);
-  assert.doesNotMatch(tip.innerHTML, /本益比為負/);
+  assert.doesNotMatch(tip.innerHTML, /EPS 為負/);
 });
 test('all negative and single negative histories remain visible and hoverable', () => {
   for (const hist of [[['2020-01',-1]], [['2020-01',-1],['2020-02',-2]]]) {
@@ -46,7 +46,7 @@ test('all negative and single negative histories remain visible and hoverable', 
     assert.ok(paths.every(p => p.attrs['stroke-dasharray']));
     hover({clientX:44,clientY:100});
     assert.equal(tip.hidden, false);
-    assert.match(tip.innerHTML, /該期間本益比為負，無資料/);
+    assert.match(tip.innerHTML, /該期間 EPS 為負，不予顯示/);
   }
 });
 test('unconfirmed gaps keep original filtering and have no dashed path', () => {
@@ -73,4 +73,16 @@ test('confirmed consecutive negative months form a zero baseline across year bou
   const {paths} = render([['2020-12', -1], ['2021-01', -1]]);
   assert.equal(paths.length, 2);
   assert.equal(paths[0].attrs.d.split(' L')[1], paths[1].attrs.d.slice(1).split(' L')[0]);
+});
+
+test('瑞基 reaches the latest snapshot and uses the corrected EPS tooltip', () => {
+  const hist = JSON.parse(fs.readFileSync(require('node:path').join(__dirname, 'fixtures/pe_4171_202610.json'), 'utf8')).hist;
+  const last = points(hist).at(-1);
+  assert.equal(last[0], hist.at(-1)[0]);
+  assert.equal(last[1], 0);
+  assert.equal(last[2], true);
+  const {hover, tip} = render(hist);
+  hover({clientX:838,clientY:100});
+  assert.match(tip.innerHTML, new RegExp(hist.at(-1)[0]));
+  assert.match(tip.innerHTML, /該期間 EPS 為負，不予顯示/);
 });

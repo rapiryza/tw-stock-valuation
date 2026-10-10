@@ -324,7 +324,7 @@
         const p = s.points.find((q) => q[0] === labels[idx]);
         if (!p || p[1] == null) return;
         dots.appendChild(mk("circle", { class: "pt", cx: x, cy: Y(p[1]), r: 4.5, fill: s.color }));
-        rows.push(`<div class="tt-r"><span><span class="swatch" style="display:inline-block;background:${s.color}"></span> ${s.name}</span><span>${p[2] ? "該期間本益比為負，無資料" : `${fmt(p[1])}${opts.unit || ""}`}</span></div>`);
+        rows.push(`<div class="tt-r"><span><span class="swatch" style="display:inline-block;background:${s.color}"></span> ${s.name}</span><span>${p[2] ? "該期間 EPS 為負，不予顯示" : `${fmt(p[1])}${opts.unit || ""}`}</span></div>`);
       });
       if (!rows.length) return hide();
       const extra = opts.tooltipNote ? `<div class="tt-h">${esc(opts.tooltipNote(labels[idx]) || "")}</div>` : "";
