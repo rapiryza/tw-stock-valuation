@@ -80,3 +80,19 @@ class EvidenceTests(unittest.TestCase):
                 self.assertEqual(json.loads(first)['hist'][0][-1], 'negative_eps')
             raw = json.loads((root / 'history/2019.json').read_text())
             self.assertEqual(len(raw['2019-08']['s']['2409']), 4)
+
+    def test_actual_same_day_and_return_to_profit_are_preserved(self):
+        stock = json.loads((ROOT / 'docs/data/stock/2409.json').read_text())
+        hist = {row[0]: row[1:] for row in stock['hist']}
+        for month in ('2020-04', '2021-02'):
+            snapshot = json.loads((ROOT / f'docs/data/history/{month[:4]}.json').read_text())[month]
+            values = snapshot['s']['2409']
+            self.assertEqual(with_pe_evidence(values, '2409', snapshot['d'], EVIDENCE), values)
+            self.assertEqual(hist[month], values)
+        self.assertEqual(hist['2021-02'][0], 52.5)
+
+    def test_actual_last_four_quarters_can_be_negative_despite_latest_profit(self):
+        record = EVIDENCE['2409'][-1]
+        self.assertGreater(record['quarters'][-1]['eps'], 0)
+        self.assertGreater(record['quarters'][-1]['netIncomeBillionTwd'], 0)
+        self.assertTrue(confirmed_negative(record, '2021-01-29'))

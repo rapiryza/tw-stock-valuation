@@ -81,6 +81,169 @@
         "date": "2020-02-06",
         "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200206"
       }
+    },
+    {
+      "snapshotDates": [
+        "2020-02-27",
+        "2020-03-31"
+      ],
+      "quarters": [
+        {
+          "period": "2019Q1",
+          "announcedOn": "2019-04-25",
+          "eps": -0.38,
+          "netIncomeBillionTwd": -3.69,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20190425"
+        },
+        {
+          "period": "2019Q2",
+          "announcedOn": "2019-07-25",
+          "eps": -0.28,
+          "netIncomeBillionTwd": -2.68,
+          "source": "https://auo.com/en-global/New_Archive/detail/news_ir_20190725"
+        },
+        {
+          "period": "2019Q3",
+          "announcedOn": "2019-10-30",
+          "eps": -0.41,
+          "netIncomeBillionTwd": -3.99,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20191030"
+        },
+        {
+          "period": "2019Q4",
+          "announcedOn": "2020-02-06",
+          "eps": -0.92,
+          "netIncomeBillionTwd": -8.83,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200206"
+        }
+      ],
+      "nextAnnouncement": {
+        "date": "2020-04-30",
+        "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200430"
+      }
+    },
+    {
+      "snapshotDates": [
+        "2020-05-29",
+        "2020-06-30"
+      ],
+      "quarters": [
+        {
+          "period": "2019Q2",
+          "announcedOn": "2019-07-25",
+          "eps": -0.28,
+          "netIncomeBillionTwd": -2.68,
+          "source": "https://auo.com/en-global/New_Archive/detail/news_ir_20190725"
+        },
+        {
+          "period": "2019Q3",
+          "announcedOn": "2019-10-30",
+          "eps": -0.41,
+          "netIncomeBillionTwd": -3.99,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20191030"
+        },
+        {
+          "period": "2019Q4",
+          "announcedOn": "2020-02-06",
+          "eps": -0.92,
+          "netIncomeBillionTwd": -8.83,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200206"
+        },
+        {
+          "period": "2020Q1",
+          "announcedOn": "2020-04-30",
+          "eps": -0.53,
+          "netIncomeBillionTwd": -4.99,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200430"
+        }
+      ],
+      "nextAnnouncement": {
+        "date": "2020-07-30",
+        "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200730"
+      }
+    },
+    {
+      "snapshotDates": [
+        "2020-07-31",
+        "2020-08-31",
+        "2020-09-30"
+      ],
+      "quarters": [
+        {
+          "period": "2019Q3",
+          "announcedOn": "2019-10-30",
+          "eps": -0.41,
+          "netIncomeBillionTwd": -3.99,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20191030"
+        },
+        {
+          "period": "2019Q4",
+          "announcedOn": "2020-02-06",
+          "eps": -0.92,
+          "netIncomeBillionTwd": -8.83,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200206"
+        },
+        {
+          "period": "2020Q1",
+          "announcedOn": "2020-04-30",
+          "eps": -0.53,
+          "netIncomeBillionTwd": -4.99,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200430"
+        },
+        {
+          "period": "2020Q2",
+          "announcedOn": "2020-07-30",
+          "eps": -0.31,
+          "netIncomeBillionTwd": -2.96,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200730"
+        }
+      ],
+      "nextAnnouncement": {
+        "date": "2020-10-29",
+        "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20201029"
+      }
+    },
+    {
+      "snapshotDates": [
+        "2020-10-30",
+        "2020-11-30",
+        "2020-12-31",
+        "2021-01-29"
+      ],
+      "quarters": [
+        {
+          "period": "2019Q4",
+          "announcedOn": "2020-02-06",
+          "eps": -0.92,
+          "netIncomeBillionTwd": -8.83,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200206"
+        },
+        {
+          "period": "2020Q1",
+          "announcedOn": "2020-04-30",
+          "eps": -0.53,
+          "netIncomeBillionTwd": -4.99,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200430"
+        },
+        {
+          "period": "2020Q2",
+          "announcedOn": "2020-07-30",
+          "eps": -0.31,
+          "netIncomeBillionTwd": -2.96,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20200730"
+        },
+        {
+          "period": "2020Q3",
+          "announcedOn": "2020-10-29",
+          "eps": 0.3,
+          "netIncomeBillionTwd": 2.89,
+          "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20201029"
+        }
+      ],
+      "nextAnnouncement": {
+        "date": "2021-02-04",
+        "source": "https://www.auo.com/en-global/New_Archive/detail/news_IR_20210204"
+      }
     }
   ]
 }
