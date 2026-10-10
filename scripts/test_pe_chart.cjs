@@ -76,7 +76,7 @@ test('confirmed consecutive negative months form a zero baseline across year bou
 });
 
 test('瑞基 reaches the latest snapshot and uses the corrected EPS tooltip', () => {
-  const hist = JSON.parse(fs.readFileSync(require('node:path').join(__dirname, '../docs/data/stock/4171.json'), 'utf8')).hist;
+  const hist = JSON.parse(fs.readFileSync(require('node:path').join(__dirname, 'fixtures/pe_4171_202610.json'), 'utf8')).hist;
   const last = points(hist).at(-1);
   assert.equal(last[0], hist.at(-1)[0]);
   assert.equal(last[1], 0);
