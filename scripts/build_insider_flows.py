@@ -39,6 +39,7 @@ HOLDING_WINDOWS = {"m1": 1, "m3": 3, "m6": 6}
 KEEP_TRANSFER_DAYS = 420
 KEEP_HOLDING_MONTHS = 36
 TW = timezone(timedelta(hours=8))
+KEY_ROLES = ["總經理", "副總", "董事長", "董事", "執行長", "策略長"]
 
 
 def clean_code(value: Any) -> str | None:
@@ -71,7 +72,7 @@ def parse_daily_date(row: dict[str, Any]) -> date | None:
 
 
 def parse_month(row: dict[str, Any]) -> str | None:
-    raw = str(pick(row, "資料年月") or "").strip()
+    raw = str(pick(row, "資料年月", "Date") or "").strip()
     parsed = roc_ym(raw)
     if not parsed:
         return None
@@ -109,36 +110,43 @@ def transfer_rows(src: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-def holding_snapshot(src: dict[str, Any]) -> dict[tuple[str, str], float]:
-    """Return {(code, month): total lots}.
+def holding_snapshot(src: dict[str, Any]) -> tuple[dict[tuple[str, str], float], dict[tuple[str, str], dict[str, dict[str, Any]]]]:
+    """Return {(code, month): total lots} and {(code, month): {name: {title, lots}}}.
 
     t187ap11 may repeat the same person under multiple titles. To avoid double
     counting, keep the maximum disclosed holding for each (code, month, name)
     and then sum unique names.
     """
-    per_person: dict[tuple[str, str, str], float] = {}
+    per_person: dict[tuple[str, str, str], dict[str, Any]] = {}
     for row in fetch_rows(src):
         code = clean_code(pick(row, "公司代號", "SecuritiesCompanyCode", "股票代號", "Code"))
         month = parse_month(row)
         name = str(pick(row, "姓名", "Name") or "").strip()
-        shares = lots(pick(row, "目前持股", "目前持有股數-自有持股"))
+        title = str(pick(row, "職稱", "Title") or "").strip()
+        shares = lots(pick(row, "目前持股", "目前持有股數-自有持股", "CurrentShares"))
         if not code or not month or not name or shares < 0:
             continue
         key = (code, month, name)
-        per_person[key] = max(per_person.get(key, 0.0), shares)
+        prev_shares = per_person.get(key, {}).get("lots", 0.0)
+        if shares >= prev_shares:
+            per_person[key] = {"title": title, "lots": shares}
 
     totals: dict[tuple[str, str], float] = defaultdict(float)
-    for (code, month, _name), shares in per_person.items():
-        totals[(code, month)] += shares
+    people_by_cm: dict[tuple[str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
+    for (code, month, name), pdata in per_person.items():
+        totals[(code, month)] += pdata["lots"]
+        people_by_cm[(code, month)][name] = pdata
+
     log(f"  {src['name']} 持股月報：{len(totals)} 檔/月")
-    return {k: round(v, 3) for k, v in totals.items()}
+    return {k: round(v, 3) for k, v in totals.items()}, people_by_cm
 
 
-def load_existing() -> tuple[dict[str, dict[str, float]], dict[str, dict[str, float]]]:
+def load_existing() -> tuple[dict[str, dict[str, float]], dict[str, dict[str, float]], dict[str, dict[str, list[dict[str, Any]]]]]:
     """Load transfer and holding history, accepting the previous beta format."""
     old = read_json(OUT, {}) or {}
     transfers: dict[str, dict[str, float]] = defaultdict(dict)
     holdings: dict[str, dict[str, float]] = defaultdict(dict)
+    breakdowns: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(dict)
 
     for code, obj in (old.get("stocks") or {}).items():
         transfer = obj.get("transfer") or {}
@@ -162,7 +170,9 @@ def load_existing() -> tuple[dict[str, dict[str, float]], dict[str, dict[str, fl
             if isinstance(item, list) and len(item) >= 2:
                 month, total = str(item[0]), float(item[1] or 0)
                 holdings[code][month] = total
-    return transfers, holdings
+                if len(item) >= 4 and isinstance(item[3], list):
+                    breakdowns[code][month] = item[3]
+    return transfers, holdings, breakdowns
 
 
 def shift_month(month: str, delta: int) -> str:
@@ -205,7 +215,11 @@ def prune(transfers: dict[str, dict[str, float]], holdings: dict[str, dict[str, 
             del holdings[code]
 
 
-def build_output(transfers: dict[str, dict[str, float]], holdings: dict[str, dict[str, float]]) -> dict[str, Any]:
+def build_output(
+    transfers: dict[str, dict[str, float]],
+    holdings: dict[str, dict[str, float]],
+    breakdowns: dict[str, dict[str, list[dict[str, Any]]]],
+) -> dict[str, Any]:
     anchor, starts = trading_anchor_and_starts()
     prune(transfers, holdings, anchor)
     stocks: dict[str, Any] = {}
@@ -228,7 +242,8 @@ def build_output(transfers: dict[str, dict[str, float]], holdings: dict[str, dic
         for month in months:
             total = round(float(holdings[code][month]), 3)
             delta = None if previous is None else round(total - previous, 3)
-            holding_series.append([month, total, delta])
+            bd = breakdowns.get(code, {}).get(month, [])
+            holding_series.append([month, total, delta, bd])
             previous = total
 
         latest_month = months[-1] if months else None
@@ -273,7 +288,7 @@ def build_output(transfers: dict[str, dict[str, float]], holdings: dict[str, dic
 
 
 def main() -> int:
-    transfers, holdings = load_existing()
+    transfers, holdings, breakdowns = load_existing()
 
     # Aggregate the current fetch first, then REPLACE the same date in persisted
     # history. This prevents the several daily workflow runs from double counting.
@@ -285,11 +300,46 @@ def main() -> int:
         for d, amount in per_day.items():
             transfers[code][d] = round(amount, 3)
 
+    all_people_by_cm: dict[tuple[str, str], dict[str, dict[str, Any]]] = defaultdict(dict)
     for src in HOLDING_SOURCES:
-        for (code, month), total in holding_snapshot(src).items():
+        totals, people_by_cm = holding_snapshot(src)
+        for (code, month), total in totals.items():
             holdings[code][month] = round(total, 3)
+        for cm_key, pmap in people_by_cm.items():
+            all_people_by_cm[cm_key].update(pmap)
 
-    out = build_output(transfers, holdings)
+    # Derive individual breakdowns by comparing month-over-month for each company
+    company_months: dict[str, list[str]] = defaultdict(list)
+    for code, month in all_people_by_cm.keys():
+        company_months[code].append(month)
+
+    for code, m_list in company_months.items():
+        sorted_m = sorted(set(m_list))
+        for i, m in enumerate(sorted_m):
+            if i == 0:
+                continue
+            prev_m = sorted_m[i - 1]
+            curr_people = all_people_by_cm.get((code, m), {})
+            prev_people = all_people_by_cm.get((code, prev_m), {})
+            if not curr_people or not prev_people:
+                continue
+            bd_list = []
+            for name, pdata in curr_people.items():
+                p_curr = pdata["lots"]
+                p_prev = prev_people.get(name, {}).get("lots", 0.0)
+                diff = round(p_curr - p_prev, 3)
+                if abs(diff) >= 1.0:
+                    bd_list.append({
+                        "name": name,
+                        "title": pdata["title"],
+                        "delta": diff,
+                        "is_exec": any(k in pdata["title"] for k in KEY_ROLES),
+                    })
+            bd_list.sort(key=lambda x: abs(x["delta"]), reverse=True)
+            if bd_list:
+                breakdowns[code][m] = bd_list
+
+    out = build_output(transfers, holdings, breakdowns)
     write_json(OUT, out)
     transfer_codes = sum(1 for obj in out["stocks"].values() if obj["transfer"]["series"])
     holding_codes = sum(1 for obj in out["stocks"].values() if obj["holding"]["series"])

@@ -28,7 +28,16 @@
       .insider-label{fill:var(--muted);font-size:12px}
       .insider-legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.9rem;margin-top:8px}
       .insider-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+      .insider-legend i.buy{background:#ef4444}
+      .insider-legend i.sell{background:#16a34a}
       .insider-legend i.transfer{background:rgba(22,163,74,.35);border:1px solid #16a34a;box-sizing:border-box}
+      .insider-breakdown-list{margin-top:12px;font-size:.85rem;display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+      .insider-breakdown-head{font-weight:600;color:var(--muted);margin-bottom:2px}
+      .insider-breakdown-item{display:flex;align-items:center;gap:8px;padding:3px 0}
+      .insider-breakdown-tag{font-size:.75rem;padding:1px 6px;border-radius:3px;font-weight:bold}
+      .insider-breakdown-tag.buy{background:rgba(239,68,68,.15);color:#ef4444}
+      .insider-breakdown-tag.sell{background:rgba(22,163,74,.15);color:#16a34a}
+      .insider-breakdown-amount{margin-left:auto;font-weight:bold}
     `;
     document.head.appendChild(style);
   }
@@ -58,18 +67,19 @@
     return dates.map((d, i) => [d, arr[i]]).filter(([, v]) => v != null).slice(-180);
   }
 
-  function drawChart(svg, code) {
+  function drawChart(svg, code, cardEl) {
     const rec = stock(code);
     const transfer = (rec?.transfer?.series || [])
       .map(([d, lots]) => ({ d, lots: Number(lots || 0) }))
       .filter(x => x.lots > 0)
       .slice(-180);
     const holding = (rec?.holding?.series || [])
-      .map(([month, total, delta]) => ({
+      .map(([month, total, delta, breakdown]) => ({
         d: `${month}-01`,
         month,
         total: Number(total || 0),
         delta: delta == null ? null : Number(delta),
+        breakdown: Array.isArray(breakdown) ? breakdown : [],
       }))
       .filter(x => x.delta != null)
       .slice(-36);
@@ -127,8 +137,15 @@
           rx: 2,
           fill: positive ? BUY : SELL,
         });
-        rect.appendChild(mk("title")).textContent =
-          `${h.month} 持股月增減 ${h.delta > 0 ? "+" : ""}${h.delta} 張`;
+        let tip = `${h.month} 持股月增減 ${h.delta > 0 ? "+" : ""}${h.delta} 張`;
+        if (h.breakdown && h.breakdown.length > 0) {
+          const details = h.breakdown
+            .filter(b => (positive ? b.delta > 0 : b.delta < 0))
+            .map(b => `  • ${b.title || '公司派'} ${b.name}: ${b.delta > 0 ? '+' : ''}${b.delta} 張`)
+            .join("\n");
+          if (details) tip += `\n明細:\n${details}`;
+        }
+        rect.appendChild(mk("title")).textContent = tip;
         svg.appendChild(rect);
       }
 
@@ -189,6 +206,38 @@
       t.textContent = year;
       svg.appendChild(t);
     });
+
+    // 若有高階經理人/董監事個人明細，在圖表卡片下方列出摘要
+    if (cardEl) {
+      let listEl = cardEl.querySelector(".insider-breakdown-list");
+      if (listEl) listEl.remove();
+
+      const recentItems = [];
+      holding.slice(-6).reverse().forEach(h => {
+        (h.breakdown || []).forEach(b => {
+          recentItems.push({ month: h.month, ...b });
+        });
+      });
+
+      if (recentItems.length > 0) {
+        listEl = document.createElement("div");
+        listEl.className = "insider-breakdown-list";
+        listEl.innerHTML = `
+          <div class="insider-breakdown-head">📋 近期公司派與內部人持股異動明細：</div>
+          ${recentItems.slice(0, 8).map(item => `
+            <div class="insider-breakdown-item">
+              <span class="insider-breakdown-tag ${item.delta > 0 ? 'buy' : 'sell'}">${item.delta > 0 ? '增持' : '減持'}</span>
+              <span style="color:var(--muted);">${item.month}</span>
+              <span>${item.title || '公司派'} <strong>${item.name}</strong></span>
+              <span class="insider-breakdown-amount" style="color:${item.delta > 0 ? BUY : SELL}">
+                ${item.delta > 0 ? '+' : ''}${item.delta} 張
+              </span>
+            </div>
+          `).join("")}
+        `;
+        cardEl.appendChild(listEl);
+      }
+    }
   }
 
   function panelCode(panel) {
@@ -227,7 +276,7 @@
     const before = [...panel.querySelectorAll("h4")].find(h => h.textContent.includes("歷年本益比"));
     if (before) before.before(section);
     else panel.appendChild(section);
-    drawChart(section.querySelector("svg"), code);
+    drawChart(section.querySelector("svg"), code, section.querySelector(".insider-chart-card"));
   }
 
   function sync() {
