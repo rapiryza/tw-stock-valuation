@@ -254,12 +254,15 @@
 
     const rec = stock(code);
     const latestMonth = rec?.holding?.latestMonth || "";
+    const latestLots = rec?.holding?.latestLots != null ? Number(rec.holding.latestLots).toLocaleString() : "";
+    const mChange = rec?.holding?.monthlyChange;
+    const changeTxt = mChange != null ? `，本期增減：${mChange > 0 ? '+' : ''}${mChange} 張` : "";
     const section = document.createElement("div");
     section.className = "insider-panel";
     section.innerHTML = `
       <h4>內部人持股／轉讓申報 vs 股價</h4>
       <p class="insider-panel-note">
-        持股月增減是官方持股餘額月報相鄰月份的變化${latestMonth ? `（最新 ${latestMonth}）` : ""}；
+        持股月增減是官方持股餘額月報相鄰月份的變化${latestMonth ? `（${latestMonth} 內部人總持股 ${latestLots} 張${changeTxt}）` : ""}；
         轉讓申報是<strong>事前申報</strong>，不代表股票已實際賣出成交。
         紅色向上＝持股增加，綠色向下＝持股減少，半透明綠柱＝轉讓申報。
       </p>
