@@ -34,7 +34,7 @@
   const state = {
     rows: [], view: [], meta: null, market: null, tags: {}, movers: null, history: null,
     tdcc: { date: null, base: null, d: {} },
-    performance: { stocks: {} }, returnPeriod: "d1", revenueNotes: {}, profitGrowth: {stocks:{}}, operating: {stocks:{}}, insider: {stocks:{}}, selectedColumns: ["p", "cap", "priceReturn", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
+    performance: { stocks: {} }, returnPeriod: "d1", revenueNotes: {}, profitGrowth: {stocks:{}}, operating: {stocks:{}}, insider: {stocks:{}}, selectedColumns: ["p", "cap", "priceReturn", "insider_holding", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
@@ -1201,7 +1201,7 @@
       getJSON("data/revenue_notes.json", {}),
       getJSON("data/profit_growth.json", {stocks:{}}),
       getJSON("data/operating_latest.json", {stocks:{}}),
-      getJSON("data/insider_flows.json", {stocks:{}}),
+      getJSON("data/insider_flows.json?v=20261013-complete", {stocks:{}}),
     ]);
     state.meta = meta; state.market = market;
     state.revenueNotes = revenueNotes || {};
