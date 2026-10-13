@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const DATA_URL = "data/insider_flows.json?v=20261014-zero-delta-neutral";
+  const DATA_URL = "data/insider_flows.json?v=20261014-clean-holding-fix";
   const PRICES_URL = "data/prices.json";
   const BUY = "#ef4444";
   const SELL = "#16a34a";
@@ -303,7 +303,6 @@
                 <span><strong>${ex.name}</strong></span>
                 <span style="margin-left:auto;font-variant-numeric:tabular-nums;color:var(--fg)">
                   持股 <strong>${Number(ex.curr).toLocaleString()}</strong> 張
-                  ${ex.diff ? `<span style="font-size:.8rem;color:${ex.diff > 0 ? BUY : SELL}">(${ex.diff > 0 ? '+' : ''}${ex.diff} 張)</span>` : ''}
                 </span>
               </div>
             `).join("")}

@@ -361,7 +361,8 @@ def build_output(
         last_item_delta = holding_series[-1][2] if holding_series else None
         monthly_change = last_item_delta if last_item_delta is not None else holding_summary["m1"]
 
-        # Sort company executives: 1) role priority, 2) holdings
+        # Sort and deduplicate company executives by person (name):
+        # 1) role priority, 2) holdings
         execs_list = company_execs.get(code, [])
         def exec_rank(ex: dict[str, Any]) -> int:
             t = ex.get("title", "")
@@ -374,7 +375,28 @@ def build_output(
             if "董事" in t: return 6
             return 7
 
-        sorted_execs = sorted(execs_list, key=lambda x: (exec_rank(x), -x.get("curr", 0)))
+        # Group by person name to prevent duplication (e.g. 兼任董事與總經理)
+        by_person: dict[str, dict[str, Any]] = {}
+        for ex in sorted(execs_list, key=lambda x: (exec_rank(x), -x.get("curr", 0))):
+            name = ex.get("name", "")
+            if not name:
+                continue
+            if name not in by_person:
+                # Find maximum reported election shares for this person across records
+                same_person_records = [x for x in execs_list if x.get("name") == name]
+                best_elec = max([x.get("elec", 0.0) for x in same_person_records], default=0.0)
+                curr = ex.get("curr", 0.0)
+                diff = round(curr - best_elec, 3) if best_elec > 0.0 else None
+                by_person[name] = {
+                    "title": ex.get("title", "董監經理人"),
+                    "name": name,
+                    "curr": curr,
+                    "elec": best_elec,
+                    "diff": diff,
+                    "is_exec": ex.get("is_exec", True),
+                }
+
+        sorted_execs = list(by_person.values())
 
         stocks[code] = {
             "transfer": {
@@ -462,22 +484,34 @@ def main() -> int:
             all_executives[code].extend(ex_list)
 
     # 5. For each company, compare executive holdings between elected vs current (diff)
-    # and attach to 2026-08 (latest official month) if no IRB changes occurred
+    # and attach to 2026-08 (latest official month) only if 2026-08 has an actual delta and no IRB breakdown
     for code, ex_list in all_executives.items():
         # Find executives who had share changes since election (選任時 vs 目前)
-        diff_execs = []
+        diff_by_person: dict[str, dict[str, Any]] = {}
         for ex in ex_list:
-            if ex.get("elec", 0) > 0 and abs(ex.get("diff", 0)) >= 1.0:
-                diff_execs.append({
-                    "name": ex["name"],
-                    "title": ex["title"],
-                    "delta": ex["diff"],
+            name = ex.get("name", "")
+            if not name or name in diff_by_person:
+                continue
+            same_person_records = [x for x in ex_list if x.get("name") == name]
+            best_elec = max([x.get("elec", 0.0) for x in same_person_records], default=0.0)
+            curr = ex.get("curr", 0.0)
+            diff = round(curr - best_elec, 3) if best_elec > 0.0 else None
+            if diff is not None and abs(diff) >= 1.0:
+                diff_by_person[name] = {
+                    "name": name,
+                    "title": ex.get("title", "公司派主管"),
+                    "delta": diff,
                     "is_exec": ex.get("is_exec", True),
-                })
-        diff_execs.sort(key=lambda x: abs(x["delta"]), reverse=True)
+                }
 
-        # If 2026-08 doesn't have an IRB breakdown, supply the verified executive diffs
-        if diff_execs and not breakdowns[code].get("2026-08"):
+        diff_execs = sorted(diff_by_person.values(), key=lambda x: abs(x["delta"]), reverse=True)
+
+        # Only populate 2026-08 if the month delta is non-zero and no IRB items exist
+        month_delta = deltas.get(code, {}).get("2026-08")
+        if month_delta is None and "2026-08" in holdings[code] and "2026-07" in holdings[code]:
+            month_delta = round(holdings[code]["2026-08"] - holdings[code]["2026-07"], 3)
+
+        if month_delta and abs(month_delta) > 0.001 and diff_execs and not breakdowns[code].get("2026-08"):
             breakdowns[code]["2026-08"] = diff_execs[:10]
 
     # 6. Inject verified executive additions (6945 圓祥生技)
@@ -492,6 +526,7 @@ def main() -> int:
     breakdowns["6945"]["2026-07"] = [
         {"name": "何正宏", "title": "總經理", "delta": 240.0, "is_exec": True}
     ]
+    breakdowns["6945"]["2026-08"] = []
     breakdowns["6945"]["2026-09"] = [
         {"name": "游忠哲", "title": "副總經理", "delta": 180.0, "is_exec": True}
     ]
