@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const DATA_URL = "data/insider_flows.json?v=20261014-clean-holding-fix";
+  const DATA_URL = "data/insider_flows.json?v=20261014-official-irb-sync";
   const PRICES_URL = "data/prices.json";
   const BUY = "#ef4444";
   const SELL = "#16a34a";
