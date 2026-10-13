@@ -2,13 +2,28 @@
 (() => {
   "use strict";
 
-  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v1";
+  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v2";
   const BUY_COLOR = "#ef4444";
   const SELL_COLOR = "#16a34a";
   const $ = (id) => document.getElementById(id);
 
   let statData = null;
   let currentTab = "all"; // "all" | "sell" | "buy" | "company"
+
+  function esc(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function renderTags(tags) {
+    if (!tags || !tags.length) return '<span style="color:var(--muted);font-size:12px;">—</span>';
+    return `<div class="insider-tags-wrap">${tags.map(t => `<span class="tag static">${esc(t)}</span>`).join("")}</div>`;
+  }
 
   function ensureStyle() {
     if ($("insider-stat-style")) return;
@@ -62,7 +77,7 @@
       }
       .insider-kpi-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 12px;
         margin-bottom: 16px;
       }
@@ -162,6 +177,18 @@
         font-weight: 800;
         font-size: .95rem;
       }
+      .insider-tags-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        max-width: 240px;
+      }
+      .insider-tags-wrap .tag {
+        font-size: 11px;
+        padding: 1px 6px;
+        border-radius: 3px;
+        white-space: nowrap;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -207,6 +234,7 @@
                 <th>代號</th>
                 <th>股票名稱</th>
                 <th>產業</th>
+                <th>業務標籤</th>
                 <th style="text-align:right">今年迄今漲幅 (YTD)</th>
                 <th style="text-align:right">近3個月內部人淨增減</th>
                 <th style="text-align:right">佔總持股比例</th>
@@ -219,6 +247,7 @@
                   <td><strong>${item.code}</strong></td>
                   <td>${item.stockName}</td>
                   <td><span style="color:var(--muted);">${item.industry || '-'}</span></td>
+                  <td>${renderTags(item.tags)}</td>
                   <td style="text-align:right;font-weight:700;color:${BUY_COLOR};">+${Number(item.ytd).toFixed(1)}%</td>
                   <td style="text-align:right;font-weight:600;color:${item.m3 > 0 ? BUY_COLOR : (item.m3 < 0 ? SELL_COLOR : 'var(--muted)')};">
                     ${item.m3 > 0 ? '+' : ''}${item.m3} 張
@@ -240,6 +269,7 @@
               <tr>
                 <th>代號</th>
                 <th>股票名稱</th>
+                <th>業務標籤</th>
                 <th>月份</th>
                 <th>身分職稱</th>
                 <th>姓名</th>
@@ -254,6 +284,7 @@
                 <tr data-code="${tx.code}">
                   <td><strong>${tx.code}</strong></td>
                   <td>${tx.stockName}</td>
+                  <td>${renderTags(tx.tags)}</td>
                   <td style="color:var(--muted);">${tx.month}</td>
                   <td><span style="color:var(--muted);">${tx.title || '內部人'}</span></td>
                   <td><strong>${tx.name}</strong></td>
@@ -291,11 +322,6 @@
       </div>
 
       <div class="insider-kpi-grid">
-        <div class="insider-kpi-box" style="border-left:4px solid var(--accent, #3b82f6);">
-          <div class="insider-kpi-title">個別內部人變動中位數</div>
-          <div class="insider-kpi-val" style="color:var(--accent, #3b82f6);">${p.overallMedianPct ?? '--'}%</div>
-          <div class="insider-kpi-sub">佔個人原持股比例中位數（共 ${p.totalTxCount} 筆）</div>
-        </div>
         <div class="insider-kpi-box" style="border-left:4px solid ${SELL_COLOR};">
           <div class="insider-kpi-title">減持佔原持股中位數</div>
           <div class="insider-kpi-val" style="color:${SELL_COLOR};">${p.sellMedianPct ?? '--'}%</div>
@@ -305,11 +331,6 @@
           <div class="insider-kpi-title">增持佔原持股中位數</div>
           <div class="insider-kpi-val" style="color:${BUY_COLOR};">${p.buyMedianPct ?? '--'}%</div>
           <div class="insider-kpi-sub">共 ${p.buyTxCount} 筆個人增持（加碼幅度 11%～50%）</div>
-        </div>
-        <div class="insider-kpi-box" style="border-left:4px solid var(--muted);">
-          <div class="insider-kpi-title">飆股門檻（YTD 漲幅前 5%）</div>
-          <div class="insider-kpi-val" style="color:var(--fg);">+${data.cutoffReturn}%</div>
-          <div class="insider-kpi-sub">共 ${data.topCount} 檔飆股（公司持股變動中位數 ${c.activeMedianPct}%）</div>
         </div>
       </div>
 
@@ -324,7 +345,7 @@
           僅增持 (${allTxs.filter(x => x.type === 'buy').length} 筆)
         </button>
         <button type="button" class="insider-stat-tab-btn ${currentTab === 'company' ? 'active' : ''}" data-tab="company">
-          95 檔飆股全體內部人持股彙總
+          ${companies.length} 檔飆股全體內部人持股彙總
         </button>
       </div>
 

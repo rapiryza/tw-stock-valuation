@@ -33,6 +33,12 @@ def generate_stat() -> dict:
     stock_names = {s["c"]: s["n"] for s in latest if "c" in s}
     stock_industries = {s["c"]: s.get("i", "") for s in latest if "c" in s}
 
+    tags_file = DATA_DIR / "tags.json"
+    tags_map = {}
+    if tags_file.exists():
+        with open(tags_file, encoding="utf-8") as f:
+            tags_map = json.load(f)
+
     # 1. Evaluate stocks with valid YTD returns
     valid_ytd = []
     for code, s in perf.get("stocks", {}).items():
@@ -56,6 +62,7 @@ def generate_stat() -> dict:
             continue
         name = stock_names.get(code, code)
         ind = stock_industries.get(code, "")
+        stock_tags = tags_map.get(code, [])
         h = s.get("holding", {})
         series = h.get("series", [])
         last_3 = series[-3:] if len(series) >= 3 else series
@@ -70,6 +77,7 @@ def generate_stat() -> dict:
                     "code": code,
                     "stockName": name,
                     "industry": ind,
+                    "tags": stock_tags,
                     "ytd": ytd_ret,
                     "m3": round(m3, 3),
                     "latestLots": latest_lots,
@@ -87,6 +95,7 @@ def generate_stat() -> dict:
                         "code": code,
                         "stockName": name,
                         "industry": ind,
+                        "tags": stock_tags,
                         "month": month,
                         "name": b.get("name"),
                         "title": b.get("title"),
