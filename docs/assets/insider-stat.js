@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v2";
+  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v3";
   const BUY_COLOR = "#ef4444";
   const SELL_COLOR = "#16a34a";
   const $ = (id) => document.getElementById(id);
@@ -233,7 +233,6 @@
               <tr>
                 <th>代號</th>
                 <th>股票名稱</th>
-                <th>產業</th>
                 <th>業務標籤</th>
                 <th style="text-align:right">今年迄今漲幅 (YTD)</th>
                 <th style="text-align:right">近3個月內部人淨增減</th>
@@ -246,7 +245,6 @@
                 <tr data-code="${item.code}">
                   <td><strong>${item.code}</strong></td>
                   <td>${item.stockName}</td>
-                  <td><span style="color:var(--muted);">${item.industry || '-'}</span></td>
                   <td>${renderTags(item.tags)}</td>
                   <td style="text-align:right;font-weight:700;color:${BUY_COLOR};">+${Number(item.ytd).toFixed(1)}%</td>
                   <td style="text-align:right;font-weight:600;color:${item.m3 > 0 ? BUY_COLOR : (item.m3 < 0 ? SELL_COLOR : 'var(--muted)')};">
