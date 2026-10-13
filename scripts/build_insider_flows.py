@@ -593,6 +593,13 @@ def main() -> int:
 
     out = build_output(transfers, transfer_people, holdings, deltas, breakdowns, all_executives)
     write_json(OUT, out)
+
+    try:
+        from build_insider_ytd_stat import generate_stat
+        generate_stat()
+    except Exception as exc:  # noqa: BLE001
+        log(f"  產生飆股內部人統計失敗：{exc}")
+
     transfer_codes = sum(1 for obj in out["stocks"].values() if obj["transfer"]["series"])
     holding_codes = sum(1 for obj in out["stocks"].values() if obj["holding"]["series"])
     has_delta_codes = sum(1 for obj in out["stocks"].values() if any(s[2] is not None for s in obj["holding"]["series"]))

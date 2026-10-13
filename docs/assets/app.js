@@ -184,6 +184,17 @@
       $("moversSection").scrollIntoView({ block: "start" });
     });
   }
+  for (const id of ["sheetInsiderStat", "sheetInsiderTab"]) {
+    $(id)?.addEventListener("click", () => {
+      $("moversSection").open = true;
+      const el = $("insiderYtdCard");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        el.classList.add("highlight-focus");
+        setTimeout(() => el.classList.remove("highlight-focus"), 1800);
+      }
+    });
+  }
 
   // ---------------------------------------------------------------- 頂欄與回頂端
   const topbar = $("topbar");
@@ -858,6 +869,7 @@
   const CLOSE_ICON = '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5.5 5.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
 
   async function openStock(code) {
+    window.openStock = openStock;
     const base = state.rows.find((r) => r.c === code);
     if (!base) return;
     // 個股檔只存歷史；營運先行指標另按需載入，不增加首頁初始下載量。
