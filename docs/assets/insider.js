@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const DATA_URL = "data/insider_flows.json?v=20261013-single-bar-per-month";
+  const DATA_URL = "data/insider_flows.json?v=20261014-zero-delta-neutral";
   const PRICES_URL = "data/prices.json";
   const BUY = "#ef4444";
   const SELL = "#16a34a";
@@ -89,6 +89,7 @@
       .insider-breakdown-tag{font-size:.75rem;padding:1px 6px;border-radius:3px;font-weight:bold}
       .insider-breakdown-tag.buy{background:rgba(239,68,68,.15);color:#ef4444}
       .insider-breakdown-tag.sell{background:rgba(22,163,74,.15);color:#16a34a}
+      .insider-breakdown-tag.neutral{background:rgba(125,125,125,.15);color:var(--muted)}
       .insider-breakdown-tag.info{background:rgba(59,130,246,.15);color:#3b82f6}
       .insider-breakdown-amount{margin-left:auto;font-weight:bold}
     `;
@@ -317,7 +318,7 @@
           </div>
           <div class="insider-board-stats">
             ${lastPrice != null ? `<span class="insider-board-metric-item" style="color:var(--accent)">最新股價 <strong>${Number(lastPrice).toFixed(2)}</strong> 元</span>` : ""}
-            ${latestH ? `<span class="insider-board-metric-item" style="color:${latestH.delta >= 0 ? BUY : SELL}">最新月增減 (${latestH.month}) <strong>${latestH.delta > 0 ? '+' : ''}${latestH.delta}</strong> 張</span>` : ""}
+            ${latestH ? `<span class="insider-board-metric-item" style="color:${latestH.delta > 0 ? BUY : (latestH.delta < 0 ? SELL : 'var(--muted)')}">最新月增減 (${latestH.month}) <strong>${latestH.delta > 0 ? '+' : ''}${latestH.delta}</strong> 張</span>` : ""}
             ${latestTr ? `<span class="insider-board-metric-item" style="color:${SELL}">近期轉讓事前申報 (${latestTr.d}) <strong>${latestTr.lots}</strong> 張</span>` : ""}
           </div>
         </div>
@@ -365,10 +366,14 @@
           rows.push(`<div class="tt-r"><span><span class="swatch" style="display:inline-block;background:var(--accent);width:8px;height:8px;border-radius:2px;margin-right:4px;"></span> 股價</span><span>${Number(pVal).toFixed(2)} 元</span></div>`);
         }
         if (h && h.delta != null) {
-          rows.push(`<div class="tt-r"><span style="color:${h.delta > 0 ? BUY : SELL}">▲▼ 持股月增減</span><span style="color:${h.delta > 0 ? BUY : SELL};font-weight:bold;">${h.delta > 0 ? '+' : ''}${h.delta} 張</span></div>`);
+          const deltaColor = h.delta > 0 ? BUY : (h.delta < 0 ? SELL : 'var(--muted)');
+          const deltaSign = h.delta > 0 ? '+' : '';
+          const deltaIcon = h.delta > 0 ? '▲' : (h.delta < 0 ? '▼' : '━');
+          rows.push(`<div class="tt-r"><span style="color:${deltaColor}">${deltaIcon} 持股月增減</span><span style="color:${deltaColor};font-weight:bold;">${deltaSign}${h.delta} 張</span></div>`);
           if (h.breakdown && h.breakdown.length > 0) {
             h.breakdown.slice(0, 4).forEach(b => {
-              rows.push(`<div class="tt-r" style="font-size:11.5px;color:var(--muted)"><span>• ${b.title || '主管'} ${b.name}</span><span style="color:${b.delta > 0 ? BUY : SELL}">${b.delta > 0 ? '+' : ''}${b.delta} 張</span></div>`);
+              const bColor = b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)');
+              rows.push(`<div class="tt-r" style="font-size:11.5px;color:var(--muted)"><span>• ${b.title || '主管'} ${b.name}</span><span style="color:${bColor}">${b.delta > 0 ? '+' : ''}${b.delta} 張</span></div>`);
             });
           }
         }
@@ -404,15 +409,20 @@
           personsHtml += `
             <div class="insider-board-persons">
               <span style="color:var(--muted);font-weight:600;">👤 本期持股變動當事人與經理人：</span>
-              ${h.breakdown.map(b => `
-                <div class="insider-board-prow">
-                  <span class="insider-breakdown-tag ${b.delta > 0 ? 'buy' : 'sell'}">${b.delta > 0 ? '增持' : '減持'}</span>
-                  <span>${b.title || '公司派主管'} <strong>${b.name}</strong></span>
-                  <span style="margin-left:auto;font-weight:bold;color:${b.delta > 0 ? BUY : SELL}">
-                    ${b.delta > 0 ? '+' : ''}${b.delta} 張
-                  </span>
-                </div>
-              `).join("")}
+              ${h.breakdown.map(b => {
+                const bTagClass = b.delta > 0 ? 'buy' : (b.delta < 0 ? 'sell' : 'neutral');
+                const bTagText = b.delta > 0 ? '增持' : (b.delta < 0 ? '減持' : '持平');
+                const bColor = b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)');
+                return `
+                  <div class="insider-board-prow">
+                    <span class="insider-breakdown-tag ${bTagClass}">${bTagText}</span>
+                    <span>${b.title || '公司派主管'} <strong>${b.name}</strong></span>
+                    <span style="margin-left:auto;font-weight:bold;color:${bColor}">
+                      ${b.delta > 0 ? '+' : ''}${b.delta} 張
+                    </span>
+                  </div>
+                `;
+              }).join("")}
             </div>
           `;
         } else if (h && h.delta != null) {
@@ -422,12 +432,16 @@
             ? leadExecs.map(e => `${e.title} ${e.name}`).join('、')
             : '董事長與經理人團隊';
 
+          const tagClass = h.delta > 0 ? 'buy' : (h.delta < 0 ? 'sell' : 'neutral');
+          const tagText = h.delta > 0 ? '增持' : (h.delta < 0 ? '減持' : '持平');
+          const deltaColor = h.delta > 0 ? BUY : (h.delta < 0 ? SELL : 'var(--muted)');
+
           personsHtml += `
             <div class="insider-board-persons">
               <div class="insider-board-prow">
-                <span class="insider-breakdown-tag ${h.delta > 0 ? 'buy' : 'sell'}">${h.delta > 0 ? '增持' : '減持'}</span>
-                <span>內部人全體異動（主要經營層：${execNames}）</span>
-                <span style="margin-left:auto;font-weight:bold;color:${h.delta > 0 ? BUY : SELL}">
+                <span class="insider-breakdown-tag ${tagClass}">${tagText}</span>
+                <span>內部人持股${h.delta === 0 ? '維持不變' : '全體異動'}（主要經營層：${execNames}）</span>
+                <span style="margin-left:auto;font-weight:bold;color:${deltaColor}">
                   ${h.delta > 0 ? '+' : ''}${h.delta} 張（本期總持股 ${Number(h.total).toLocaleString()} 張）
                 </span>
               </div>
