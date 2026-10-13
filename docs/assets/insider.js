@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const DATA_URL = "data/insider_flows.json?v=20261014-official-irb-sync";
+  const DATA_URL = "data/insider_flows.json?v=20261014-pct-individual";
   const PRICES_URL = "data/prices.json";
   const BUY = "#ef4444";
   const SELL = "#16a34a";
@@ -284,31 +284,13 @@
     const hit = mk("rect", { class: "insider-hit", x: M.l, y: M.t, width: W - M.l - M.r, height: H - M.t - M.b });
     svg.appendChild(hit);
 
-    // 下方資訊看板預設顯示最新狀態與公司高階經理人持股
+    // 下方資訊看板預設顯示最新狀態（股價、最新月增減、近期轉讓事前申報）
     const renderDefaultBoard = () => {
       if (!boardEl) return;
       const latestH = holding[holding.length - 1];
       const latestTr = transfer[transfer.length - 1];
       const lastP = [...labels].reverse().find(d => priceMap.get(d) != null);
       const lastPrice = lastP ? priceMap.get(lastP) : null;
-
-      let keyExecsHtml = "";
-      if (executives && executives.length > 0) {
-        keyExecsHtml = `
-          <div class="insider-board-persons">
-            <span style="color:var(--muted);font-weight:600;">👑 公司核心董監事／高階經理人持股概況：</span>
-            ${executives.slice(0, 4).map(ex => `
-              <div class="insider-board-prow">
-                <span class="insider-breakdown-tag info">${ex.title || '經營層'}</span>
-                <span><strong>${ex.name}</strong></span>
-                <span style="margin-left:auto;font-variant-numeric:tabular-nums;color:var(--fg)">
-                  持股 <strong>${Number(ex.curr).toLocaleString()}</strong> 張
-                </span>
-              </div>
-            `).join("")}
-          </div>
-        `;
-      }
 
       boardEl.innerHTML = `
         <div class="insider-board-head">
@@ -321,7 +303,6 @@
             ${latestTr ? `<span class="insider-board-metric-item" style="color:${SELL}">近期轉讓事前申報 (${latestTr.d}) <strong>${latestTr.lots}</strong> 張</span>` : ""}
           </div>
         </div>
-        ${keyExecsHtml}
       `;
     };
     renderDefaultBoard();
@@ -372,7 +353,8 @@
           if (h.breakdown && h.breakdown.length > 0) {
             h.breakdown.slice(0, 4).forEach(b => {
               const bColor = b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)');
-              rows.push(`<div class="tt-r" style="font-size:11.5px;color:var(--muted)"><span>• ${b.title || '主管'} ${b.name}</span><span style="color:${bColor}">${b.delta > 0 ? '+' : ''}${b.delta} 張</span></div>`);
+              const pctStr = (b.pct != null) ? ` (佔原持股 ${b.pct}%)` : '';
+              rows.push(`<div class="tt-r" style="font-size:11.5px;color:var(--muted)"><span>• ${b.title || '主管'} ${b.name}</span><span style="color:${bColor}">${b.delta > 0 ? '+' : ''}${b.delta} 張${pctStr}</span></div>`);
             });
           }
         }
@@ -412,12 +394,15 @@
                 const bTagClass = b.delta > 0 ? 'buy' : (b.delta < 0 ? 'sell' : 'neutral');
                 const bTagText = b.delta > 0 ? '增持' : (b.delta < 0 ? '減持' : '持平');
                 const bColor = b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)');
+                const pctStr = (b.pct != null)
+                  ? ` <span class="insider-pct" style="font-weight:normal;color:var(--muted);font-size:.82rem;">(佔原持股 ${b.pct}%)</span>`
+                  : '';
                 return `
                   <div class="insider-board-prow">
                     <span class="insider-breakdown-tag ${bTagClass}">${bTagText}</span>
                     <span>${b.title || '公司派主管'} <strong>${b.name}</strong></span>
                     <span style="margin-left:auto;font-weight:bold;color:${bColor}">
-                      ${b.delta > 0 ? '+' : ''}${b.delta} 張
+                      ${b.delta > 0 ? '+' : ''}${b.delta} 張${pctStr}
                     </span>
                   </div>
                 `;
@@ -519,16 +504,21 @@
         listEl.className = "insider-breakdown-list";
         listEl.innerHTML = `
           <div class="insider-breakdown-head">📋 歷史內部人／經理人個別增減持明細清單：</div>
-          ${recentItems.slice(0, 10).map(item => `
-            <div class="insider-breakdown-item">
-              <span class="insider-breakdown-tag ${item.delta > 0 ? 'buy' : 'sell'}">${item.delta > 0 ? '增持' : '減持'}</span>
-              <span style="color:var(--muted);">${item.month}</span>
-              <span>${item.title || '公司主管'} <strong>${item.name}</strong></span>
-              <span class="insider-breakdown-amount" style="color:${item.delta > 0 ? BUY : SELL}">
-                ${item.delta > 0 ? '+' : ''}${item.delta} 張
-              </span>
-            </div>
-          `).join("")}
+          ${recentItems.slice(0, 10).map(item => {
+            const pctStr = (item.pct != null)
+              ? ` <span class="insider-pct" style="font-weight:normal;color:var(--muted);font-size:.82rem;">(佔原持股 ${item.pct}%)</span>`
+              : '';
+            return `
+              <div class="insider-breakdown-item">
+                <span class="insider-breakdown-tag ${item.delta > 0 ? 'buy' : 'sell'}">${item.delta > 0 ? '增持' : '減持'}</span>
+                <span style="color:var(--muted);">${item.month}</span>
+                <span>${item.title || '公司主管'} <strong>${item.name}</strong></span>
+                <span class="insider-breakdown-amount" style="color:${item.delta > 0 ? BUY : SELL}">
+                  ${item.delta > 0 ? '+' : ''}${item.delta} 張${pctStr}
+                </span>
+              </div>
+            `;
+          }).join("")}
         `;
         cardEl.appendChild(listEl);
       }

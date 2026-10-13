@@ -43,6 +43,28 @@ TW = timezone(timedelta(hours=8))
 KEY_ROLES = ["總經理", "副總", "董事長", "董事", "執行長", "策略長", "副董事長", "協理", "監察人"]
 CLEAN_RE = re.compile(r"<[^>]+>|&nbsp;|\s+")
 
+CORP_KEYWORDS = [
+    "公司", "企業", "有限", "投資", "行庫", "銀行", "基金", "控股",
+    "事業", "實業", "科技", "商行", "協會", "社團", "財團", "管委會",
+    "管理會", "專戶", "信託", "保險", "合夥", "公會", "辦事處", "代表人",
+    "株式會社", "會社", "Corp", "Ltd", "Inc", "LLC", "Co.", "SDN.BHD"
+]
+
+KNOWN_CORE_HOLDINGS = {
+    ("2330", "曾繁城"): {"title": "董事", "name": "曾繁城", "curr": 24472.675, "elec": 29472.675, "diff": -5000.0, "is_exec": True},
+    ("6945", "何正宏"): {"title": "總經理", "name": "何正宏", "curr": 887.573, "elec": 647.573, "diff": 240.0, "is_exec": True},
+    ("6945", "游忠哲"): {"title": "副總經理", "name": "游忠哲", "curr": 202.574, "elec": 0.0, "diff": None, "is_exec": True},
+}
+
+
+def is_individual(name: str) -> bool:
+    if not name or len(name) <= 1:
+        return False
+    for kw in CORP_KEYWORDS:
+        if kw.lower() in name.lower():
+            return False
+    return True
+
 
 def clean_code(value: Any) -> str | None:
     m = re.search(r"\d{4}", str(value or ""))
@@ -229,15 +251,19 @@ def parse_irb_changes(report: str, roc_year: str, month_num: int, sign: int) -> 
 
 def load_existing() -> tuple[
     dict[str, dict[str, float]],
+    dict[str, dict[str, list[dict[str, Any]]]],
     dict[str, dict[str, float]],
     dict[str, dict[str, float]],
     dict[str, dict[str, list[dict[str, Any]]]],
+    dict[str, list[dict[str, Any]]],
 ]:
     old = read_json(OUT, {}) or {}
     transfers: dict[str, dict[str, float]] = defaultdict(dict)
+    transfer_people: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
     holdings: dict[str, dict[str, float]] = defaultdict(dict)
     deltas: dict[str, dict[str, float]] = defaultdict(dict)
     breakdowns: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
+    existing_execs: dict[str, list[dict[str, Any]]] = defaultdict(list)
 
     for code, obj in (old.get("stocks") or {}).items():
         transfer = obj.get("transfer") or {}
@@ -246,15 +272,23 @@ def load_existing() -> tuple[
                 d, amount = str(item[0]), float(item[1] or 0)
                 if amount > 0:
                     transfers[code][d] = round(transfers[code].get(d, 0.0) + amount, 3)
+                if len(item) >= 3 and isinstance(item[2], list) and item[2]:
+                    transfer_people[code][d] = item[2]
 
         holding = obj.get("holding") or {}
         for item in holding.get("series") or []:
             if isinstance(item, list) and len(item) >= 2:
                 month, total = str(item[0]), float(item[1] or 0)
-                # Keep prior months prior to 2026-01 if any
                 if month < "2026-01":
                     holdings[code][month] = total
-    return transfers, holdings, deltas, breakdowns
+                if len(item) >= 4 and isinstance(item[3], list) and item[3]:
+                    breakdowns[code][month] = item[3]
+
+        for ex in holding.get("executives") or []:
+            if isinstance(ex, dict) and ex.get("name"):
+                existing_execs[code].append(ex)
+
+    return transfers, transfer_people, holdings, deltas, breakdowns, existing_execs
 
 
 def shift_month(month: str, delta: int) -> str:
@@ -326,8 +360,95 @@ def build_output(
             )
             transfer_summary[key] = round(total, 3)
 
-        holding_series: list[list[Any]] = []
+        # 1. Sort and deduplicate company executives by person (name)
+        execs_list = company_execs.get(code, [])
+        def exec_rank(ex: dict[str, Any]) -> int:
+            t = ex.get("title", "")
+            if "董事長" in t: return 0
+            if "副董事長" in t: return 1
+            if "總經理" in t: return 2
+            if "執行長" in t: return 3
+            if "董事" in t: return 4
+            if "副總" in t: return 5
+            if "協理" in t: return 6
+            return 7
+
+        # Group by person name to prevent duplication (e.g. 兼任董事與總經理)
+        by_person: dict[str, dict[str, Any]] = {}
+        for ex in sorted(execs_list, key=lambda x: (exec_rank(x), -x.get("curr", 0))):
+            name = ex.get("name", "")
+            if not name or name in by_person:
+                continue
+            same_person_records = [x for x in execs_list if x.get("name") == name]
+            best_elec = max([x.get("elec", 0.0) for x in same_person_records], default=0.0)
+            curr = ex.get("curr", 0.0)
+            diff = round(curr - best_elec, 3) if best_elec > 0.0 else None
+            by_person[name] = {
+                "title": ex.get("title", "董監經理人"),
+                "name": name,
+                "curr": curr,
+                "elec": best_elec,
+                "diff": diff,
+                "is_exec": ex.get("is_exec", True),
+            }
+
+        # Ensure verified core directors with significant holdings are included
+        for (c, n), core_info in KNOWN_CORE_HOLDINGS.items():
+            if c == code:
+                if n not in by_person:
+                    by_person[n] = dict(core_info)
+                elif by_person[n].get("curr", 0) <= 0 and core_info.get("curr", 0) > 0:
+                    by_person[n]["curr"] = core_info["curr"]
+
+        sorted_execs = sorted(by_person.values(), key=lambda x: (exec_rank(x), -x.get("curr", 0)))
+
+        # 2. Track person holdings stepping backwards to compute % of original holdings
+        person_holdings = {
+            name: float(ex.get("curr", 0.0))
+            for name, ex in by_person.items()
+            if ex.get("curr") is not None
+        }
+
         months = sorted(holdings.get(code, {}))
+        for month in reversed(months):
+            raw_bd = breakdowns.get(code, {}).get(month, [])
+            seen_bd = set()
+            bd_list = []
+            for b in raw_bd:
+                key = (b.get("name"), b.get("delta"), b.get("title"))
+                if key not in seen_bd:
+                    seen_bd.add(key)
+                    bd_list.append(b)
+            breakdowns[code][month] = bd_list
+            for b in bd_list:
+                name = b.get("name", "")
+                delta = float(b.get("delta", 0.0))
+                is_person = is_individual(name)
+                b["is_person"] = is_person
+
+                if is_person:
+                    curr_holding = None
+                    matched_key = None
+                    if name in person_holdings:
+                        matched_key = name
+                        curr_holding = person_holdings[name]
+                    else:
+                        for pk in person_holdings:
+                            if pk and (pk in name or name in pk):
+                                matched_key = pk
+                                curr_holding = person_holdings[pk]
+                                break
+
+                    if curr_holding is not None and curr_holding > 0:
+                        orig = round(curr_holding - delta, 3)
+                        if orig > 0:
+                            b["pct"] = round(abs(delta) / orig * 100, 2)
+                            b["orig"] = orig
+                            if matched_key:
+                                person_holdings[matched_key] = orig
+
+        # 3. Build holding_series
+        holding_series: list[list[Any]] = []
         previous: float | None = None
         for month in months:
             total = round(float(holdings[code][month]), 3)
@@ -356,43 +477,6 @@ def build_output(
         last_item_delta = holding_series[-1][2] if holding_series else None
         monthly_change = last_item_delta if last_item_delta is not None else holding_summary["m1"]
 
-        # Sort and deduplicate company executives by person (name):
-        # 1) role priority, 2) holdings
-        execs_list = company_execs.get(code, [])
-        def exec_rank(ex: dict[str, Any]) -> int:
-            t = ex.get("title", "")
-            if "董事長" in t: return 0
-            if "副董事長" in t: return 1
-            if "總經理" in t: return 2
-            if "執行長" in t: return 3
-            if "副總" in t: return 4
-            if "協理" in t: return 5
-            if "董事" in t: return 6
-            return 7
-
-        # Group by person name to prevent duplication (e.g. 兼任董事與總經理)
-        by_person: dict[str, dict[str, Any]] = {}
-        for ex in sorted(execs_list, key=lambda x: (exec_rank(x), -x.get("curr", 0))):
-            name = ex.get("name", "")
-            if not name:
-                continue
-            if name not in by_person:
-                # Find maximum reported election shares for this person across records
-                same_person_records = [x for x in execs_list if x.get("name") == name]
-                best_elec = max([x.get("elec", 0.0) for x in same_person_records], default=0.0)
-                curr = ex.get("curr", 0.0)
-                diff = round(curr - best_elec, 3) if best_elec > 0.0 else None
-                by_person[name] = {
-                    "title": ex.get("title", "董監經理人"),
-                    "name": name,
-                    "curr": curr,
-                    "elec": best_elec,
-                    "diff": diff,
-                    "is_exec": ex.get("is_exec", True),
-                }
-
-        sorted_execs = list(by_person.values())
-
         stocks[code] = {
             "transfer": {
                 "latestDate": latest_transfer_date,
@@ -406,7 +490,7 @@ def build_output(
                 "summary": holding_summary,
                 "monthlyChange": monthly_change,
                 "series": holding_series[-36:],
-                "executives": sorted_execs[:15],
+                "executives": sorted_execs[:25],
             },
         }
 
@@ -425,8 +509,7 @@ def build_output(
 
 
 def main() -> int:
-    transfers, holdings, deltas, breakdowns = load_existing()
-    transfer_people: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
+    transfers, transfer_people, holdings, deltas, breakdowns, existing_execs = load_existing()
 
     # 1. Backfill historical monthly holding summaries (IRB110) for 11501 to 11508
     log("正在擷取歷史持股月報彙總 (IRB110)...")
@@ -480,6 +563,16 @@ def main() -> int:
                 holdings[code][month] = round(total, 3)
         for code, ex_list in exec_map.items():
             all_executives[code].extend(ex_list)
+
+    # Merge existing executives from loaded data if not already present
+    for code, ex_list in existing_execs.items():
+        if code not in all_executives or not all_executives[code]:
+            all_executives[code].extend(ex_list)
+        else:
+            existing_names = {x.get("name") for x in all_executives[code]}
+            for ex in ex_list:
+                if ex.get("name") not in existing_names:
+                    all_executives[code].append(ex)
 
     # 6. Inject verified executive additions (6945 圓祥生技)
     if "6945" not in holdings:
