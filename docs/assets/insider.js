@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const DATA_URL = "data/insider_flows.json?v=20261013-persons-v1";
+  const DATA_URL = "data/insider_flows.json?v=20261013-single-bar-per-month";
   const PRICES_URL = "data/prices.json";
   const BUY = "#ef4444";
   const SELL = "#16a34a";
@@ -186,23 +186,39 @@
     const byHoldingMonth = new Map(holding.map(x => [x.month, x]));
     const priceMap = new Map(prices);
 
+    // 每月持股增減長柱只在該月份最後一個交易日（月底位置）繪製一次，避免日線圖中整個月天天重複出現長柱
+    const renderedHoldingMonths = new Set();
+    // 找出每個月份在 labels 中最後出現的索引位置
+    const monthLastIdx = new Map();
+    labels.forEach((d, idx) => {
+      const ym = d.slice(0, 7);
+      monthLastIdx.set(ym, idx);
+    });
+
     labels.forEach((d, idx) => {
       const x0 = X(idx);
-      const h = byHolding.get(d) || byHoldingMonth.get(d.slice(0, 7));
-      if (h && h.delta) {
-        const height = Math.max(2, Math.abs(h.delta) / lotsMax * 68);
-        const positive = h.delta > 0;
-        const rect = mk("rect", {
-          x: x0 - barW - 1,
-          y: positive ? baseline - height : baseline,
-          width: barW,
-          height,
-          rx: 2,
-          fill: positive ? BUY : SELL,
-        });
-        svg.appendChild(rect);
+      const ym = d.slice(0, 7);
+
+      // 持股月增減長柱：僅在該月份的代表日（月底日）繪製一支柱子
+      if (idx === monthLastIdx.get(ym) && !renderedHoldingMonths.has(ym)) {
+        const h = byHoldingMonth.get(ym);
+        if (h && h.delta) {
+          renderedHoldingMonths.add(ym);
+          const height = Math.max(2, Math.abs(h.delta) / lotsMax * 68);
+          const positive = h.delta > 0;
+          const rect = mk("rect", {
+            x: x0 - barW - 1,
+            y: positive ? baseline - height : baseline,
+            width: barW,
+            height,
+            rx: 2,
+            fill: positive ? BUY : SELL,
+          });
+          svg.appendChild(rect);
+        }
       }
 
+      // 轉讓事前申報長柱：按具體申報日繪製
       const tr = byTransfer.get(d);
       if (tr) {
         const height = Math.max(2, tr.lots / lotsMax * 68);
