@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const DATA_URL = "data/insider_flows.json?v=20261014-pct-individual";
+  const DATA_URL = "data/insider_flows.json?v=20261014-no-board";
   const PRICES_URL = "data/prices.json";
   const BUY = "#ef4444";
   const SELL = "#16a34a";
@@ -33,56 +33,6 @@
       .insider-legend i.buy{background:#ef4444}
       .insider-legend i.sell{background:#16a34a}
       .insider-legend i.transfer{background:rgba(22,163,74,.35);border:1px solid #16a34a;box-sizing:border-box}
-      .insider-cursor-board{
-        margin-top:12px;
-        background:var(--surface-2, rgba(125,125,125,.06));
-        border:1px solid var(--border, var(--line));
-        border-radius:8px;
-        padding:12px 14px;
-        font-size:.88rem;
-        transition:background .15s ease, border-color .15s ease;
-      }
-      .insider-board-head{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-bottom:6px;
-      }
-      .insider-board-title{
-        font-weight:700;
-        color:var(--fg);
-        display:flex;
-        align-items:center;
-        gap:6px;
-      }
-      .insider-board-stats{
-        display:flex;
-        gap:14px;
-        align-items:center;
-        flex-wrap:wrap;
-        font-variant-numeric:tabular-nums;
-      }
-      .insider-board-metric-item{
-        display:flex;
-        align-items:center;
-        gap:4px;
-      }
-      .insider-board-persons{
-        display:flex;
-        flex-direction:column;
-        gap:6px;
-        margin-top:8px;
-        padding-top:8px;
-        border-top:1px dashed var(--line);
-      }
-      .insider-board-prow{
-        display:flex;
-        align-items:center;
-        gap:8px;
-        flex-wrap:wrap;
-      }
       .insider-breakdown-list{margin-top:14px;font-size:.85rem;display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
       .insider-breakdown-head{font-weight:600;color:var(--muted);margin-bottom:4px}
       .insider-breakdown-item{display:flex;align-items:center;gap:8px;padding:3px 0}
@@ -121,7 +71,7 @@
     return dates.map((d, i) => [d, arr[i]]).filter(([, v]) => v != null).slice(-180);
   }
 
-  function drawChart(svg, code, cardEl, tipEl, boardEl) {
+  function drawChart(svg, code, cardEl, tipEl) {
     const rec = stock(code);
     const executives = rec?.holding?.executives || [];
     const transfer = (rec?.transfer?.series || [])
@@ -165,7 +115,6 @@
       const t = mk("text", { x: W / 2, y: H / 2, "text-anchor": "middle", class: "insider-label" });
       t.textContent = "尚無內部人資料";
       svg.appendChild(t);
-      if (boardEl) boardEl.innerHTML = `<span style="color:var(--muted)">尚無內部人持股申報記錄</span>`;
       return;
     }
 
@@ -284,36 +233,12 @@
     const hit = mk("rect", { class: "insider-hit", x: M.l, y: M.t, width: W - M.l - M.r, height: H - M.t - M.b });
     svg.appendChild(hit);
 
-    // 下方資訊看板預設顯示最新狀態（股價、最新月增減、近期轉讓事前申報）
-    const renderDefaultBoard = () => {
-      if (!boardEl) return;
-      const latestH = holding[holding.length - 1];
-      const latestTr = transfer[transfer.length - 1];
-      const lastP = [...labels].reverse().find(d => priceMap.get(d) != null);
-      const lastPrice = lastP ? priceMap.get(lastP) : null;
-
-      boardEl.innerHTML = `
-        <div class="insider-board-head">
-          <div class="insider-board-title">
-            <span>💡 鼠標移動至上方圖表，即可在下方即時檢視該時間點之買賣張數、股價與交易當事人</span>
-          </div>
-          <div class="insider-board-stats">
-            ${lastPrice != null ? `<span class="insider-board-metric-item" style="color:var(--accent)">最新股價 <strong>${Number(lastPrice).toFixed(2)}</strong> 元</span>` : ""}
-            ${latestH ? `<span class="insider-board-metric-item" style="color:${latestH.delta > 0 ? BUY : (latestH.delta < 0 ? SELL : 'var(--muted)')}">最新月增減 (${latestH.month}) <strong>${latestH.delta > 0 ? '+' : ''}${latestH.delta}</strong> 張</span>` : ""}
-            ${latestTr ? `<span class="insider-board-metric-item" style="color:${SELL}">近期轉讓事前申報 (${latestTr.d}) <strong>${latestTr.lots}</strong> 張</span>` : ""}
-          </div>
-        </div>
-      `;
-    };
-    renderDefaultBoard();
-
     const hide = () => {
       if (tipEl) tipEl.hidden = true;
       cross.setAttribute("x1", -99);
       cross.setAttribute("x2", -99);
       dot.setAttribute("cx", -99);
       dot.setAttribute("cy", -99);
-      renderDefaultBoard();
     };
 
     const move = (ev) => {
@@ -379,106 +304,6 @@
         } else {
           tipEl.hidden = true;
         }
-      }
-
-      // 2. 更新圖表下方即時當事人看板 (boardEl)
-      if (boardEl) {
-        const titleDate = h ? `${h.month}（持股月報）` : d;
-        let personsHtml = "";
-
-        if (h && h.breakdown && h.breakdown.length > 0) {
-          personsHtml += `
-            <div class="insider-board-persons">
-              <span style="color:var(--muted);font-weight:600;">👤 本期持股變動當事人與經理人：</span>
-              ${h.breakdown.map(b => {
-                const bTagClass = b.delta > 0 ? 'buy' : (b.delta < 0 ? 'sell' : 'neutral');
-                const bTagText = b.delta > 0 ? '增持' : (b.delta < 0 ? '減持' : '持平');
-                const bColor = b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)');
-                const pctStr = (b.pct != null)
-                  ? ` <span class="insider-pct" style="font-weight:normal;color:var(--muted);font-size:.82rem;">(佔原持股 ${b.pct}%)</span>`
-                  : '';
-                return `
-                  <div class="insider-board-prow">
-                    <span class="insider-breakdown-tag ${bTagClass}">${bTagText}</span>
-                    <span>${b.title || '公司派主管'} <strong>${b.name}</strong></span>
-                    <span style="margin-left:auto;font-weight:bold;color:${bColor}">
-                      ${b.delta > 0 ? '+' : ''}${b.delta} 張${pctStr}
-                    </span>
-                  </div>
-                `;
-              }).join("")}
-            </div>
-          `;
-        } else if (h && h.delta != null) {
-          // If no individual transaction exceeded the millions threshold in IRB, display key management with holding status
-          const leadExecs = executives.slice(0, 3);
-          const execNames = leadExecs.length > 0
-            ? leadExecs.map(e => `${e.title} ${e.name}`).join('、')
-            : '董事長與經理人團隊';
-
-          const tagClass = h.delta > 0 ? 'buy' : (h.delta < 0 ? 'sell' : 'neutral');
-          const tagText = h.delta > 0 ? '增持' : (h.delta < 0 ? '減持' : '持平');
-          const deltaColor = h.delta > 0 ? BUY : (h.delta < 0 ? SELL : 'var(--muted)');
-
-          personsHtml += `
-            <div class="insider-board-persons">
-              <div class="insider-board-prow">
-                <span class="insider-breakdown-tag ${tagClass}">${tagText}</span>
-                <span>內部人持股${h.delta === 0 ? '維持不變' : '全體異動'}（主要經營層：${execNames}）</span>
-                <span style="margin-left:auto;font-weight:bold;color:${deltaColor}">
-                  ${h.delta > 0 ? '+' : ''}${h.delta} 張（本期總持股 ${Number(h.total).toLocaleString()} 張）
-                </span>
-              </div>
-            </div>
-          `;
-        }
-
-        if (tr) {
-          const trPersons = (tr.breakdown && tr.breakdown.length > 0)
-            ? tr.breakdown.map(b => `
-                <div class="insider-board-prow">
-                  <span class="insider-breakdown-tag sell">轉讓申報</span>
-                  <span>${b.title || '內部人'} <strong>${b.name}</strong>${b.method ? `（${b.method}）` : ''}</span>
-                  <span style="margin-left:auto;font-weight:bold;color:${SELL}">
-                    ${b.lots} 張
-                  </span>
-                </div>
-              `).join("")
-            : `
-                <div class="insider-board-prow">
-                  <span class="insider-breakdown-tag sell">事前申報</span>
-                  <span>內部人股權轉讓事前申報（不代表實際成交）</span>
-                  <span style="margin-left:auto;font-weight:bold;color:${SELL}">
-                    ${tr.lots} 張
-                  </span>
-                </div>
-              `;
-
-          personsHtml += `
-            <div class="insider-board-persons" style="border-top:1px dashed var(--line);padding-top:8px;">
-              <span style="color:var(--muted);font-weight:600;">⚑ 股權轉讓申報當事人：</span>
-              ${trPersons}
-            </div>
-          `;
-        }
-
-        if (!personsHtml) {
-          personsHtml = `<div style="margin-top:6px;color:var(--muted);font-size:.84rem;">本期內部人持股無異動申報記錄</div>`;
-        }
-
-        boardEl.innerHTML = `
-          <div class="insider-board-head">
-            <div class="insider-board-title">
-              📅 <span>${titleDate}</span>
-            </div>
-            <div class="insider-board-stats">
-              ${pVal != null ? `<span class="insider-board-metric-item" style="color:var(--accent)">股價 <strong>${Number(pVal).toFixed(2)}</strong> 元</span>` : ""}
-              ${h && h.delta != null ? `<span class="insider-board-metric-item" style="color:${h.delta > 0 ? BUY : SELL}">持股月增減 <strong>${h.delta > 0 ? '+' : ''}${h.delta}</strong> 張</span>` : ""}
-              ${tr ? `<span class="insider-board-metric-item" style="color:${SELL}">轉讓申報 <strong>${tr.lots}</strong> 張</span>` : ""}
-            </div>
-          </div>
-          ${personsHtml}
-        `;
       }
     };
 
@@ -564,7 +389,6 @@
           <span><i class="transfer"></i>轉讓事前申報</span>
           <span><i style="background:var(--accent)"></i>股價</span>
         </div>
-        <div class="insider-cursor-board"></div>
       </div>
     `;
     const before = [...panel.querySelectorAll("h4")].find(h => h.textContent.includes("歷年本益比"));
@@ -574,9 +398,8 @@
     const svg = section.querySelector("svg");
     const cardEl = section.querySelector(".insider-chart-card");
     const tipEl = section.querySelector(".insider-tooltip");
-    const boardEl = section.querySelector(".insider-cursor-board");
 
-    drawChart(svg, code, cardEl, tipEl, boardEl);
+    drawChart(svg, code, cardEl, tipEl);
   }
 
   function sync() {
