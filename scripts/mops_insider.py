@@ -69,6 +69,19 @@ def fetch_mops_insider(
     return None
 
 
+def is_corporate(title: str, name: str) -> bool:
+    name_u = name.upper()
+    corp_keywords = [
+        '公司', '銀行', '基金', '有限', '院', '處', '政府', '部',
+        'INC', 'LTD', 'CORP', 'LLC', '商', '投資', '專戶', '合作社'
+    ]
+    if any(k in name_u for k in corp_keywords):
+        return True
+    if '法人' in title and '代表人' not in title:
+        return True
+    return False
+
+
 def parse_mops_records(mops_data: dict | None) -> list[dict]:
     """Parse query6_1 result rows into structured insider records.
     
@@ -79,40 +92,92 @@ def parse_mops_records(mops_data: dict | None) -> list[dict]:
     [03] 選任當時持有股數
     [04] 上月實際持有股數
     [08] 本月增加-自有股數(集中) -> B_market
-    [09] 本月增加-自有股數(其它原因－不含私募) -> I_other (除權配股、受贈等)
+    [09] 本月增加-自有股數(其它原因－不含私募) -> I_other (除權配股、RSU、受贈等)
     [13] 本月減少-自有股數(集中) -> S_market
     [14] 本月減少-自有股數(其它原因－不含私募) -> D_other (贈與、轉讓等)
     [18] 本月實際自有持有股數 -> S_t
+
+    Filters:
+    - General corporate actions (stock dividends, 1:10 splits) are filtered out.
+    - Genuine employee stock / RSU grants (awarded to individual managers/executives)
+      are recognized and tagged with rsu / is_rsu.
     """
     if not mops_data or not isinstance(mops_data, dict):
         return []
     res = mops_data.get("result") or {}
     data = res.get("data") or []
-    out = []
-    for row in data:
-        if len(row) < 19:
+
+    # Pass 1: detect corporate actions (dividends / splits)
+    corp_action = False
+    valid_holders = []
+    for r in data:
+        if len(r) < 19:
             continue
-        title = str(row[0] or "").strip()
-        name = str(row[1] or "").strip()
+        title = str(r[0] or "").strip()
+        name = str(r[1] or "").strip()
         try:
-            prev_shares = float(str(row[4]).replace(",", "") or 0)
-            curr_shares = float(str(row[18]).replace(",", "") or 0)
-            b_mkt = float(str(row[8]).replace(",", "") or 0)
-            s_mkt = float(str(row[13]).replace(",", "") or 0)
-            other_inc = float(str(row[9]).replace(",", "") or 0)
-            other_dec = float(str(row[14]).replace(",", "") or 0)
+            prev = float(str(r[4]).replace(",", "") or 0) / 1000.0
+            curr = float(str(r[18]).replace(",", "") or 0) / 1000.0
+            other_inc = float(str(r[9]).replace(",", "") or 0) / 1000.0
         except ValueError:
             continue
+
+        corp = is_corporate(title, name)
+        if corp and other_inc > 0:
+            corp_action = True
+
+        if other_inc > 0:
+            valid_holders.append({
+                "title": title, "name": name, "prev": prev, "curr": curr,
+                "other_inc": other_inc, "corp": corp,
+                "ratio": (other_inc / prev) if prev > 0 else None
+            })
+
+    # If >= 3 non-corp holders had identical positive ratio, also corporate action (split/dividend)
+    if not corp_action:
+        ratios = [round(h["ratio"], 3) for h in valid_holders if h["ratio"] is not None and not h["corp"]]
+        if len(ratios) >= 3 and len(set(ratios)) == 1 and ratios[0] > 0.01:
+            corp_action = True
+
+    # Pass 2: generate structured records
+    out = []
+    for r in data:
+        if len(r) < 19:
+            continue
+        title = str(r[0] or "").strip()
+        name = str(r[1] or "").strip()
+        try:
+            prev = float(str(r[4]).replace(",", "") or 0) / 1000.0
+            curr = float(str(r[18]).replace(",", "") or 0) / 1000.0
+            b_mkt = float(str(r[8]).replace(",", "") or 0) / 1000.0
+            s_mkt = float(str(r[13]).replace(",", "") or 0) / 1000.0
+            other_inc = float(str(r[9]).replace(",", "") or 0) / 1000.0
+            other_dec = float(str(r[14]).replace(",", "") or 0) / 1000.0
+        except ValueError:
+            continue
+
+        corp = is_corporate(title, name)
+        is_spouse = "配偶" in title or "子女" in title
+
+        # RSU / Employee stock grant: awarded to natural persons (not corporations, not spouse gift)
+        # when company is not undergoing general split/dividend
+        rsu = 0.0
+        if not corp_action and not corp and not is_spouse and other_inc > 0:
+            rsu = other_inc
 
         out.append({
             "title": title,
             "name": name,
-            "prev": round(prev_shares / 1000.0, 3),
-            "curr": round(curr_shares / 1000.0, 3),
-            "b_mkt": round(b_mkt / 1000.0, 3),
-            "s_mkt": round(s_mkt / 1000.0, 3),
-            "net_mkt": round((b_mkt - s_mkt) / 1000.0, 3),
-            "other_inc": round(other_inc / 1000.0, 3),
-            "other_dec": round(other_dec / 1000.0, 3),
+            "prev": round(prev, 3),
+            "curr": round(curr, 3),
+            "b_mkt": round(b_mkt, 3),
+            "s_mkt": round(s_mkt, 3),
+            "net_mkt": round(b_mkt - s_mkt, 3),
+            "rsu": round(rsu, 3),
+            "other_inc": round(other_inc, 3),
+            "other_dec": round(other_dec, 3),
+            "corp_action": corp_action,
+            "is_corp": corp,
+            "is_spouse": is_spouse,
         })
     return out

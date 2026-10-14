@@ -41,6 +41,7 @@
       .insider-breakdown-tag.sell{background:rgba(22,163,74,.15);color:#16a34a}
       .insider-breakdown-tag.neutral{background:rgba(125,125,125,.15);color:var(--muted)}
       .insider-breakdown-tag.info{background:rgba(59,130,246,.15);color:#3b82f6}
+      .insider-breakdown-tag.rsu{background:rgba(59,130,246,.15);color:#2563eb;border:1px solid rgba(59,130,246,.35)}
       .insider-breakdown-amount{margin-left:auto;font-weight:bold}
     `;
     document.head.appendChild(style);
@@ -277,9 +278,11 @@
           rows.push(`<div class="tt-r"><span style="color:${deltaColor}">${deltaIcon} 持股月增減</span><span style="color:${deltaColor};font-weight:bold;">${deltaSign}${h.delta} 張</span></div>`);
           if (h.breakdown && h.breakdown.length > 0) {
             h.breakdown.slice(0, 4).forEach(b => {
-              const bColor = b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)');
+              const isRsu = b.source === 'rsu' || (b.note && b.note.includes('RSU'));
+              const rsuBadge = isRsu ? ' <span style="display:inline-block;padding:1px 4px;border-radius:3px;font-size:10px;background:rgba(59,130,246,0.15);color:#2563eb;font-weight:600;">RSU/員工股</span>' : '';
+              const bColor = isRsu ? '#2563eb' : (b.delta > 0 ? BUY : (b.delta < 0 ? SELL : 'var(--muted)'));
               const pctStr = (b.pct != null) ? ` (佔原持股 ${b.pct}%)` : '';
-              rows.push(`<div class="tt-r" style="font-size:11.5px;color:var(--muted)"><span>• ${b.title || '主管'} ${b.name}</span><span style="color:${bColor}">${b.delta > 0 ? '+' : ''}${b.delta} 張${pctStr}</span></div>`);
+              rows.push(`<div class="tt-r" style="font-size:11.5px;color:var(--muted)"><span>• ${b.title || '主管'} ${b.name}${rsuBadge}</span><span style="color:${bColor}">${b.delta > 0 ? '+' : ''}${b.delta} 張${pctStr}</span></div>`);
             });
           }
         }
@@ -330,15 +333,19 @@
         listEl.innerHTML = `
           <div class="insider-breakdown-head">📋 歷史內部人／經理人個別增減持明細清單：</div>
           ${recentItems.slice(0, 10).map(item => {
+            const isRsu = item.source === 'rsu' || (item.note && item.note.includes('RSU'));
+            const tagClass = isRsu ? 'rsu' : (item.delta > 0 ? 'buy' : 'sell');
+            const tagLabel = isRsu ? 'RSU/員工股' : (item.delta > 0 ? '增持' : '減持');
+            const itemColor = isRsu ? '#2563eb' : (item.delta > 0 ? BUY : SELL);
             const pctStr = (item.pct != null)
               ? ` <span class="insider-pct" style="font-weight:normal;color:var(--muted);font-size:.82rem;">(佔原持股 ${item.pct}%)</span>`
               : '';
             return `
               <div class="insider-breakdown-item">
-                <span class="insider-breakdown-tag ${item.delta > 0 ? 'buy' : 'sell'}">${item.delta > 0 ? '增持' : '減持'}</span>
+                <span class="insider-breakdown-tag ${tagClass}">${tagLabel}</span>
                 <span style="color:var(--muted);">${item.month}</span>
                 <span>${item.title || '公司主管'} <strong>${item.name}</strong></span>
-                <span class="insider-breakdown-amount" style="color:${item.delta > 0 ? BUY : SELL}">
+                <span class="insider-breakdown-amount" style="color:${itemColor}">
                   ${item.delta > 0 ? '+' : ''}${item.delta} 張${pctStr}
                 </span>
               </div>

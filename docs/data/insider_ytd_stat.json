@@ -1,22 +1,24 @@
 {
-  "updatedAt": "2026-10-14T19:53:51+08:00",
+  "updatedAt": "2026-10-14T20:50:17+08:00",
   "evaluatedCount": 1902,
   "topPercent": 5,
   "topCount": 95,
   "cutoffReturn": 157.56,
-  "periodDescription": "最近3個月（依公開資訊觀測站官方集中市場買進/賣出欄位）",
+  "periodDescription": "最近3個月（依公開資訊觀測站官方集中市場買賣及員工認股/RSU）",
   "personStats": {
-    "overallMedianPct": 7.57,
+    "overallMedianPct": 15.59,
     "sellMedianPct": 7.56,
     "buyMedianPct": 13.79,
-    "totalTxCount": 287,
+    "rsuMedianPct": 52.51,
+    "totalTxCount": 444,
     "buyTxCount": 9,
-    "sellTxCount": 278
+    "sellTxCount": 278,
+    "rsuTxCount": 157
   },
   "companyStats": {
-    "activeMedianPct": 0.44,
-    "allMedianPct": 0.16,
-    "activeCount": 67,
+    "activeMedianPct": 0.66,
+    "allMedianPct": 0.24,
+    "activeCount": 69,
     "totalCount": 95
   },
   "personTransactions": [
@@ -33,7 +35,8 @@
       "orig": 9.491,
       "pct": 100.0,
       "ytd": 494.13,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -54,7 +57,161 @@
       "orig": 5.0,
       "pct": 100.0,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6538",
+      "stockName": "倉和",
+      "tags": [
+        "印刷網版",
+        "精密網版",
+        "太陽能網版"
+      ],
+      "month": "2026-06",
+      "name": "余俊緯",
+      "title": "協理",
+      "delta": 15.0,
+      "orig": 13.0,
+      "pct": 100.0,
+      "ytd": 384.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6538",
+      "stockName": "倉和",
+      "tags": [
+        "印刷網版",
+        "精密網版",
+        "太陽能網版"
+      ],
+      "month": "2026-06",
+      "name": "許思華",
+      "title": "協理",
+      "delta": 15.0,
+      "orig": 7.0,
+      "pct": 100.0,
+      "ytd": 384.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6538",
+      "stockName": "倉和",
+      "tags": [
+        "印刷網版",
+        "精密網版",
+        "太陽能網版"
+      ],
+      "month": "2026-06",
+      "name": "廖彰文",
+      "title": "其他",
+      "delta": 14.0,
+      "orig": 6.0,
+      "pct": 100.0,
+      "ytd": 384.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "蕭寒稊",
+      "title": "副總經理",
+      "delta": 12.65,
+      "orig": 9.57,
+      "pct": 100.0,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "奧田哲朗",
+      "title": "協理",
+      "delta": 5.5,
+      "orig": 5.5,
+      "pct": 100.0,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "吳雅芳",
+      "title": "其他",
+      "delta": 3.85,
+      "orig": 2.75,
+      "pct": 100.0,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6861",
+      "stockName": "睿生光電",
+      "tags": [
+        "X光偵測器",
+        "醫療影像"
+      ],
+      "month": "2026-07",
+      "name": "程嘉杏",
+      "title": "財務部門主管",
+      "delta": 0.171,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 354.47,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6861",
+      "stockName": "睿生光電",
+      "tags": [
+        "X光偵測器",
+        "醫療影像"
+      ],
+      "month": "2026-08",
+      "name": "潘泰吉",
+      "title": "董事長",
+      "delta": 1.209,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 354.47,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6147",
@@ -74,7 +231,142 @@
       "orig": 170.0,
       "pct": 100.0,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "羅世蔚",
+      "title": "副總經理",
+      "delta": 160.0,
+      "orig": 122.5,
+      "pct": 100.0,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "涂宗毓",
+      "title": "副總經理",
+      "delta": 112.0,
+      "orig": 31.023,
+      "pct": 100.0,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "涂功次",
+      "title": "副總經理",
+      "delta": 112.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "林明田",
+      "title": "副總經理",
+      "delta": 112.0,
+      "orig": 28.0,
+      "pct": 100.0,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "劉致佑",
+      "title": "協理",
+      "delta": 12.0,
+      "orig": 12.0,
+      "pct": 100.0,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "姚柏宇",
+      "title": "協理",
+      "delta": 7.0,
+      "orig": 2.5,
+      "pct": 100.0,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6217",
@@ -93,7 +385,8 @@
       "orig": 1.0,
       "pct": 100.0,
       "ytd": 322.85,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -112,7 +405,29 @@
       "orig": 6.0,
       "pct": 100.0,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6217",
+      "stockName": "中探針",
+      "tags": [
+        "彈簧探針",
+        "測試連接器",
+        "探針式連接器",
+        "測試治具",
+        "IC測試座"
+      ],
+      "month": "2026-08",
+      "name": "林芳玉",
+      "title": "協理",
+      "delta": 13.794,
+      "orig": 0.67,
+      "pct": 100.0,
+      "ytd": 322.85,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6182",
@@ -130,7 +445,8 @@
       "orig": 4.0,
       "pct": 100.0,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -149,7 +465,8 @@
       "orig": 48.0,
       "pct": 100.0,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -168,7 +485,50 @@
       "orig": 11.545,
       "pct": 100.0,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "陳怡光",
+      "title": "副總經理",
+      "delta": 13.0,
+      "orig": 11.545,
+      "pct": 100.0,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "黃瑞昌",
+      "title": "經理",
+      "delta": 7.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -187,7 +547,136 @@
       "orig": 15.863,
       "pct": 100.0,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-07",
+      "name": "張瑞榮",
+      "title": "副總經理",
+      "delta": 80.521,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-07",
+      "name": "王慶樹",
+      "title": "協理",
+      "delta": 11.003,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6274",
+      "stockName": "台燿",
+      "tags": [
+        "銅箔基板",
+        "高頻高速材料",
+        "高頻材料",
+        "無鹵素基板",
+        "膠片"
+      ],
+      "month": "2026-07",
+      "name": "吳冠瑩",
+      "title": "副總經理",
+      "delta": 36.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 251.21,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3711",
+      "stockName": "日月光投控",
+      "tags": [
+        "封裝測試",
+        "先進封裝",
+        "OSAT",
+        "系統級封裝",
+        "電子代工"
+      ],
+      "month": "2026-07",
+      "name": "張洪本",
+      "title": "副董事長",
+      "delta": 4500.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 198.2,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "蔡譯慶",
+      "title": "副總經理",
+      "delta": 24.0,
+      "orig": 21.604,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "周晏加",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 8.5,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2360",
@@ -207,7 +696,137 @@
       "orig": 0.2,
       "pct": 100.0,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "吳樞俊",
+      "title": "副總經理",
+      "delta": 12.0,
+      "orig": 0.2,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "林旭初",
+      "title": "副總經理",
+      "delta": 24.0,
+      "orig": 11.6,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "洪晟耀",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 8.0,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "王志賢",
+      "title": "副總經理",
+      "delta": 12.0,
+      "orig": 6.0,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "吳昭毅",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "8289",
+      "stockName": "泰藝",
+      "tags": [
+        "石英元件",
+        "石英振盪器",
+        "石英晶體"
+      ],
+      "month": "2026-08",
+      "name": "李逸民",
+      "title": "協理",
+      "delta": 3.053,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 184.67,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "5864",
@@ -226,7 +845,438 @@
       "orig": 2.68,
       "pct": 100.0,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "王文促",
+      "title": "董事長",
+      "delta": 35.233,
+      "orig": 20.702,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "黃正昌",
+      "title": "董事",
+      "delta": 35.233,
+      "orig": 17.894,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "黃信元",
+      "title": "副總經理",
+      "delta": 29.152,
+      "orig": 11.215,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "鄭琇月",
+      "title": "經理",
+      "delta": 31.121,
+      "orig": 8.184,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "王春健",
+      "title": "經理",
+      "delta": 29.346,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "王玉松",
+      "title": "經理",
+      "delta": 31.057,
+      "orig": -5.0,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "胡哲閔",
+      "title": "經理",
+      "delta": 1.117,
+      "orig": 0.133,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "黃筠捷",
+      "title": "經理",
+      "delta": 11.655,
+      "orig": 5.55,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "陳文慧",
+      "title": "經理",
+      "delta": 25.532,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "蕭家建",
+      "title": "經理",
+      "delta": 34.205,
+      "orig": 1.42,
+      "pct": 100.0,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "林錦隆",
+      "title": "董事",
+      "delta": 211.0,
+      "orig": 49.565,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "郭逢春",
+      "title": "董事",
+      "delta": 8.0,
+      "orig": 5.0,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "彭嘉尉",
+      "title": "副總經理",
+      "delta": 8.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "鍾木池",
+      "title": "協理",
+      "delta": 5.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "張喬翔",
+      "title": "協理",
+      "delta": 4.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "虞晉瑞",
+      "title": "協理",
+      "delta": 4.0,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "王月貞",
+      "title": "協理",
+      "delta": 3.0,
+      "orig": 2.098,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "葉昌旗",
+      "title": "協理",
+      "delta": 4.0,
+      "orig": 1.734,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "賴建儒",
+      "title": "協理",
+      "delta": 4.0,
+      "orig": 0.22,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "翁明達",
+      "title": "協理",
+      "delta": 2.5,
+      "orig": 0.0,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "潘虹萍",
+      "title": "會計部門主管",
+      "delta": 1.25,
+      "orig": 0.286,
+      "pct": 100.0,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2484",
@@ -244,7 +1294,30 @@
       "orig": 14.092,
       "pct": 99.35,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "楊代偉",
+      "title": "董事",
+      "delta": 36.0,
+      "orig": 36.3,
+      "pct": 99.17,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -263,7 +1336,29 @@
       "orig": 46.532,
       "pct": 98.86,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "莊惠兒",
+      "title": "經理",
+      "delta": 23.375,
+      "orig": 23.976,
+      "pct": 97.49,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2360",
@@ -283,7 +1378,29 @@
       "orig": 7.2,
       "pct": 97.22,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "潘嬅蓁",
+      "title": "總經理",
+      "delta": 33.553,
+      "orig": 35.684,
+      "pct": 94.03,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2243",
@@ -296,7 +1413,25 @@
       "orig": 14.0,
       "pct": 92.86,
       "ytd": 406.55,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-08",
+      "name": "李舒音勻",
+      "title": "財務部門主管",
+      "delta": 24.0,
+      "orig": 26.14,
+      "pct": 91.81,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2380",
@@ -313,7 +1448,8 @@
       "orig": 11.893,
       "pct": 91.58,
       "ytd": 233.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -334,7 +1470,8 @@
       "orig": 10.964,
       "pct": 91.21,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -353,7 +1490,8 @@
       "orig": 30.783,
       "pct": 90.96,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2380",
@@ -370,7 +1508,8 @@
       "orig": 1.001,
       "pct": 89.21,
       "ytd": 233.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -389,7 +1528,93 @@
       "orig": 40.5,
       "pct": 88.89,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "吳宗樺",
+      "title": "副總經理",
+      "delta": 112.0,
+      "orig": 129.0,
+      "pct": 86.82,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6538",
+      "stockName": "倉和",
+      "tags": [
+        "印刷網版",
+        "精密網版",
+        "太陽能網版"
+      ],
+      "month": "2026-06",
+      "name": "林吉良",
+      "title": "協理",
+      "delta": 15.0,
+      "orig": 17.44,
+      "pct": 86.01,
+      "ytd": 384.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "曾漢仁",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 23.5,
+      "pct": 85.11,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "吳聖仁",
+      "title": "副總經理",
+      "delta": 140.0,
+      "orig": 165.757,
+      "pct": 84.46,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6834",
@@ -407,7 +1632,114 @@
       "orig": 304.0,
       "pct": 82.24,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "戴尤美",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 24.436,
+      "pct": 81.85,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "鄧春香",
+      "title": "董事",
+      "delta": 34.073,
+      "orig": 41.958,
+      "pct": 81.21,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "7734",
+      "stockName": "印能科技",
+      "tags": [
+        "先進封裝設備",
+        "半導體設備",
+        "氣動熱能製程設備",
+        "自動化系統"
+      ],
+      "month": "2026-07",
+      "name": "陳怡君",
+      "title": "財務部門主管",
+      "delta": 7.2,
+      "orig": 8.903,
+      "pct": 80.87,
+      "ytd": 182.13,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "張大志",
+      "title": "副總經理",
+      "delta": 32.0,
+      "orig": 40.2,
+      "pct": 79.6,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "丁美佐",
+      "title": "經理",
+      "delta": 5.077,
+      "orig": 6.615,
+      "pct": 76.75,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "8039",
@@ -426,7 +1758,86 @@
       "orig": 50.0,
       "pct": 76.0,
       "ytd": 255.63,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "羅淇生",
+      "title": "董事",
+      "delta": 27.5,
+      "orig": 36.3,
+      "pct": 75.76,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "林學勤",
+      "title": "協理",
+      "delta": 2.5,
+      "orig": 3.318,
+      "pct": 75.35,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6538",
+      "stockName": "倉和",
+      "tags": [
+        "印刷網版",
+        "精密網版",
+        "太陽能網版"
+      ],
+      "month": "2026-06",
+      "name": "李正(王民)",
+      "title": "協理",
+      "delta": 15.0,
+      "orig": 20.0,
+      "pct": 75.0,
+      "ytd": 384.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6683",
+      "stockName": "雍智科技",
+      "tags": [
+        "探針卡",
+        "測試載板",
+        "IC測試介面"
+      ],
+      "month": "2026-08",
+      "name": "吳興仁",
+      "title": "協理",
+      "delta": 3.0,
+      "orig": 4.0,
+      "pct": 75.0,
+      "ytd": 239.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -445,7 +1856,8 @@
       "orig": 46.866,
       "pct": 74.4,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3081",
@@ -463,7 +1875,51 @@
       "orig": 2.75,
       "pct": 72.73,
       "ytd": 369.82,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3711",
+      "stockName": "日月光投控",
+      "tags": [
+        "封裝測試",
+        "先進封裝",
+        "OSAT",
+        "系統級封裝",
+        "電子代工"
+      ],
+      "month": "2026-07",
+      "name": "沈貝俐",
+      "title": "副總經理",
+      "delta": 150.0,
+      "orig": 206.332,
+      "pct": 72.7,
+      "ytd": 198.2,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "歐陽勤一",
+      "title": "副總經理",
+      "delta": 24.0,
+      "orig": 33.1,
+      "pct": 72.51,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6834",
@@ -481,7 +1937,31 @@
       "orig": 140.0,
       "pct": 71.43,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "蔡俊宏",
+      "title": "協理",
+      "delta": 15.0,
+      "orig": 21.0,
+      "pct": 71.43,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6226",
@@ -496,7 +1976,8 @@
       "orig": 2.888,
       "pct": 69.25,
       "ytd": 494.13,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -515,7 +1996,95 @@
       "orig": 51.121,
       "pct": 68.47,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "李佩凌",
+      "title": "經理",
+      "delta": 28.436,
+      "orig": 41.958,
+      "pct": 67.77,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "黃景德",
+      "title": "協理",
+      "delta": 12.0,
+      "orig": 18.0,
+      "pct": 66.67,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "翁義龍",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 30.0,
+      "pct": 66.67,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "陳俊孝",
+      "title": "協理",
+      "delta": 10.0,
+      "orig": 15.435,
+      "pct": 64.79,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6715",
@@ -528,7 +2097,8 @@
       "orig": 10.958,
       "pct": 63.88,
       "ytd": 443.41,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6226",
@@ -543,7 +2113,29 @@
       "orig": 7.888,
       "pct": 63.39,
       "ytd": 494.13,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "王慶樹",
+      "title": "協理",
+      "delta": 10.0,
+      "orig": 15.863,
+      "pct": 63.04,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2455",
@@ -562,7 +2154,8 @@
       "orig": 8.0,
       "pct": 62.5,
       "ytd": 245.21,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -581,7 +2174,72 @@
       "orig": 13.0,
       "pct": 61.54,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "莊仕銘",
+      "title": "副總經理",
+      "delta": 12.65,
+      "orig": 20.57,
+      "pct": 61.5,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "周寶蓮",
+      "title": "經理",
+      "delta": 6.866,
+      "orig": 11.322,
+      "pct": 60.64,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "蘇雅蓉",
+      "title": "財務部門主管",
+      "delta": 5.0,
+      "orig": 8.544,
+      "pct": 58.52,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3653",
@@ -599,7 +2257,8 @@
       "orig": 1.734,
       "pct": 57.67,
       "ytd": 157.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6197",
@@ -618,7 +2277,46 @@
       "orig": 18.0,
       "pct": 55.56,
       "ytd": 164.03,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-07",
+      "name": "李舒音勻",
+      "title": "財務部門主管",
+      "delta": 9.0,
+      "orig": 17.14,
+      "pct": 52.51,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "陳錦惠",
+      "title": "副總經理",
+      "delta": 12.0,
+      "orig": 23.059,
+      "pct": 52.04,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3037",
@@ -639,7 +2337,46 @@
       "orig": 10.0,
       "pct": 50.0,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5386",
+      "stockName": "青雲",
+      "tags": [
+        "資訊通路",
+        "主機板代理",
+        "伺服器代理"
+      ],
+      "month": "2026-07",
+      "name": "柯聰源",
+      "title": "董事長",
+      "delta": 3683.18,
+      "orig": 7366.36,
+      "pct": 50.0,
+      "ytd": 189.62,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5386",
+      "stockName": "青雲",
+      "tags": [
+        "資訊通路",
+        "主機板代理",
+        "伺服器代理"
+      ],
+      "month": "2026-07",
+      "name": "丁健興",
+      "title": "董事",
+      "delta": 25.122,
+      "orig": 50.244,
+      "pct": 50.0,
+      "ytd": 189.62,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6147",
@@ -659,7 +2396,8 @@
       "orig": 327.757,
       "pct": 49.43,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -676,7 +2414,8 @@
       "orig": 12.15,
       "pct": 49.38,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -696,7 +2435,8 @@
       "orig": 61.023,
       "pct": 49.16,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -716,7 +2456,51 @@
       "orig": 165.757,
       "pct": 48.87,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "7734",
+      "stockName": "印能科技",
+      "tags": [
+        "先進封裝設備",
+        "半導體設備",
+        "氣動熱能製程設備",
+        "自動化系統"
+      ],
+      "month": "2026-07",
+      "name": "王炳坤",
+      "title": "協理",
+      "delta": 12.0,
+      "orig": 24.61,
+      "pct": 48.76,
+      "ytd": 182.13,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "劉恒惠",
+      "title": "協理",
+      "delta": 12.0,
+      "orig": 24.79,
+      "pct": 48.41,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -735,7 +2519,8 @@
       "orig": 41.457,
       "pct": 48.24,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2303",
@@ -751,7 +2536,154 @@
       "orig": 4012.917,
       "pct": 47.35,
       "ytd": 188.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6933",
+      "stockName": "AMAX-KY",
+      "tags": [
+        "AI伺服器"
+      ],
+      "month": "2026-06",
+      "name": "林季燁",
+      "title": "其他",
+      "delta": 3.75,
+      "orig": 8.0,
+      "pct": 46.88,
+      "ytd": 176.33,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-07",
+      "name": "王志超",
+      "title": "董事",
+      "delta": 45.411,
+      "orig": 97.195,
+      "pct": 46.72,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "陳彥瑋",
+      "title": "副總經理",
+      "delta": 10.45,
+      "orig": 22.55,
+      "pct": 46.34,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "吳宗穎",
+      "title": "協理",
+      "delta": 10.45,
+      "orig": 22.55,
+      "pct": 46.34,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "洪惠珍",
+      "title": "協理",
+      "delta": 5.0,
+      "orig": 10.797,
+      "pct": 46.31,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "朱立文",
+      "title": "協理",
+      "delta": 10.0,
+      "orig": 21.835,
+      "pct": 45.8,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "蔣正彥",
+      "title": "副總經理",
+      "delta": 16.0,
+      "orig": 35.0,
+      "pct": 45.71,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6182",
@@ -769,7 +2701,8 @@
       "orig": 9.0,
       "pct": 44.44,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -789,7 +2722,8 @@
       "orig": 129.0,
       "pct": 44.19,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -808,7 +2742,71 @@
       "orig": 23.0,
       "pct": 43.48,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "劉劍清",
+      "title": "副總經理",
+      "delta": 32.0,
+      "orig": 74.012,
+      "pct": 43.24,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "潘雅蘭",
+      "title": "協理",
+      "delta": 35.233,
+      "orig": 82.469,
+      "pct": 42.72,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "蔡吉雄",
+      "title": "副總經理",
+      "delta": 10.45,
+      "orig": 24.53,
+      "pct": 42.6,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3026",
@@ -828,7 +2826,8 @@
       "orig": 23.788,
       "pct": 42.04,
       "ytd": 737.25,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -848,7 +2847,8 @@
       "orig": 31.023,
       "pct": 41.9,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -863,7 +2863,8 @@
       "orig": 72.188,
       "pct": 41.56,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -883,7 +2884,8 @@
       "orig": 14.5,
       "pct": 41.38,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -903,7 +2905,29 @@
       "orig": 19.6,
       "pct": 40.82,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "陳燁真",
+      "title": "副總經理",
+      "delta": 12.0,
+      "orig": 30.0,
+      "pct": 40.0,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "8039",
@@ -922,7 +2946,136 @@
       "orig": 20.345,
       "pct": 39.32,
       "ytd": 255.63,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "吳慧娟",
+      "title": "副總經理",
+      "delta": 20.449,
+      "orig": 52.17,
+      "pct": 39.2,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "黃志忠",
+      "title": "副總經理",
+      "delta": 16.0,
+      "orig": 41.062,
+      "pct": 38.97,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "吳程遠",
+      "title": "副總經理",
+      "delta": 28.0,
+      "orig": 75.565,
+      "pct": 37.05,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "蕭景慧",
+      "title": "經理",
+      "delta": 20.584,
+      "orig": 57.519,
+      "pct": 35.79,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6274",
+      "stockName": "台燿",
+      "tags": [
+        "銅箔基板",
+        "高頻高速材料",
+        "高頻材料",
+        "無鹵素基板",
+        "膠片"
+      ],
+      "month": "2026-07",
+      "name": "辛燿吉",
+      "title": "董事",
+      "delta": 60.0,
+      "orig": 170.0,
+      "pct": 35.29,
+      "ytd": 251.21,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "黃心羚",
+      "title": "經理",
+      "delta": 16.302,
+      "orig": 46.419,
+      "pct": 35.12,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3189",
@@ -938,7 +3091,8 @@
       "orig": 215.588,
       "pct": 33.86,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8039",
@@ -957,7 +3111,30 @@
       "orig": 12.0,
       "pct": 33.33,
       "ytd": 255.63,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "陳文鎮",
+      "title": "副總經理",
+      "delta": 24.0,
+      "orig": 72.06,
+      "pct": 33.31,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3026",
@@ -977,7 +3154,8 @@
       "orig": 48.788,
       "pct": 32.79,
       "ytd": 737.25,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -998,7 +3176,8 @@
       "orig": 138.593,
       "pct": 32.47,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -1018,7 +3197,8 @@
       "orig": 184.0,
       "pct": 31.52,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -1037,7 +3217,70 @@
       "orig": 13.0,
       "pct": 30.77,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5386",
+      "stockName": "青雲",
+      "tags": [
+        "資訊通路",
+        "主機板代理",
+        "伺服器代理"
+      ],
+      "month": "2026-07",
+      "name": "呂仰鎧",
+      "title": "董事",
+      "delta": 114.789,
+      "orig": 373.579,
+      "pct": 30.73,
+      "ytd": 189.62,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "黃秀妙",
+      "title": "副總經理",
+      "delta": 24.0,
+      "orig": 80.311,
+      "pct": 29.88,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "施美蘭",
+      "title": "副總經理",
+      "delta": 0.592,
+      "orig": 1.998,
+      "pct": 29.63,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "8289",
@@ -1054,7 +3297,72 @@
       "orig": 94.341,
       "pct": 28.62,
       "ytd": 184.67,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "7734",
+      "stockName": "印能科技",
+      "tags": [
+        "先進封裝設備",
+        "半導體設備",
+        "氣動熱能製程設備",
+        "自動化系統"
+      ],
+      "month": "2026-07",
+      "name": "蘇桓平",
+      "title": "副總經理",
+      "delta": 11.6,
+      "orig": 40.738,
+      "pct": 28.47,
+      "ytd": 182.13,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "應正",
+      "title": "副總經理",
+      "delta": 36.0,
+      "orig": 126.969,
+      "pct": 28.35,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "鄭子彥",
+      "title": "副總經理",
+      "delta": 12.0,
+      "orig": 43.0,
+      "pct": 27.91,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2360",
@@ -1074,7 +3382,8 @@
       "orig": 21.604,
       "pct": 27.77,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2327",
@@ -1094,7 +3403,8 @@
       "orig": 76.196,
       "pct": 27.56,
       "ytd": 171.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -1111,7 +3421,28 @@
       "orig": 7.27,
       "pct": 27.51,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6182",
+      "stockName": "合晶",
+      "tags": [
+        "矽晶圓",
+        "磊晶圓",
+        "拋光晶圓",
+        "半導體材料"
+      ],
+      "month": "2026-08",
+      "name": "邰中和",
+      "title": "董事",
+      "delta": 400.0,
+      "orig": 1455.162,
+      "pct": 27.49,
+      "ytd": 286.36,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3026",
@@ -1131,7 +3462,8 @@
       "orig": 32.788,
       "pct": 27.45,
       "ytd": 737.25,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -1147,7 +3479,29 @@
       "orig": 91.754,
       "pct": 27.25,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "張瑞榮",
+      "title": "副總經理",
+      "delta": 13.0,
+      "orig": 48.0,
+      "pct": 27.08,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -1166,7 +3520,31 @@
       "orig": 23.059,
       "pct": 26.02,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "郭明宗",
+      "title": "副總經理",
+      "delta": 14.0,
+      "orig": 55.214,
+      "pct": 25.36,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3037",
@@ -1187,7 +3565,8 @@
       "orig": 39.894,
       "pct": 25.07,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6834",
@@ -1205,7 +3584,8 @@
       "orig": 40.0,
       "pct": 25.0,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6174",
@@ -1220,7 +3600,8 @@
       "orig": 4.0,
       "pct": 25.0,
       "ytd": 173.25,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -1239,7 +3620,30 @@
       "orig": 16.104,
       "pct": 24.84,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "施政宏",
+      "title": "總經理",
+      "delta": 160.0,
+      "orig": 653.159,
+      "pct": 24.5,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3037",
@@ -1260,7 +3664,29 @@
       "orig": 86.557,
       "pct": 24.26,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "劉秀珍",
+      "title": "協理",
+      "delta": 10.0,
+      "orig": 41.457,
+      "pct": 24.12,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "7610",
@@ -1277,7 +3703,8 @@
       "orig": 144.952,
       "pct": 23.46,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -1296,7 +3723,8 @@
       "orig": 334.345,
       "pct": 23.33,
       "ytd": 178.83,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -1316,7 +3744,70 @@
       "orig": 168.0,
       "pct": 23.21,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6538",
+      "stockName": "倉和",
+      "tags": [
+        "印刷網版",
+        "精密網版",
+        "太陽能網版"
+      ],
+      "month": "2026-06",
+      "name": "鍾瑞嬌",
+      "title": "董事",
+      "delta": 123.0,
+      "orig": 535.32,
+      "pct": 22.98,
+      "ytd": 384.35,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "楊吉裕",
+      "title": "董事",
+      "delta": 13.2,
+      "orig": 57.831,
+      "pct": 22.83,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "歐承恩",
+      "title": "董事",
+      "delta": 30.0,
+      "orig": 134.078,
+      "pct": 22.38,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6834",
@@ -1334,7 +3825,8 @@
       "orig": 402.0,
       "pct": 22.14,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -1351,7 +3843,8 @@
       "orig": 9.27,
       "pct": 21.57,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -1372,7 +3865,50 @@
       "orig": 41.85,
       "pct": 21.51,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "黃志良",
+      "title": "協理",
+      "delta": 10.0,
+      "orig": 46.532,
+      "pct": 21.49,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "葉澤光",
+      "title": "協理",
+      "delta": 10.0,
+      "orig": 46.866,
+      "pct": 21.34,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3189",
@@ -1388,7 +3924,8 @@
       "orig": 142.588,
       "pct": 21.04,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -1407,7 +3944,8 @@
       "orig": 95.914,
       "pct": 20.85,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6187",
@@ -1428,7 +3966,8 @@
       "orig": 134.078,
       "pct": 20.14,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -1447,7 +3986,29 @@
       "orig": 115.0,
       "pct": 20.0,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "曾明燦",
+      "title": "總經理",
+      "delta": 23.0,
+      "orig": 115.0,
+      "pct": 20.0,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -1466,7 +4027,25 @@
       "orig": 30.0,
       "pct": 20.0,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-08",
+      "name": "楊宗霖",
+      "title": "總經理",
+      "delta": 24.0,
+      "orig": 119.991,
+      "pct": 20.0,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6197",
@@ -1485,7 +4064,30 @@
       "orig": 20.0,
       "pct": 20.0,
       "ytd": 164.03,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "李靜粼",
+      "title": "副總經理",
+      "delta": 24.0,
+      "orig": 120.1,
+      "pct": 19.98,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6226",
@@ -1500,7 +4102,8 @@
       "orig": 50.788,
       "pct": 19.69,
       "ytd": 494.13,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6658",
@@ -1520,7 +4123,8 @@
       "orig": 183.68,
       "pct": 19.6,
       "ytd": 239.59,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -1539,7 +4143,8 @@
       "orig": 51.819,
       "pct": 19.3,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -1558,7 +4163,25 @@
       "orig": 31.457,
       "pct": 19.07,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-07",
+      "name": "楊宗霖",
+      "title": "總經理",
+      "delta": 18.809,
+      "orig": 101.182,
+      "pct": 18.59,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "5228",
@@ -1576,7 +4199,8 @@
       "orig": 55.161,
       "pct": 18.13,
       "ytd": 249.72,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -1592,7 +4216,28 @@
       "orig": 149.308,
       "pct": 18.08,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3081",
+      "stockName": "聯亞",
+      "tags": [
+        "光通訊磊晶",
+        "雷射二極體",
+        "光通訊元件",
+        "磷化銦雷射磊晶"
+      ],
+      "month": "2026-08",
+      "name": "張景溢",
+      "title": "董事長",
+      "delta": 23.705,
+      "orig": 131.945,
+      "pct": 17.97,
+      "ytd": 369.82,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6830",
@@ -1610,7 +4255,8 @@
       "orig": 810.609,
       "pct": 17.39,
       "ytd": 197.7,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6861",
@@ -1626,7 +4272,47 @@
       "orig": 52.0,
       "pct": 17.31,
       "ytd": 354.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "黃桂霖",
+      "title": "副總經理",
+      "delta": 32.0,
+      "orig": 185.723,
+      "pct": 17.23,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-08",
+      "name": "黃添富",
+      "title": "總經理",
+      "delta": 36.0,
+      "orig": 210.434,
+      "pct": 17.11,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2492",
@@ -1645,7 +4331,8 @@
       "orig": 87.914,
       "pct": 17.06,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3605",
@@ -1660,7 +4347,29 @@
       "orig": 119.991,
       "pct": 16.67,
       "ytd": 200.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "王維",
+      "title": "協理",
+      "delta": 31.228,
+      "orig": 187.353,
+      "pct": 16.67,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "5864",
@@ -1679,7 +4388,8 @@
       "orig": 12.104,
       "pct": 16.52,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2409",
@@ -1697,7 +4407,8 @@
       "orig": 492.494,
       "pct": 16.24,
       "ytd": 195.92,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2383",
@@ -1713,7 +4424,8 @@
       "orig": 62.0,
       "pct": 16.13,
       "ytd": 235.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -1732,7 +4444,30 @@
       "orig": 31.057,
       "pct": 16.1,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "楊政翰",
+      "title": "副總經理",
+      "delta": 20.0,
+      "orig": 124.654,
+      "pct": 16.04,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2061",
@@ -1747,7 +4482,30 @@
       "orig": 500.0,
       "pct": 16.0,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "曾一士",
+      "title": "董事",
+      "delta": 36.0,
+      "orig": 225.948,
+      "pct": 15.93,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "7610",
@@ -1764,7 +4522,8 @@
       "orig": 163.788,
       "pct": 15.26,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "7610",
@@ -1781,7 +4540,8 @@
       "orig": 28.403,
       "pct": 14.79,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -1802,7 +4562,8 @@
       "orig": 13.722,
       "pct": 14.58,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2409",
@@ -1820,7 +4581,27 @@
       "orig": 412.494,
       "pct": 14.55,
       "ytd": 195.92,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "7610",
+      "stockName": "聯友金屬-創",
+      "tags": [
+        "碳酸鈷",
+        "鎢酸鈉",
+        "金屬化合物"
+      ],
+      "month": "2026-08",
+      "name": "蔡議賢",
+      "title": "會計部門主管",
+      "delta": 0.815,
+      "orig": 5.637,
+      "pct": 14.46,
+      "ytd": 1008.39,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3189",
@@ -1836,7 +4617,8 @@
       "orig": 421.748,
       "pct": 14.46,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -1857,7 +4639,8 @@
       "orig": 62.367,
       "pct": 14.43,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -1876,7 +4659,30 @@
       "orig": 6.96,
       "pct": 14.37,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "高火文",
+      "title": "董事",
+      "delta": 224.0,
+      "orig": 1559.854,
+      "pct": 14.36,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6187",
@@ -1897,7 +4703,8 @@
       "orig": 21.0,
       "pct": 14.29,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -1913,7 +4720,8 @@
       "orig": 91.641,
       "pct": 14.19,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "7610",
@@ -1930,7 +4738,8 @@
       "orig": 57.997,
       "pct": 13.79,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "1709",
@@ -1947,7 +4756,8 @@
       "orig": 58.0,
       "pct": 13.79,
       "ytd": 283.18,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "4919",
@@ -1965,7 +4775,30 @@
       "orig": 75.0,
       "pct": 13.33,
       "ytd": 194.12,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "王志超",
+      "title": "董事",
+      "delta": 18.726,
+      "orig": 142.606,
+      "pct": 13.13,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6213",
@@ -1983,7 +4816,8 @@
       "orig": 152.428,
       "pct": 13.12,
       "ytd": 654.19,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -1999,7 +4833,8 @@
       "orig": 122.308,
       "pct": 13.08,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "7610",
@@ -2016,7 +4851,29 @@
       "orig": 138.788,
       "pct": 12.97,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2492",
+      "stockName": "華新科",
+      "tags": [
+        "被動元件",
+        "MLCC",
+        "晶片電阻",
+        "電感",
+        "晶片天線"
+      ],
+      "month": "2026-06",
+      "name": "李定珠",
+      "title": "副總經理",
+      "delta": 12.0,
+      "orig": 95.914,
+      "pct": 12.51,
+      "ytd": 264.1,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6861",
@@ -2032,7 +4889,8 @@
       "orig": 64.0,
       "pct": 12.5,
       "ytd": 354.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3605",
@@ -2047,7 +4905,25 @@
       "orig": 212.517,
       "pct": 12.23,
       "ytd": 200.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-08",
+      "name": "林萬福",
+      "title": "總經理",
+      "delta": 26.0,
+      "orig": 212.517,
+      "pct": 12.23,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "7734",
@@ -2065,7 +4941,8 @@
       "orig": 24.61,
       "pct": 12.19,
       "ytd": 182.13,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6861",
@@ -2081,7 +4958,8 @@
       "orig": 165.203,
       "pct": 12.11,
       "ytd": 354.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6830",
@@ -2099,7 +4977,8 @@
       "orig": 90.904,
       "pct": 12.1,
       "ytd": 197.7,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -2115,7 +4994,8 @@
       "orig": 413.994,
       "pct": 12.08,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3026",
@@ -2135,7 +5015,8 @@
       "orig": 100.0,
       "pct": 12.0,
       "ytd": 737.25,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -2154,7 +5035,8 @@
       "orig": 1275.528,
       "pct": 12.0,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -2173,7 +5055,8 @@
       "orig": 8.373,
       "pct": 11.94,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8289",
@@ -2190,7 +5073,8 @@
       "orig": 67.341,
       "pct": 11.88,
       "ytd": 184.67,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2383",
@@ -2206,7 +5090,8 @@
       "orig": 52.0,
       "pct": 11.54,
       "ytd": 235.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6683",
@@ -2223,7 +5108,8 @@
       "orig": 44.5,
       "pct": 11.24,
       "ytd": 239.35,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "4542",
@@ -2241,7 +5127,8 @@
       "orig": 80.5,
       "pct": 11.18,
       "ytd": 306.14,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6672",
@@ -2256,7 +5143,8 @@
       "orig": 18.0,
       "pct": 11.11,
       "ytd": 539.31,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -2272,7 +5160,8 @@
       "orig": 45.473,
       "pct": 11.0,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8996",
@@ -2291,7 +5180,8 @@
       "orig": 1310.0,
       "pct": 10.99,
       "ytd": 190.52,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2327",
@@ -2311,7 +5201,8 @@
       "orig": 55.196,
       "pct": 10.87,
       "ytd": 171.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -2326,7 +5217,8 @@
       "orig": 3232.155,
       "pct": 10.46,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6182",
@@ -2344,7 +5236,8 @@
       "orig": 76.729,
       "pct": 10.43,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -2360,7 +5253,8 @@
       "orig": 38.473,
       "pct": 10.4,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6197",
@@ -2379,7 +5273,8 @@
       "orig": 48.312,
       "pct": 10.35,
       "ytd": 164.03,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -2400,7 +5295,8 @@
       "orig": 262.249,
       "pct": 10.3,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6672",
@@ -2415,7 +5311,8 @@
       "orig": 20.0,
       "pct": 10.0,
       "ytd": 539.31,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -2432,7 +5329,8 @@
       "orig": 10.27,
       "pct": 9.74,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -2453,7 +5351,25 @@
       "orig": 139.098,
       "pct": 9.35,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-07",
+      "name": "黃添富",
+      "title": "總經理",
+      "delta": 18.0,
+      "orig": 192.434,
+      "pct": 9.35,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "8996",
@@ -2472,7 +5388,8 @@
       "orig": 1094.0,
       "pct": 9.05,
       "ytd": 190.52,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3105",
@@ -2490,7 +5407,8 @@
       "orig": 269.33,
       "pct": 8.91,
       "ytd": 204.37,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2327",
@@ -2510,7 +5428,8 @@
       "orig": 22.676,
       "pct": 8.82,
       "ytd": 171.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3094",
@@ -2528,7 +5447,8 @@
       "orig": 205.0,
       "pct": 8.78,
       "ytd": 172.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "4973",
@@ -2546,7 +5466,8 @@
       "orig": 208.574,
       "pct": 8.63,
       "ytd": 287.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -2565,7 +5486,8 @@
       "orig": 60.042,
       "pct": 8.33,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6187",
@@ -2586,7 +5508,8 @@
       "orig": 24.79,
       "pct": 8.07,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2492",
@@ -2605,7 +5528,8 @@
       "orig": 65.042,
       "pct": 7.69,
       "ytd": 264.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -2622,7 +5546,8 @@
       "orig": 13.15,
       "pct": 7.6,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -2642,7 +5567,8 @@
       "orig": 39.604,
       "pct": 7.57,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5864",
@@ -2661,7 +5587,8 @@
       "orig": 1191.016,
       "pct": 7.56,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6213",
@@ -2679,7 +5606,8 @@
       "orig": 132.428,
       "pct": 7.55,
       "ytd": 654.19,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6861",
@@ -2695,7 +5623,8 @@
       "orig": 56.0,
       "pct": 7.14,
       "ytd": 354.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -2716,7 +5645,8 @@
       "orig": 14.107,
       "pct": 7.09,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6715",
@@ -2729,7 +5659,8 @@
       "orig": 872.539,
       "pct": 6.99,
       "ytd": 443.41,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -2745,7 +5676,28 @@
       "orig": 358.748,
       "pct": 6.97,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3653",
+      "stockName": "健策",
+      "tags": [
+        "均熱片",
+        "導線架",
+        "散熱元件",
+        "陶瓷基板"
+      ],
+      "month": "2026-08",
+      "name": "洪解原",
+      "title": "協理",
+      "delta": 3.5,
+      "orig": 50.529,
+      "pct": 6.93,
+      "ytd": 157.56,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2360",
@@ -2765,7 +5717,54 @@
       "orig": 43.5,
       "pct": 6.9,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-08",
+      "name": "蔡明傑",
+      "title": "協理",
+      "delta": 1.0,
+      "orig": 14.564,
+      "pct": 6.87,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6187",
+      "stockName": "萬潤",
+      "tags": [
+        "點膠機",
+        "自動化設備",
+        "半導體點膠設備",
+        "貼合設備",
+        "AOI檢測",
+        "被動元件設備",
+        "LED設備"
+      ],
+      "month": "2026-07",
+      "name": "蘇雅蓉",
+      "title": "財務部門主管",
+      "delta": 0.544,
+      "orig": 8.0,
+      "pct": 6.8,
+      "ytd": 323.08,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3189",
@@ -2781,7 +5780,8 @@
       "orig": 207.508,
       "pct": 6.75,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3234",
@@ -2799,7 +5799,8 @@
       "orig": 75.504,
       "pct": 6.62,
       "ytd": 268.59,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -2818,7 +5819,8 @@
       "orig": 275.423,
       "pct": 6.54,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -2833,7 +5835,8 @@
       "orig": 77.188,
       "pct": 6.48,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6182",
@@ -2851,7 +5854,8 @@
       "orig": 143.347,
       "pct": 6.28,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -2871,7 +5875,8 @@
       "orig": 144.1,
       "pct": 6.25,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8996",
@@ -2890,7 +5895,8 @@
       "orig": 1166.0,
       "pct": 6.17,
       "ytd": 190.52,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6147",
@@ -2910,7 +5916,8 @@
       "orig": 130.5,
       "pct": 6.13,
       "ytd": 330.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3481",
@@ -2930,7 +5937,8 @@
       "orig": 528.211,
       "pct": 6.06,
       "ytd": 198.53,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6187",
@@ -2951,7 +5959,8 @@
       "orig": 37.25,
       "pct": 6.04,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -2970,7 +5979,8 @@
       "orig": 132.534,
       "pct": 6.04,
       "ytd": 178.83,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8289",
@@ -2987,7 +5997,25 @@
       "orig": 166.284,
       "pct": 6.01,
       "ytd": 184.67,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3605",
+      "stockName": "宏致",
+      "tags": [
+        "連接器"
+      ],
+      "month": "2026-07",
+      "name": "林萬福",
+      "title": "總經理",
+      "delta": 12.0,
+      "orig": 200.517,
+      "pct": 5.98,
+      "ytd": 200.64,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2464",
@@ -3008,7 +6036,8 @@
       "orig": 1510.251,
       "pct": 5.96,
       "ytd": 205.33,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "6715",
@@ -3021,7 +6050,8 @@
       "orig": 33.602,
       "pct": 5.95,
       "ytd": 443.41,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3653",
@@ -3039,7 +6069,8 @@
       "orig": 50.529,
       "pct": 5.94,
       "ytd": 157.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6197",
@@ -3058,7 +6089,8 @@
       "orig": 51.312,
       "pct": 5.85,
       "ytd": 164.03,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -3073,7 +6105,8 @@
       "orig": 2894.155,
       "pct": 5.6,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6187",
@@ -3094,7 +6127,8 @@
       "orig": 18.0,
       "pct": 5.56,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -3109,7 +6143,8 @@
       "orig": 2819.027,
       "pct": 5.5,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -3125,7 +6160,8 @@
       "orig": 557.631,
       "pct": 5.38,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -3145,7 +6181,29 @@
       "orig": 185.723,
       "pct": 5.38,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3711",
+      "stockName": "日月光投控",
+      "tags": [
+        "封裝測試",
+        "先進封裝",
+        "OSAT",
+        "系統級封裝",
+        "電子代工"
+      ],
+      "month": "2026-08",
+      "name": "張淑琴",
+      "title": "副總經理",
+      "delta": 40.0,
+      "orig": 755.238,
+      "pct": 5.3,
+      "ytd": 198.2,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "5228",
@@ -3163,7 +6221,8 @@
       "orig": 1361.456,
       "pct": 5.14,
       "ytd": 249.72,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -3179,7 +6238,8 @@
       "orig": 587.631,
       "pct": 5.11,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6182",
@@ -3197,7 +6257,8 @@
       "orig": 1455.162,
       "pct": 4.95,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -3213,7 +6274,8 @@
       "orig": 40.473,
       "pct": 4.94,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3105",
@@ -3231,7 +6293,28 @@
       "orig": 283.33,
       "pct": 4.94,
       "ytd": 204.37,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3105",
+      "stockName": "穩懋",
+      "tags": [
+        "砷化鎵",
+        "化合物半導體",
+        "射頻晶片代工",
+        "高頻封測"
+      ],
+      "month": "2026-08",
+      "name": "蕭宏彬",
+      "title": "副總經理",
+      "delta": 3.41,
+      "orig": 69.49,
+      "pct": 4.91,
+      "ytd": 204.37,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "5864",
@@ -3250,7 +6333,8 @@
       "orig": 1122.528,
       "pct": 4.81,
       "ytd": 166.78,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -3266,7 +6350,8 @@
       "orig": 355.994,
       "pct": 4.78,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3026",
@@ -3286,7 +6371,8 @@
       "orig": 104.882,
       "pct": 4.65,
       "ytd": 737.25,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5228",
@@ -3304,7 +6390,8 @@
       "orig": 43.0,
       "pct": 4.65,
       "ytd": 249.72,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3441",
@@ -3319,7 +6406,8 @@
       "orig": 2302.53,
       "pct": 4.56,
       "ytd": 531.16,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -3338,7 +6426,8 @@
       "orig": 374.0,
       "pct": 4.55,
       "ytd": 178.83,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -3358,7 +6447,8 @@
       "orig": 22.604,
       "pct": 4.42,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "7610",
@@ -3375,7 +6465,8 @@
       "orig": 23.559,
       "pct": 4.24,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3094",
@@ -3393,7 +6484,8 @@
       "orig": 214.0,
       "pct": 4.21,
       "ytd": 172.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -3414,7 +6506,8 @@
       "orig": 24.632,
       "pct": 4.06,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -3435,7 +6528,30 @@
       "orig": 126.098,
       "pct": 3.97,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-07",
+      "name": "陳鵲如",
+      "title": "協理",
+      "delta": 19.381,
+      "orig": 492.604,
+      "pct": 3.93,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2327",
@@ -3455,7 +6571,8 @@
       "orig": 53.188,
       "pct": 3.76,
       "ytd": 171.43,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6207",
@@ -3474,7 +6591,8 @@
       "orig": 241.909,
       "pct": 3.72,
       "ytd": 192.76,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "4973",
@@ -3492,7 +6610,8 @@
       "orig": 216.574,
       "pct": 3.69,
       "ytd": 287.1,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -3509,7 +6628,8 @@
       "orig": 5795.574,
       "pct": 3.62,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6834",
@@ -3527,7 +6647,8 @@
       "orig": 2000.0,
       "pct": 3.6,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -3542,7 +6663,8 @@
       "orig": 2664.027,
       "pct": 3.57,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -3558,7 +6680,8 @@
       "orig": 73.595,
       "pct": 3.46,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3441",
@@ -3573,7 +6696,8 @@
       "orig": 2412.53,
       "pct": 3.36,
       "ytd": 531.16,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3711",
@@ -3592,7 +6716,8 @@
       "orig": 788.0,
       "pct": 3.3,
       "ytd": 198.2,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -3613,7 +6738,8 @@
       "orig": 61.0,
       "pct": 3.28,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -3634,7 +6760,8 @@
       "orig": 63.0,
       "pct": 3.17,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -3653,7 +6780,8 @@
       "orig": 284.423,
       "pct": 3.16,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -3672,7 +6800,8 @@
       "orig": 293.423,
       "pct": 3.07,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6834",
@@ -3690,7 +6819,8 @@
       "orig": 2630.0,
       "pct": 3.04,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "1709",
@@ -3707,7 +6837,8 @@
       "orig": 66.0,
       "pct": 3.03,
       "ytd": 283.18,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "7734",
@@ -3725,7 +6856,8 @@
       "orig": 33.61,
       "pct": 2.98,
       "ytd": 182.13,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2351",
@@ -3742,7 +6874,8 @@
       "orig": 235.049,
       "pct": 2.98,
       "ytd": 166.75,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6834",
@@ -3760,7 +6893,8 @@
       "orig": 313.0,
       "pct": 2.88,
       "ytd": 470.18,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6187",
@@ -3781,7 +6915,8 @@
       "orig": 140.078,
       "pct": 2.86,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6861",
@@ -3797,7 +6932,8 @@
       "orig": 142.203,
       "pct": 2.81,
       "ytd": 354.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "4542",
@@ -3815,7 +6951,8 @@
       "orig": 72.0,
       "pct": 2.78,
       "ytd": 306.14,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -3831,7 +6968,8 @@
       "orig": 1052.727,
       "pct": 2.75,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -3851,7 +6989,48 @@
       "orig": 190.723,
       "pct": 2.62,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "8021",
+      "stockName": "尖點",
+      "tags": [
+        "PCB鑽針",
+        "微型鑽針"
+      ],
+      "month": "2026-07",
+      "name": "林若萍",
+      "title": "董事",
+      "delta": 35.215,
+      "orig": 1343.064,
+      "pct": 2.62,
+      "ytd": 182.63,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "6147",
+      "stockName": "頎邦",
+      "tags": [
+        "驅動IC封測",
+        "金凸塊",
+        "薄膜覆晶封裝",
+        "驅動IC封裝",
+        "測試服務",
+        "化合物半導體"
+      ],
+      "month": "2026-07",
+      "name": "吳非艱",
+      "title": "董事長",
+      "delta": 240.0,
+      "orig": 9183.76,
+      "pct": 2.61,
+      "ytd": 330.43,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6715",
@@ -3864,7 +7043,30 @@
       "orig": 811.539,
       "pct": 2.59,
       "ytd": 443.41,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "黃靖雯",
+      "title": "副總經理",
+      "delta": 17.555,
+      "orig": 684.44,
+      "pct": 2.56,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "7610",
@@ -3881,7 +7083,8 @@
       "orig": 120.251,
       "pct": 2.49,
       "ytd": 1008.39,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3167",
@@ -3898,7 +7101,8 @@
       "orig": 5585.574,
       "pct": 2.49,
       "ytd": 293.44,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6182",
@@ -3916,7 +7120,8 @@
       "orig": 1492.162,
       "pct": 2.48,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "5228",
@@ -3934,7 +7139,8 @@
       "orig": 41.0,
       "pct": 2.44,
       "ytd": 249.72,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6715",
@@ -3947,7 +7153,8 @@
       "orig": 413.923,
       "pct": 2.42,
       "ytd": 443.41,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -3966,7 +7173,8 @@
       "orig": 124.534,
       "pct": 2.41,
       "ytd": 178.83,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "7734",
@@ -3984,7 +7192,8 @@
       "orig": 41.738,
       "pct": 2.4,
       "ytd": 182.13,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -4005,7 +7214,8 @@
       "orig": 211.304,
       "pct": 2.37,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -4021,7 +7231,33 @@
       "orig": 363.994,
       "pct": 2.2,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "1303",
+      "stockName": "南亞",
+      "tags": [
+        "電子材料",
+        "銅箔基板",
+        "聚酯纖維",
+        "膠布",
+        "合成皮",
+        "可塑劑",
+        "苯酐",
+        "雙酚A",
+        "塑膠管"
+      ],
+      "month": "2026-06",
+      "name": "王文淵",
+      "title": "董事",
+      "delta": 807.622,
+      "orig": 37483.606,
+      "pct": 2.15,
+      "ytd": 479.73,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6182",
@@ -4039,7 +7275,8 @@
       "orig": 236.116,
       "pct": 2.12,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6223",
@@ -4057,7 +7294,8 @@
       "orig": 47.251,
       "pct": 2.12,
       "ytd": 161.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3081",
@@ -4075,7 +7313,8 @@
       "orig": 94.624,
       "pct": 2.11,
       "ytd": 369.82,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -4091,7 +7330,8 @@
       "orig": 191.508,
       "pct": 2.09,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2455",
@@ -4110,7 +7350,8 @@
       "orig": 1391.09,
       "pct": 2.08,
       "ytd": 245.21,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6861",
@@ -4126,7 +7367,8 @@
       "orig": 145.203,
       "pct": 2.07,
       "ytd": 354.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2061",
@@ -4141,7 +7383,8 @@
       "orig": 97.963,
       "pct": 2.04,
       "ytd": 250.79,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3221",
@@ -4157,7 +7400,52 @@
       "orig": 898.033,
       "pct": 2.0,
       "ytd": 159.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "彭峻豪",
+      "title": "協理",
+      "delta": 4.681,
+      "orig": 248.247,
+      "pct": 1.89,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "楊弘文",
+      "title": "董事",
+      "delta": 21.066,
+      "orig": 1121.236,
+      "pct": 1.88,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6182",
@@ -4175,7 +7463,8 @@
       "orig": 213.899,
       "pct": 1.87,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2484",
@@ -4193,7 +7482,8 @@
       "orig": 1984.473,
       "pct": 1.81,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2454",
@@ -4214,7 +7504,30 @@
       "orig": 559.108,
       "pct": 1.79,
       "ytd": 212.94,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "楊秋蓮",
+      "title": "協理",
+      "delta": 4.681,
+      "orig": 263.635,
+      "pct": 1.78,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6226",
@@ -4229,7 +7542,8 @@
       "orig": 1740.142,
       "pct": 1.72,
       "ytd": 494.13,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
     },
     {
       "code": "6182",
@@ -4247,7 +7561,8 @@
       "orig": 1518.162,
       "pct": 1.71,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8289",
@@ -4264,7 +7579,30 @@
       "orig": 10327.618,
       "pct": 1.71,
       "ytd": 184.67,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "洪進揚",
+      "title": "董事長",
+      "delta": 35.111,
+      "orig": 2114.768,
+      "pct": 1.66,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3711",
@@ -4283,7 +7621,8 @@
       "orig": 1093.015,
       "pct": 1.65,
       "ytd": 198.2,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -4302,7 +7641,8 @@
       "orig": 121.534,
       "pct": 1.65,
       "ytd": 178.83,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -4317,7 +7657,8 @@
       "orig": 3727.238,
       "pct": 1.61,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -4332,7 +7673,8 @@
       "orig": 3729.238,
       "pct": 1.61,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2484",
@@ -4350,7 +7692,8 @@
       "orig": 4114.183,
       "pct": 1.56,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3605",
@@ -4365,7 +7708,8 @@
       "orig": 195.434,
       "pct": 1.54,
       "ytd": 200.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6187",
@@ -4386,7 +7730,8 @@
       "orig": 136.078,
       "pct": 1.47,
       "ytd": 323.08,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3711",
@@ -4405,7 +7750,8 @@
       "orig": 762.0,
       "pct": 1.44,
       "ytd": 198.2,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6217",
@@ -4424,7 +7770,8 @@
       "orig": 5158.409,
       "pct": 1.42,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "8996",
@@ -4443,7 +7790,8 @@
       "orig": 222.001,
       "pct": 1.35,
       "ytd": 190.52,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6182",
@@ -4461,7 +7809,30 @@
       "orig": 231.116,
       "pct": 1.3,
       "ytd": 286.36,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "廖健宏",
+      "title": "協理",
+      "delta": 5.852,
+      "orig": 450.841,
+      "pct": 1.3,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3221",
@@ -4477,7 +7848,8 @@
       "orig": 734.509,
       "pct": 1.29,
       "ytd": 159.47,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -4492,7 +7864,8 @@
       "orig": 3774.238,
       "pct": 1.25,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3441",
@@ -4507,7 +7880,8 @@
       "orig": 2331.53,
       "pct": 1.24,
       "ytd": 531.16,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -4522,7 +7896,8 @@
       "orig": 3776.238,
       "pct": 1.24,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6223",
@@ -4540,7 +7915,8 @@
       "orig": 242.471,
       "pct": 1.24,
       "ytd": 161.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2484",
@@ -4558,7 +7934,8 @@
       "orig": 1948.473,
       "pct": 1.23,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2455",
@@ -4577,7 +7954,8 @@
       "orig": 1406.09,
       "pct": 1.07,
       "ytd": 245.21,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -4593,7 +7971,8 @@
       "orig": 193.508,
       "pct": 1.03,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -4609,7 +7988,8 @@
       "orig": 1023.727,
       "pct": 0.98,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6207",
@@ -4628,7 +8008,30 @@
       "orig": 209.031,
       "pct": 0.96,
       "ytd": 192.76,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2360",
+      "stockName": "致茂",
+      "tags": [
+        "量測儀器",
+        "測試設備",
+        "電池檢測",
+        "電動車測試",
+        "綠能電池測試",
+        "半導體測試"
+      ],
+      "month": "2026-07",
+      "name": "黃彥勛",
+      "title": "董事",
+      "delta": 32.0,
+      "orig": 3349.432,
+      "pct": 0.96,
+      "ytd": 190.32,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "3605",
@@ -4643,7 +8046,8 @@
       "orig": 210.434,
       "pct": 0.95,
       "ytd": 200.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -4663,7 +8067,30 @@
       "orig": 106.012,
       "pct": 0.94,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "3481",
+      "stockName": "群創",
+      "tags": [
+        "面板",
+        "液晶面板",
+        "車用面板",
+        "公共顯示器",
+        "智慧醫療",
+        "智慧製造"
+      ],
+      "month": "2026-08",
+      "name": "陳鵲如",
+      "title": "協理",
+      "delta": 4.681,
+      "orig": 511.985,
+      "pct": 0.91,
+      "ytd": 198.53,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "2484",
@@ -4681,7 +8108,8 @@
       "orig": 2002.473,
       "pct": 0.9,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6830",
@@ -4699,7 +8127,8 @@
       "orig": 669.609,
       "pct": 0.9,
       "ytd": 197.7,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -4714,7 +8143,8 @@
       "orig": 3810.238,
       "pct": 0.89,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2484",
@@ -4732,7 +8162,8 @@
       "orig": 4150.183,
       "pct": 0.87,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -4747,7 +8178,8 @@
       "orig": 3806.238,
       "pct": 0.84,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3711",
@@ -4766,7 +8198,8 @@
       "orig": 1102.015,
       "pct": 0.82,
       "ytd": 198.2,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2464",
@@ -4787,7 +8220,27 @@
       "orig": 1600.251,
       "pct": 0.81,
       "ytd": 205.33,
-      "type": "buy"
+      "type": "buy",
+      "source": "market"
+    },
+    {
+      "code": "7610",
+      "stockName": "聯友金屬-創",
+      "tags": [
+        "碳酸鈷",
+        "鎢酸鈉",
+        "金屬化合物"
+      ],
+      "month": "2026-08",
+      "name": "郭子瑋",
+      "title": "協理",
+      "delta": 0.222,
+      "orig": 28.403,
+      "pct": 0.78,
+      "ytd": 1008.39,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6217",
@@ -4806,7 +8259,8 @@
       "orig": 127.43,
       "pct": 0.78,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -4826,7 +8280,8 @@
       "orig": 127.969,
       "pct": 0.78,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6223",
@@ -4844,7 +8299,8 @@
       "orig": 130.441,
       "pct": 0.77,
       "ytd": 161.56,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "4542",
@@ -4862,7 +8318,8 @@
       "orig": 1475.115,
       "pct": 0.75,
       "ytd": 306.14,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -4881,7 +8338,8 @@
       "orig": 2631.174,
       "pct": 0.72,
       "ytd": 178.83,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2337",
@@ -4900,7 +8358,8 @@
       "orig": 2649.174,
       "pct": 0.68,
       "ytd": 178.83,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2360",
@@ -4920,7 +8379,8 @@
       "orig": 162.969,
       "pct": 0.61,
       "ytd": 190.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3189",
@@ -4936,7 +8396,8 @@
       "orig": 360.748,
       "pct": 0.55,
       "ytd": 560.38,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6274",
@@ -4955,7 +8416,8 @@
       "orig": 11108.377,
       "pct": 0.54,
       "ytd": 251.21,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3037",
@@ -4976,7 +8438,8 @@
       "orig": 222.829,
       "pct": 0.45,
       "ytd": 438.64,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2303",
@@ -4992,7 +8455,8 @@
       "orig": 2395.28,
       "pct": 0.42,
       "ytd": 188.32,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "3481",
@@ -5012,7 +8476,8 @@
       "orig": 496.211,
       "pct": 0.4,
       "ytd": 198.53,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6197",
@@ -5031,7 +8496,8 @@
       "orig": 828.12,
       "pct": 0.36,
       "ytd": 164.03,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -5046,7 +8512,8 @@
       "orig": 6282.599,
       "pct": 0.32,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -5061,7 +8528,8 @@
       "orig": 6262.599,
       "pct": 0.32,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -5076,7 +8544,8 @@
       "orig": 6242.599,
       "pct": 0.32,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6683",
@@ -5093,7 +8562,8 @@
       "orig": 320.464,
       "pct": 0.31,
       "ytd": 239.35,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "2484",
@@ -5111,7 +8581,8 @@
       "orig": 4159.183,
       "pct": 0.22,
       "ytd": 351.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
     },
     {
       "code": "6933",
@@ -5126,7 +8597,27 @@
       "orig": 4864.037,
       "pct": 0.21,
       "ytd": 176.33,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "7610",
+      "stockName": "聯友金屬-創",
+      "tags": [
+        "碳酸鈷",
+        "鎢酸鈉",
+        "金屬化合物"
+      ],
+      "month": "2026-08",
+      "name": "黃彥誌",
+      "title": "協理",
+      "delta": 0.222,
+      "orig": 120.251,
+      "pct": 0.18,
+      "ytd": 1008.39,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6217",
@@ -5145,7 +8636,29 @@
       "orig": 5085.409,
       "pct": 0.18,
       "ytd": 322.85,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "陳宓娟",
+      "title": "副董事長",
+      "delta": 35.233,
+      "orig": 20803.815,
+      "pct": 0.17,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "6274",
@@ -5164,7 +8677,27 @@
       "orig": 11048.377,
       "pct": 0.14,
       "ytd": 251.21,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "2380",
+      "stockName": "虹光",
+      "tags": [
+        "掃描器",
+        "多功能事務機",
+        "醫療影像器材"
+      ],
+      "month": "2026-06",
+      "name": "盛少瀾",
+      "title": "董事長",
+      "delta": 21.286,
+      "orig": 16870.3,
+      "pct": 0.13,
+      "ytd": 233.33,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     },
     {
       "code": "5464",
@@ -5181,7 +8714,29 @@
       "orig": 4745.065,
       "pct": 0.06,
       "ytd": 227.57,
-      "type": "sell"
+      "type": "sell",
+      "source": "market"
+    },
+    {
+      "code": "5864",
+      "stockName": "致和證",
+      "tags": [
+        "證券經紀",
+        "自營交易",
+        "承銷",
+        "債券",
+        "複委託"
+      ],
+      "month": "2026-08",
+      "name": "陳品錞",
+      "title": "常務董事",
+      "delta": 9.842,
+      "orig": 19218.223,
+      "pct": 0.05,
+      "ytd": 166.78,
+      "type": "rsu",
+      "source": "rsu",
+      "note": "RSU/員工股"
     }
   ],
   "topGainersCompanies": [
@@ -5194,9 +8749,9 @@
         "金屬化合物"
       ],
       "ytd": 1008.39,
-      "m3": -720.2,
+      "m3": -718.941,
       "latestLots": 16664.477,
-      "orig": 17384.677,
+      "orig": 17383.418,
       "pct": 4.14,
       "type": "sell"
     },
@@ -5317,10 +8872,10 @@
         "塑膠管"
       ],
       "ytd": 479.73,
-      "m3": -10306.0,
+      "m3": -9498.378,
       "latestLots": 1444037.695,
-      "orig": 1454343.695,
-      "pct": 0.71,
+      "orig": 1453536.073,
+      "pct": 0.65,
       "type": "sell"
     },
     {
@@ -5466,11 +9021,11 @@
         "太陽能網版"
       ],
       "ytd": 384.35,
-      "m3": 0.0,
+      "m3": 242.0,
       "latestLots": 3654.075,
-      "orig": 3654.075,
-      "pct": 0.0,
-      "type": "flat"
+      "orig": 3412.075,
+      "pct": 7.09,
+      "type": "buy"
     },
     {
       "code": "3081",
@@ -5482,11 +9037,11 @@
         "磷化銦雷射磊晶"
       ],
       "ytd": 369.82,
-      "m3": -4.0,
+      "m3": 204.01,
       "latestLots": 8836.979,
-      "orig": 8840.979,
-      "pct": 0.05,
-      "type": "sell"
+      "orig": 8632.969,
+      "pct": 2.36,
+      "type": "buy"
     },
     {
       "code": "3498",
@@ -5544,10 +9099,10 @@
         "醫療影像"
       ],
       "ytd": 354.47,
-      "m3": -48.0,
+      "m3": -46.449,
       "latestLots": 20369.962,
-      "orig": 20417.962,
-      "pct": 0.24,
+      "orig": 20416.411,
+      "pct": 0.23,
       "type": "sell"
     },
     {
@@ -5578,11 +9133,11 @@
         "化合物半導體"
       ],
       "ytd": 330.43,
-      "m3": -626.0,
+      "m3": 1130.0,
       "latestLots": 66212.703,
-      "orig": 66838.703,
-      "pct": 0.94,
-      "type": "sell"
+      "orig": 65082.703,
+      "pct": 1.74,
+      "type": "buy"
     },
     {
       "code": "6187",
@@ -5597,10 +9152,10 @@
         "LED設備"
       ],
       "ytd": 323.08,
-      "m3": 619.35,
+      "m3": 784.438,
       "latestLots": 18206.399,
-      "orig": 17587.049,
-      "pct": 3.52,
+      "orig": 17421.961,
+      "pct": 4.5,
       "type": "buy"
     },
     {
@@ -5614,10 +9169,10 @@
         "IC測試座"
       ],
       "ytd": 322.85,
-      "m3": -221.0,
+      "m3": -207.206,
       "latestLots": 8041.737,
-      "orig": 8262.737,
-      "pct": 2.67,
+      "orig": 8248.943,
+      "pct": 2.51,
       "type": "sell"
     },
     {
@@ -5708,10 +9263,10 @@
         "半導體材料"
       ],
       "ytd": 286.36,
-      "m3": -612.0,
+      "m3": -212.0,
       "latestLots": 23478.335,
-      "orig": 24090.335,
-      "pct": 2.54,
+      "orig": 23690.335,
+      "pct": 0.89,
       "type": "sell"
     },
     {
@@ -5756,10 +9311,10 @@
         "晶片天線"
       ],
       "ytd": 264.1,
-      "m3": -431.461,
+      "m3": -167.937,
       "latestLots": 104801.412,
-      "orig": 105232.873,
-      "pct": 0.41,
+      "orig": 104969.349,
+      "pct": 0.16,
       "type": "sell"
     },
     {
@@ -5806,11 +9361,11 @@
         "膠片"
       ],
       "ytd": 251.21,
-      "m3": -85.0,
+      "m3": 11.0,
       "latestLots": 12662.151,
-      "orig": 12747.151,
-      "pct": 0.67,
-      "type": "sell"
+      "orig": 12651.151,
+      "pct": 0.09,
+      "type": "buy"
     },
     {
       "code": "2061",
@@ -5896,10 +9451,10 @@
         "IC測試介面"
       ],
       "ytd": 239.35,
-      "m3": -7.0,
+      "m3": -4.0,
       "latestLots": 4382.43,
-      "orig": 4389.43,
-      "pct": 0.16,
+      "orig": 4386.43,
+      "pct": 0.09,
       "type": "sell"
     },
     {
@@ -5925,11 +9480,11 @@
         "醫療影像器材"
       ],
       "ytd": 233.33,
-      "m3": -23.57,
+      "m3": 19.002,
       "latestLots": 4758.942,
-      "orig": 4782.512,
-      "pct": 0.49,
-      "type": "sell"
+      "orig": 4739.94,
+      "pct": 0.4,
+      "type": "buy"
     },
     {
       "code": "3016",
@@ -6068,10 +9623,10 @@
         "高頻封測"
       ],
       "ytd": 204.37,
-      "m3": -38.0,
+      "m3": -34.59,
       "latestLots": 23300.672,
-      "orig": 23338.672,
-      "pct": 0.16,
+      "orig": 23335.262,
+      "pct": 0.15,
       "type": "sell"
     },
     {
@@ -6095,11 +9650,11 @@
         "連接器"
       ],
       "ytd": 200.64,
-      "m3": -51.0,
+      "m3": 149.809,
       "latestLots": 16598.994,
-      "orig": 16649.994,
-      "pct": 0.31,
-      "type": "sell"
+      "orig": 16449.185,
+      "pct": 0.91,
+      "type": "buy"
     },
     {
       "code": "3481",
@@ -6113,11 +9668,11 @@
         "智慧製造"
       ],
       "ytd": 198.53,
-      "m3": -34.0,
+      "m3": 164.211,
       "latestLots": 9933.099,
-      "orig": 9967.099,
-      "pct": 0.34,
-      "type": "sell"
+      "orig": 9768.888,
+      "pct": 1.68,
+      "type": "buy"
     },
     {
       "code": "3711",
@@ -6130,11 +9685,11 @@
         "電子代工"
       ],
       "ytd": 198.2,
-      "m3": -64.0,
+      "m3": 9126.0,
       "latestLots": 691542.507,
-      "orig": 691606.507,
-      "pct": 0.01,
-      "type": "sell"
+      "orig": 682416.507,
+      "pct": 1.34,
+      "type": "buy"
     },
     {
       "code": "6830",
@@ -6243,11 +9798,11 @@
         "半導體測試"
       ],
       "ytd": 190.32,
-      "m3": -67.0,
+      "m3": 685.0,
       "latestLots": 27928.629,
-      "orig": 27995.629,
-      "pct": 0.24,
-      "type": "sell"
+      "orig": 27243.629,
+      "pct": 2.51,
+      "type": "buy"
     },
     {
       "code": "5386",
@@ -6258,11 +9813,11 @@
         "伺服器代理"
       ],
       "ytd": 189.62,
-      "m3": 0.0,
+      "m3": 7506.271,
       "latestLots": 11124.906,
-      "orig": 11124.906,
-      "pct": 0.0,
-      "type": "flat"
+      "orig": 3618.635,
+      "pct": 207.43,
+      "type": "buy"
     },
     {
       "code": "2303",
@@ -6287,10 +9842,10 @@
         "石英晶體"
       ],
       "ytd": 184.67,
-      "m3": -509.0,
+      "m3": -505.947,
       "latestLots": 10971.932,
-      "orig": 11480.932,
-      "pct": 4.43,
+      "orig": 11477.879,
+      "pct": 4.41,
       "type": "sell"
     },
     {
@@ -6315,10 +9870,10 @@
         "微型鑽針"
       ],
       "ytd": 182.63,
-      "m3": -182.0,
+      "m3": -111.57,
       "latestLots": 12659.613,
-      "orig": 12841.613,
-      "pct": 1.42,
+      "orig": 12771.183,
+      "pct": 0.87,
       "type": "sell"
     },
     {
@@ -6331,11 +9886,11 @@
         "自動化系統"
       ],
       "ytd": 182.13,
-      "m3": -2.994,
+      "m3": 35.006,
       "latestLots": 5347.197,
-      "orig": 5350.191,
-      "pct": 0.06,
-      "type": "sell"
+      "orig": 5312.191,
+      "pct": 0.66,
+      "type": "buy"
     },
     {
       "code": "5328",
@@ -6389,10 +9944,10 @@
         "AI伺服器"
       ],
       "ytd": 176.33,
-      "m3": -560.0,
+      "m3": -556.25,
       "latestLots": 24249.417,
-      "orig": 24809.417,
-      "pct": 2.26,
+      "orig": 24805.667,
+      "pct": 2.24,
       "type": "sell"
     },
     {
@@ -6533,11 +10088,11 @@
         "複委託"
       ],
       "ytd": 166.78,
-      "m3": -400.68,
+      "m3": 200.231,
       "latestLots": 104143.04,
-      "orig": 104543.72,
-      "pct": 0.38,
-      "type": "sell"
+      "orig": 103942.809,
+      "pct": 0.19,
+      "type": "buy"
     },
     {
       "code": "2351",
@@ -6663,11 +10218,11 @@
         "陶瓷基板"
       ],
       "ytd": 157.56,
-      "m3": -4.0,
+      "m3": 475.75,
       "latestLots": 38632.38,
-      "orig": 38636.38,
-      "pct": 0.01,
-      "type": "sell"
+      "orig": 38156.63,
+      "pct": 1.25,
+      "type": "buy"
     }
   ]
 }

@@ -80,7 +80,7 @@ def generate_stat() -> dict:
                     company_market_net += net_mkt
 
                     if p_name and is_individual(p_name):
-                        dedup_key = (code, mo_str, p_name, net_mkt)
+                        dedup_key = (code, mo_str, p_name, "mkt", net_mkt)
                         if dedup_key not in seen_person_month:
                             seen_person_month.add(dedup_key)
                             prev_hold = r["prev"]
@@ -105,6 +105,40 @@ def generate_stat() -> dict:
                                 "pct": pct,
                                 "ytd": ytd_ret,
                                 "type": "buy" if net_mkt > 0 else "sell",
+                                "source": "market",
+                            })
+
+                if r.get("rsu", 0) > 0:
+                    rsu_lots = r["rsu"]
+                    company_market_net += rsu_lots
+                    if p_name and is_individual(p_name):
+                        dedup_key = (code, mo_str, p_name, "rsu", rsu_lots)
+                        if dedup_key not in seen_person_month:
+                            seen_person_month.add(dedup_key)
+                            prev_hold = r["prev"]
+                            if prev_hold > 0:
+                                pct = round(rsu_lots / prev_hold * 100, 2)
+                                orig = prev_hold
+                            else:
+                                curr_hold = r["curr"]
+                                orig = round(curr_hold - rsu_lots, 3)
+                                pct = 100.0 if orig <= 0 else round(rsu_lots / orig * 100, 2)
+
+                            pct = min(100.0, pct)
+                            person_txs.append({
+                                "code": code,
+                                "stockName": name,
+                                "tags": stock_tags,
+                                "month": mo_str,
+                                "name": p_name,
+                                "title": title or "主管",
+                                "delta": rsu_lots,
+                                "orig": orig,
+                                "pct": pct,
+                                "ytd": ytd_ret,
+                                "type": "rsu",
+                                "source": "rsu",
+                                "note": "RSU/員工股",
                             })
 
         s = insider.get("stocks", {}).get(code)
@@ -127,6 +161,7 @@ def generate_stat() -> dict:
     all_pcts = [tx["pct"] for tx in person_txs]
     buy_pcts = [tx["pct"] for tx in person_txs if tx["type"] == "buy"]
     sell_pcts = [tx["pct"] for tx in person_txs if tx["type"] == "sell"]
+    rsu_pcts = [tx["pct"] for tx in person_txs if tx["type"] == "rsu"]
     active_m3 = [c["pct"] for c in company_m3_list if c["pct"] > 0]
     all_m3 = [c["pct"] for c in company_m3_list]
 
@@ -136,14 +171,16 @@ def generate_stat() -> dict:
         "topPercent": 5,
         "topCount": top_5_pct_count,
         "cutoffReturn": cutoff_return,
-        "periodDescription": "最近3個月（依公開資訊觀測站官方集中市場買進/賣出欄位）",
+        "periodDescription": "最近3個月（依公開資訊觀測站官方集中市場買賣及員工認股/RSU）",
         "personStats": {
             "overallMedianPct": round(statistics.median(all_pcts), 2) if all_pcts else None,
             "sellMedianPct": round(statistics.median(sell_pcts), 2) if sell_pcts else None,
             "buyMedianPct": round(statistics.median(buy_pcts), 2) if buy_pcts else None,
+            "rsuMedianPct": round(statistics.median(rsu_pcts), 2) if rsu_pcts else None,
             "totalTxCount": len(person_txs),
             "buyTxCount": len(buy_pcts),
             "sellTxCount": len(sell_pcts),
+            "rsuTxCount": len(rsu_pcts),
         },
         "companyStats": {
             "activeMedianPct": round(statistics.median(active_m3), 2) if active_m3 else None,

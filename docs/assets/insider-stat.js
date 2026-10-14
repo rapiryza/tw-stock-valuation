@@ -173,6 +173,7 @@
       .insider-stat-tag.buy { background: rgba(239,68,68,.14); color: #ef4444; }
       .insider-stat-tag.sell { background: rgba(22,163,74,.14); color: #16a34a; }
       .insider-stat-tag.flat { background: rgba(125,125,125,.14); color: var(--muted); }
+      .insider-stat-tag.rsu { background: rgba(59,130,246,.14); color: #2563eb; border: 1px solid rgba(59,130,246,.35); }
       .insider-pct-strong {
         font-weight: 800;
         font-size: .95rem;
@@ -223,6 +224,8 @@
       displayList = allTxs.filter(x => x.type === "sell");
     } else if (currentTab === "buy") {
       displayList = allTxs.filter(x => x.type === "buy");
+    } else if (currentTab === "rsu") {
+      displayList = allTxs.filter(x => x.type === "rsu" || x.source === "rsu");
     }
 
     const tableHtml = currentTab === "company"
@@ -278,7 +281,12 @@
               </tr>
             </thead>
             <tbody>
-              ${displayList.map(tx => `
+              ${displayList.map(tx => {
+                const isRsu = tx.type === 'rsu' || tx.source === 'rsu';
+                const tagClass = isRsu ? 'rsu' : (tx.type === 'buy' ? 'buy' : 'sell');
+                const tagLabel = isRsu ? 'RSU/員工股' : (tx.type === 'buy' ? '增持' : '減持');
+                const valColor = isRsu ? '#2563eb' : (tx.type === 'buy' ? BUY_COLOR : SELL_COLOR);
+                return `
                 <tr data-code="${tx.code}">
                   <td><strong>${tx.code}</strong></td>
                   <td>${tx.stockName}</td>
@@ -286,12 +294,12 @@
                   <td style="color:var(--muted);">${tx.month}</td>
                   <td><span style="color:var(--muted);">${tx.title || '內部人'}</span></td>
                   <td><strong>${tx.name}</strong></td>
-                  <td><span class="insider-stat-tag ${tx.type}">${tx.type === 'buy' ? '增持' : '減持'}</span></td>
-                  <td style="text-align:right;font-weight:600;color:${tx.type === 'buy' ? BUY_COLOR : SELL_COLOR};">
+                  <td><span class="insider-stat-tag ${tagClass}">${tagLabel}</span></td>
+                  <td style="text-align:right;font-weight:600;color:${valColor};">
                     ${tx.delta > 0 ? '+' : ''}${tx.delta} 張
                   </td>
                   <td style="text-align:right;background:rgba(59,130,246,.05);">
-                    <span class="insider-pct-strong" style="color:${tx.type === 'buy' ? BUY_COLOR : SELL_COLOR};">
+                    <span class="insider-pct-strong" style="color:${valColor};">
                       ${tx.pct}%
                     </span>
                   </td>
@@ -299,7 +307,7 @@
                     +${Number(tx.ytd).toFixed(1)}%
                   </td>
                 </tr>
-              `).join("")}
+              `}).join("")}
             </tbody>
           </table>
         </div>
@@ -326,10 +334,17 @@
           <div class="insider-kpi-sub">共 ${p.sellTxCount} 筆個人集中市場實際減持</div>
         </div>
         <div class="insider-kpi-box" style="border-left:4px solid ${BUY_COLOR};">
-          <div class="insider-kpi-title">增持佔原持股中位數</div>
+          <div class="insider-kpi-title">集中增持佔原持股中位數</div>
           <div class="insider-kpi-val" style="color:${BUY_COLOR};">${p.buyMedianPct ?? '--'}%</div>
           <div class="insider-kpi-sub">共 ${p.buyTxCount} 筆個人集中市場實際買進</div>
         </div>
+        ${(p.rsuTxCount && p.rsuTxCount > 0) ? `
+          <div class="insider-kpi-box" style="border-left:4px solid #2563eb;">
+            <div class="insider-kpi-title">員工股/RSU佔原持股中位數</div>
+            <div class="insider-kpi-val" style="color:#2563eb;">${p.rsuMedianPct ?? '--'}%</div>
+            <div class="insider-kpi-sub">共 ${p.rsuTxCount} 筆主管取得員工股/RSU</div>
+          </div>
+        ` : ''}
       </div>
 
       <div class="insider-stat-tabs">
@@ -340,8 +355,13 @@
           僅減持 (${allTxs.filter(x => x.type === 'sell').length} 筆)
         </button>
         <button type="button" class="insider-stat-tab-btn ${currentTab === 'buy' ? 'active' : ''}" data-tab="buy">
-          僅增持 (${allTxs.filter(x => x.type === 'buy').length} 筆)
+          集中買進 (${allTxs.filter(x => x.type === 'buy').length} 筆)
         </button>
+        ${allTxs.some(x => x.type === 'rsu') ? `
+          <button type="button" class="insider-stat-tab-btn ${currentTab === 'rsu' ? 'active' : ''}" data-tab="rsu">
+            員工股/RSU (${allTxs.filter(x => x.type === 'rsu').length} 筆)
+          </button>
+        ` : ''}
         <button type="button" class="insider-stat-tab-btn ${currentTab === 'company' ? 'active' : ''}" data-tab="company">
           ${companies.length} 檔飆股全體內部人持股彙總
         </button>

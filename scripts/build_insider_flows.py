@@ -415,7 +415,7 @@ def build_output(
             seen_bd = set()
             bd_list = []
             for b in raw_bd:
-                key = (b.get("name"), b.get("delta"), b.get("title"))
+                key = (b.get("name"), b.get("delta"), b.get("title"), b.get("source"))
                 if key not in seen_bd:
                     seen_bd.add(key)
                     bd_list.append(b)
@@ -423,29 +423,33 @@ def build_output(
             for b in bd_list:
                 name = b.get("name", "")
                 delta = float(b.get("delta", 0.0))
-                is_person = is_individual(name)
+                is_person = b.get("is_person") if "is_person" in b else is_individual(name)
                 b["is_person"] = is_person
 
                 if is_person:
-                    curr_holding = None
-                    matched_key = None
-                    if name in person_holdings:
-                        matched_key = name
-                        curr_holding = person_holdings[name]
-                    else:
-                        for pk in person_holdings:
-                            if pk and (pk in name or name in pk):
-                                matched_key = pk
-                                curr_holding = person_holdings[pk]
-                                break
+                    if b.get("pct") is None:
+                        if b.get("orig") and b["orig"] > 0:
+                            b["pct"] = round(abs(delta) / b["orig"] * 100, 2)
+                        else:
+                            curr_holding = None
+                            matched_key = None
+                            if name in person_holdings:
+                                matched_key = name
+                                curr_holding = person_holdings[name]
+                            else:
+                                for pk in person_holdings:
+                                    if pk and (pk in name or name in pk):
+                                        matched_key = pk
+                                        curr_holding = person_holdings[pk]
+                                        break
 
-                    if curr_holding is not None and curr_holding > 0:
-                        orig = round(curr_holding - delta, 3)
-                        if orig > 0:
-                            b["pct"] = round(abs(delta) / orig * 100, 2)
-                            b["orig"] = orig
-                            if matched_key:
-                                person_holdings[matched_key] = orig
+                            if curr_holding is not None and curr_holding > 0:
+                                orig = round(curr_holding - delta, 3)
+                                if orig > 0:
+                                    b["pct"] = round(abs(delta) / orig * 100, 2)
+                                    b["orig"] = orig
+                                    if matched_key:
+                                        person_holdings[matched_key] = orig
 
         # 3. Build holding_series
         holding_series: list[list[Any]] = []
@@ -600,20 +604,50 @@ def main() -> int:
                     seen_shareholder_delta = set()
                     net_sum = 0.0
                     real_bd = []
+
+                    # 1. Market buy/sell trades
                     for r in records:
                         if r["net_mkt"] != 0:
                             p_name = r["name"].strip()
-                            dedup_key = (p_name, r["b_mkt"], r["s_mkt"], r["prev"], r["curr"])
+                            dedup_key = (p_name, "mkt", r["b_mkt"], r["s_mkt"], r["prev"], r["curr"])
                             if dedup_key not in seen_shareholder_delta:
                                 seen_shareholder_delta.add(dedup_key)
                                 net_sum += r["net_mkt"]
+                                orig_val = r["prev"] if r["prev"] > 0 else max(0.001, r["curr"] - r["net_mkt"])
+                                pct_val = round(abs(r["net_mkt"]) / orig_val * 100, 2) if orig_val > 0 else None
                                 real_bd.append({
                                     "name": p_name,
                                     "title": clean_title(r["title"]) or "內部人",
                                     "delta": r["net_mkt"],
                                     "is_exec": any(k in r["title"] for k in KEY_ROLES),
-                                    "orig": r["prev"] if r["prev"] > 0 else max(0.001, r["curr"] - r["net_mkt"]),
+                                    "orig": orig_val,
+                                    "pct": pct_val,
+                                    "source": "market",
+                                    "is_person": not r.get("is_corp", False),
                                 })
+
+                    # 2. Employee stock / RSU grants
+                    for r in records:
+                        if r.get("rsu", 0) > 0:
+                            p_name = r["name"].strip()
+                            dedup_key = (p_name, "rsu", r["rsu"], r["prev"], r["curr"])
+                            if dedup_key not in seen_shareholder_delta:
+                                seen_shareholder_delta.add(dedup_key)
+                                net_sum += r["rsu"]
+                                orig_val = r["prev"] if r["prev"] > 0 else max(0.001, r["curr"] - r["rsu"])
+                                pct_val = round(abs(r["rsu"]) / orig_val * 100, 2) if orig_val > 0 else None
+                                real_bd.append({
+                                    "name": p_name,
+                                    "title": clean_title(r["title"]) or "主管",
+                                    "delta": r["rsu"],
+                                    "is_exec": any(k in r["title"] for k in KEY_ROLES),
+                                    "orig": orig_val,
+                                    "pct": pct_val,
+                                    "source": "rsu",
+                                    "note": "RSU/員工股",
+                                    "is_person": True,
+                                })
+
                     deltas[code][month_str] = round(net_sum, 3)
                     breakdowns[code][month_str] = real_bd
                 except Exception:
