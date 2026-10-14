@@ -35,7 +35,7 @@
   <nav class="sheet-toolbar" aria-label="工作表工具列">
     <span class="sheet-file">▤ 每日資料</span><span class="sheet-divider"></span>
     <button type="button" id="sheetSearch">搜尋</button><button type="button" id="sheetColumns">欄位</button>
-    <button type="button" id="sheetAnalysis">分析</button><button type="button" id="sheetInsiderStat">飆股內部人統計</button><button type="button" onclick="location.href='spread.html'">台美價差</button><span class="sheet-readonly">唯讀 · 點選資料列查看明細</span>
+    <button type="button" id="sheetAnalysis">分析</button><button type="button" onclick="location.href='spread.html'">台美價差</button><span class="sheet-readonly">唯讀 · 點選資料列查看明細</span>
   </nav>
 
   <!-- ============ 漲幅排行與族群 ============ -->
@@ -71,9 +71,6 @@
         <ol class="rank" id="rankList"></ol>
       </div>
     </div>
-
-    <!-- ============ 今年迄今漲幅前 5% 飆股內部人持股動向統計 ============ -->
-    <div class="card insider-ytd-card" id="insiderYtdCard"></div>
   </details>
 
   <!-- ============ 個股表 ============ -->
@@ -130,7 +127,7 @@
       </div>
     </div>
 
-    <nav class="sheet-tabs" aria-label="工作表分頁"><a href="#stocks" aria-current="page">資料表 ▾</a><button type="button" id="sheetAnalysisTab">排行分析</button><button type="button" id="sheetInsiderTab">飆股內部人統計</button></nav>
+    <nav class="sheet-tabs" aria-label="工作表分頁"><a href="#stocks" aria-current="page">資料表 ▾</a><button type="button" id="sheetAnalysisTab">排行分析</button></nav>
 
     <!-- 手機：卡片列表 -->
     <div class="stock-cards" id="cards"></div>
@@ -164,7 +161,6 @@
 <script src="assets/app.js?v=20261013-insider-col"></script>
 <script src="assets/op-ui.js?v=20261007-select-redraw-fix"></script>
 <script src="assets/insider.js?v=20261014-no-board"></script>
-<script src="assets/insider-stat.js?v=20261014-v4"></script>
 <script src="assets/op-layout-fix.js?v=20261008-insider-visible"></script>
 <script>
 (() => {

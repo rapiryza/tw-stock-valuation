@@ -184,17 +184,6 @@
       $("moversSection").scrollIntoView({ block: "start" });
     });
   }
-  for (const id of ["sheetInsiderStat", "sheetInsiderTab"]) {
-    $(id)?.addEventListener("click", () => {
-      $("moversSection").open = true;
-      const el = $("insiderYtdCard");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-        el.classList.add("highlight-focus");
-        setTimeout(() => el.classList.remove("highlight-focus"), 1800);
-      }
-    });
-  }
 
   // ---------------------------------------------------------------- 頂欄與回頂端
   const topbar = $("topbar");
