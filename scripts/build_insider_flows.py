@@ -659,12 +659,6 @@ def main() -> int:
     holdings["6945"]["2026-07"] = 27434.147
     holdings["6945"]["2026-08"] = 27434.147
     holdings["6945"]["2026-09"] = 27614.147
-    deltas["6945"]["2026-07"] = 0.0
-    deltas["6945"]["2026-08"] = 0.0
-    deltas["6945"]["2026-09"] = 0.0
-    breakdowns["6945"]["2026-07"] = []
-    breakdowns["6945"]["2026-08"] = []
-    breakdowns["6945"]["2026-09"] = []
 
     out = build_output(transfers, transfer_people, holdings, deltas, breakdowns, all_executives)
     write_json(OUT, out)

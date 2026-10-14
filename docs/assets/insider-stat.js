@@ -2,13 +2,15 @@
 (() => {
   "use strict";
 
-  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v4";
+  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v5";
   const BUY_COLOR = "#ef4444";
   const SELL_COLOR = "#16a34a";
   const $ = (id) => document.getElementById(id);
 
   let statData = null;
-  let currentTab = "all"; // "all" | "sell" | "buy" | "company"
+  let currentTab = "all"; // "all" | "sell" | "buy" | "rsu" | "company"
+  let txSort = { k: "pct", dir: -1 };      // 預設交易依佔原持股比例降序
+  let companySort = { k: "ytd", dir: -1 }; // 預設公司依 YTD 降序
 
   function esc(str) {
     if (!str) return "";
@@ -25,11 +27,35 @@
     return `<div class="insider-tags-wrap">${tags.map(t => `<span class="tag static">${esc(t)}</span>`).join("")}</div>`;
   }
 
+  function renderTh(k, label, align = "left", titleTip = "") {
+    const isComp = currentTab === "company";
+    const sortObj = isComp ? companySort : txSort;
+    const isSorted = sortObj.k === k;
+    const aria = isSorted ? (sortObj.dir > 0 ? "ascending" : "descending") : "none";
+    const ind = isSorted ? `<span class="sort-ind" style="margin-left:4px;font-size:11px;">${sortObj.dir > 0 ? "↑" : "↓"}</span>` : "";
+    const styleAlign = align === "right" ? "text-align:right;" : "";
+    const bg = (k === "pct" && !isComp) ? "background:rgba(59,130,246,.08);color:var(--fg);" : "";
+    return `<th class="insider-sortable-th" data-k="${k}" aria-sort="${aria}" style="${styleAlign}${bg}" title="${titleTip || '點擊依此欄自定義排序'}">${label}${ind}</th>`;
+  }
+
   function ensureStyle() {
     if ($("insider-stat-style")) return;
     const style = document.createElement("style");
     style.id = "insider-stat-style";
     style.textContent = `
+      .insider-stat-table th.insider-sortable-th {
+        cursor: pointer;
+        user-select: none;
+        transition: color .15s ease, background .15s ease;
+      }
+      .insider-stat-table th.insider-sortable-th:hover {
+        background: var(--surface-2, rgba(125,125,125,.14));
+        color: var(--fg);
+      }
+      .insider-stat-table th[aria-sort="ascending"],
+      .insider-stat-table th[aria-sort="descending"] {
+        color: var(--accent, #3b82f6) !important;
+      }
       .insider-ytd-card {
         margin-top: 18px;
         background: var(--surface, #fff);
@@ -219,7 +245,7 @@
     // Filter transactions based on current tab
     let displayList = [];
     if (currentTab === "all") {
-      displayList = allTxs;
+      displayList = [...allTxs];
     } else if (currentTab === "sell") {
       displayList = allTxs.filter(x => x.type === "sell");
     } else if (currentTab === "buy") {
@@ -228,23 +254,55 @@
       displayList = allTxs.filter(x => x.type === "rsu" || x.source === "rsu");
     }
 
+    // Sort displayList according to txSort
+    displayList.sort((a, b) => {
+      const k = txSort.k;
+      let va = a[k], vb = b[k];
+      if (k === "tags") {
+        va = (va || []).join(",");
+        vb = (vb || []).join(",");
+      }
+      if (typeof va === "string" && typeof vb === "string") {
+        return txSort.dir * va.localeCompare(vb, "zh-Hant");
+      }
+      va = (va == null || isNaN(va)) ? (txSort.dir > 0 ? Infinity : -Infinity) : Number(va);
+      vb = (vb == null || isNaN(vb)) ? (txSort.dir > 0 ? Infinity : -Infinity) : Number(vb);
+      return txSort.dir * (va - vb);
+    });
+
+    // Sort companies according to companySort
+    const sortedCompanies = [...companies].sort((a, b) => {
+      const k = companySort.k;
+      let va = a[k], vb = b[k];
+      if (k === "tags") {
+        va = (va || []).join(",");
+        vb = (vb || []).join(",");
+      }
+      if (typeof va === "string" && typeof vb === "string") {
+        return companySort.dir * va.localeCompare(vb, "zh-Hant");
+      }
+      va = (va == null || isNaN(va)) ? (companySort.dir > 0 ? Infinity : -Infinity) : Number(va);
+      vb = (vb == null || isNaN(vb)) ? (companySort.dir > 0 ? Infinity : -Infinity) : Number(vb);
+      return companySort.dir * (va - vb);
+    });
+
     const tableHtml = currentTab === "company"
       ? `
         <div class="insider-table-container">
           <table class="insider-stat-table">
             <thead>
               <tr>
-                <th>代號</th>
-                <th>股票名稱</th>
-                <th>業務標籤</th>
-                <th style="text-align:right">今年迄今漲幅 (YTD)</th>
-                <th style="text-align:right">近3個月內部人淨增減</th>
-                <th style="text-align:right">佔總持股比例</th>
-                <th>最新總持股</th>
+                ${renderTh("code", "代號", "left")}
+                ${renderTh("stockName", "股票名稱", "left")}
+                ${renderTh("tags", "業務標籤", "left")}
+                ${renderTh("ytd", "今年迄今漲幅 (YTD)", "right")}
+                ${renderTh("m3", "近3個月內部人淨增減", "right")}
+                ${renderTh("pct", "佔總持股比例", "right")}
+                ${renderTh("latestLots", "最新總持股", "left")}
               </tr>
             </thead>
             <tbody>
-              ${companies.map(item => `
+              ${sortedCompanies.map(item => `
                 <tr data-code="${item.code}">
                   <td><strong>${item.code}</strong></td>
                   <td>${item.stockName}</td>
@@ -268,16 +326,16 @@
           <table class="insider-stat-table">
             <thead>
               <tr>
-                <th>代號</th>
-                <th>股票名稱</th>
-                <th>業務標籤</th>
-                <th>月份</th>
-                <th>身分職稱</th>
-                <th>姓名</th>
-                <th>類別</th>
-                <th style="text-align:right">增減張數</th>
-                <th style="text-align:right;background:rgba(59,130,246,.08);color:var(--fg);">佔原持股比例</th>
-                <th style="text-align:right">今年迄今漲幅 (YTD)</th>
+                ${renderTh("code", "代號", "left")}
+                ${renderTh("stockName", "股票名稱", "left")}
+                ${renderTh("tags", "業務標籤", "left")}
+                ${renderTh("month", "月份", "left")}
+                ${renderTh("title", "身分職稱", "left")}
+                ${renderTh("name", "姓名", "left")}
+                ${renderTh("type", "類別", "left")}
+                ${renderTh("delta", "增減張數", "right")}
+                ${renderTh("pct", "佔原持股比例", "right")}
+                ${renderTh("ytd", "今年迄今漲幅 (YTD)", "right")}
               </tr>
             </thead>
             <tbody>
@@ -374,6 +432,31 @@
     cardEl.querySelectorAll(".insider-stat-tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         currentTab = btn.dataset.tab;
+        renderCard(data);
+      });
+    });
+
+    // Hook table header clicks for custom column sorting
+    cardEl.querySelectorAll("th.insider-sortable-th").forEach(th => {
+      th.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const k = th.dataset.k;
+        if (!k) return;
+        if (currentTab === "company") {
+          if (companySort.k === k) {
+            companySort.dir = -companySort.dir;
+          } else {
+            companySort.k = k;
+            companySort.dir = ["code", "stockName", "tags"].includes(k) ? 1 : -1;
+          }
+        } else {
+          if (txSort.k === k) {
+            txSort.dir = -txSort.dir;
+          } else {
+            txSort.k = k;
+            txSort.dir = ["code", "stockName", "tags", "month", "title", "name", "type"].includes(k) ? 1 : -1;
+          }
+        }
         renderCard(data);
       });
     });
