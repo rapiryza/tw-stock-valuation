@@ -33,16 +33,6 @@
       .insider-legend i.buy{background:#ef4444}
       .insider-legend i.sell{background:#16a34a}
       .insider-legend i.transfer{background:rgba(22,163,74,.35);border:1px solid #16a34a;box-sizing:border-box}
-      .insider-breakdown-list{margin-top:14px;font-size:.85rem;display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
-      .insider-breakdown-head{font-weight:600;color:var(--muted);margin-bottom:4px}
-      .insider-breakdown-item{display:flex;align-items:center;gap:8px;padding:3px 0}
-      .insider-breakdown-tag{font-size:.75rem;padding:1px 6px;border-radius:3px;font-weight:bold}
-      .insider-breakdown-tag.buy{background:rgba(239,68,68,.15);color:#ef4444}
-      .insider-breakdown-tag.sell{background:rgba(22,163,74,.15);color:#16a34a}
-      .insider-breakdown-tag.neutral{background:rgba(125,125,125,.15);color:var(--muted)}
-      .insider-breakdown-tag.info{background:rgba(59,130,246,.15);color:#3b82f6}
-      .insider-breakdown-tag.rsu{background:rgba(59,130,246,.15);color:#2563eb;border:1px solid rgba(59,130,246,.35)}
-      .insider-breakdown-amount{margin-left:auto;font-weight:bold}
     `;
     document.head.appendChild(style);
   }
@@ -315,45 +305,10 @@
     svg.addEventListener("touchmove", (e) => { if (e.touches[0]) move(e.touches[0]); }, { passive: true });
     svg.addEventListener("touchend", hide);
 
-    // 在圖表下方列出所有近期經理人/主管買賣明細清單
+    // 清理可能殘留的 breakdown 清單
     if (cardEl) {
-      let listEl = cardEl.querySelector(".insider-breakdown-list");
+      const listEl = cardEl.querySelector(".insider-breakdown-list");
       if (listEl) listEl.remove();
-
-      const recentItems = [];
-      holding.slice(-12).reverse().forEach(h => {
-        (h.breakdown || []).forEach(b => {
-          recentItems.push({ month: h.month, ...b });
-        });
-      });
-
-      if (recentItems.length > 0) {
-        listEl = document.createElement("div");
-        listEl.className = "insider-breakdown-list";
-        listEl.innerHTML = `
-          <div class="insider-breakdown-head">📋 歷史內部人／經理人個別增減持明細清單：</div>
-          ${recentItems.slice(0, 10).map(item => {
-            const isRsu = item.source === 'rsu' || (item.note && item.note.includes('RSU'));
-            const tagClass = isRsu ? 'rsu' : (item.delta > 0 ? 'buy' : 'sell');
-            const tagLabel = isRsu ? 'RSU/員工股' : (item.delta > 0 ? '增持' : '減持');
-            const itemColor = isRsu ? '#2563eb' : (item.delta > 0 ? BUY : SELL);
-            const pctStr = (item.pct != null)
-              ? ` <span class="insider-pct" style="font-weight:normal;color:var(--muted);font-size:.82rem;">(佔原持股 ${item.pct}%)</span>`
-              : '';
-            return `
-              <div class="insider-breakdown-item">
-                <span class="insider-breakdown-tag ${tagClass}">${tagLabel}</span>
-                <span style="color:var(--muted);">${item.month}</span>
-                <span>${item.title || '公司主管'} <strong>${item.name}</strong></span>
-                <span class="insider-breakdown-amount" style="color:${itemColor}">
-                  ${item.delta > 0 ? '+' : ''}${item.delta} 張${pctStr}
-                </span>
-              </div>
-            `;
-          }).join("")}
-        `;
-        cardEl.appendChild(listEl);
-      }
     }
   }
 
