@@ -51,8 +51,8 @@ CORP_KEYWORDS = [
 ]
 
 KNOWN_CORE_HOLDINGS = {
-    ("2330", "曾繁城"): {"title": "董事", "name": "曾繁城", "curr": 24472.675, "elec": 29472.675, "diff": -5000.0, "is_exec": True},
-    ("6945", "何正宏"): {"title": "總經理", "name": "何正宏", "curr": 887.573, "elec": 647.573, "diff": 240.0, "is_exec": True},
+    ("2330", "曾繁城"): {"title": "董事", "name": "曾繁城", "curr": 24472.675, "elec": 29472.675, "diff": None, "is_exec": True},
+    ("6945", "何正宏"): {"title": "總經理", "name": "何正宏", "curr": 887.573, "elec": 647.573, "diff": None, "is_exec": True},
     ("6945", "游忠哲"): {"title": "副總經理", "name": "游忠哲", "curr": 202.574, "elec": 0.0, "diff": None, "is_exec": True},
 }
 
@@ -574,22 +574,57 @@ def main() -> int:
                 if ex.get("name") not in existing_names:
                     all_executives[code].append(ex)
 
-    # 6. Inject verified executive additions (6945 圓祥生技)
+    # 5. Apply official MOPS centralized market trading (B_market and S_market)
+    # This filters out stock dividends, gifts, trusts, employee stock options, and capital reductions
+    log("正在套用公開資訊觀測站官方集中市場買賣異動 (query6_1)...")
+    mops_cache_dir = DATA_DIR / "mops_cache"
+    if mops_cache_dir.exists():
+        import json
+        from mops_insider import parse_mops_records
+        for cache_file in mops_cache_dir.glob("*.json"):
+            parts = cache_file.stem.split("_")
+            if len(parts) == 3:
+                code, yr, mo = parts
+                month_str = f"2026-{mo}"
+                try:
+                    with open(cache_file, encoding="utf-8") as f:
+                        mops_data = json.load(f)
+                    records = parse_mops_records(mops_data)
+                    net_sum = sum(r["net_mkt"] for r in records)
+                    deltas[code][month_str] = round(net_sum, 3)
+
+                    # Build real market breakdowns
+                    real_bd = []
+                    seen_bd = set()
+                    for r in records:
+                        if r["net_mkt"] != 0:
+                            p_name = r["name"].strip()
+                            bd_key = (p_name, r["net_mkt"])
+                            if bd_key not in seen_bd:
+                                seen_bd.add(bd_key)
+                                real_bd.append({
+                                    "name": p_name,
+                                    "title": clean_title(r["title"]) or "內部人",
+                                    "delta": r["net_mkt"],
+                                    "is_exec": any(k in r["title"] for k in KEY_ROLES),
+                                    "orig": r["prev"] if r["prev"] > 0 else max(0.001, r["curr"] - r["net_mkt"]),
+                                })
+                    breakdowns[code][month_str] = real_bd
+                except Exception:
+                    pass
+
+    # Ensure 6945 holdings are registered
     if "6945" not in holdings:
         holdings["6945"] = {}
     holdings["6945"]["2026-07"] = 27434.147
     holdings["6945"]["2026-08"] = 27434.147
     holdings["6945"]["2026-09"] = 27614.147
-    deltas["6945"]["2026-07"] = 240.0
+    deltas["6945"]["2026-07"] = 0.0
     deltas["6945"]["2026-08"] = 0.0
-    deltas["6945"]["2026-09"] = 180.0
-    breakdowns["6945"]["2026-07"] = [
-        {"name": "何正宏", "title": "總經理", "delta": 240.0, "is_exec": True}
-    ]
+    deltas["6945"]["2026-09"] = 0.0
+    breakdowns["6945"]["2026-07"] = []
     breakdowns["6945"]["2026-08"] = []
-    breakdowns["6945"]["2026-09"] = [
-        {"name": "游忠哲", "title": "副總經理", "delta": 180.0, "is_exec": True}
-    ]
+    breakdowns["6945"]["2026-09"] = []
 
     out = build_output(transfers, transfer_people, holdings, deltas, breakdowns, all_executives)
     write_json(OUT, out)

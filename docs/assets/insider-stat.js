@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v3";
+  const STAT_DATA_URL = "data/insider_ytd_stat.json?v=20261014-v4";
   const BUY_COLOR = "#ef4444";
   const SELL_COLOR = "#16a34a";
   const $ = (id) => document.getElementById(id);
@@ -323,12 +323,12 @@
         <div class="insider-kpi-box" style="border-left:4px solid ${SELL_COLOR};">
           <div class="insider-kpi-title">減持佔原持股中位數</div>
           <div class="insider-kpi-val" style="color:${SELL_COLOR};">${p.sellMedianPct ?? '--'}%</div>
-          <div class="insider-kpi-sub">共 ${p.sellTxCount} 筆個人減持（調節幅度 38%～72%）</div>
+          <div class="insider-kpi-sub">共 ${p.sellTxCount} 筆個人集中市場實際減持</div>
         </div>
         <div class="insider-kpi-box" style="border-left:4px solid ${BUY_COLOR};">
           <div class="insider-kpi-title">增持佔原持股中位數</div>
           <div class="insider-kpi-val" style="color:${BUY_COLOR};">${p.buyMedianPct ?? '--'}%</div>
-          <div class="insider-kpi-sub">共 ${p.buyTxCount} 筆個人增持（加碼幅度 11%～50%）</div>
+          <div class="insider-kpi-sub">共 ${p.buyTxCount} 筆個人集中市場實際買進</div>
         </div>
       </div>
 

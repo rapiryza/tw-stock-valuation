@@ -18,6 +18,12 @@ DATA_DIR = ROOT / "docs" / "data"
 TW = timezone(timedelta(hours=8))
 
 
+from build_insider_flows import is_individual, clean_title
+from mops_insider import fetch_mops_insider, parse_mops_records
+
+MONTHS = [("115", "06", "2026-06"), ("115", "07", "2026-07"), ("115", "08", "2026-08")]
+
+
 def generate_stat() -> dict:
     perf_file = DATA_DIR / "performance.json"
     insider_file = DATA_DIR / "insider_flows.json"
@@ -55,56 +61,68 @@ def generate_stat() -> dict:
     person_txs = []
     company_m3_list = []
 
-    # 2. Collect transactions from last 3 months for top 5% gainers
+    # 2. Extract genuine centralized market transactions (B_market and S_market) from MOPS query6_1
     for code, ytd_ret in top_5_pct:
-        s = insider.get("stocks", {}).get(code)
-        if not s:
-            continue
         name = stock_names.get(code, code)
-        ind = stock_industries.get(code, "")
         stock_tags = tags_map.get(code, [])
-        h = s.get("holding", {})
-        series = h.get("series", [])
-        last_3 = series[-3:] if len(series) >= 3 else series
+        company_market_net = 0.0
+        seen_person_month = set()
 
-        m3 = h.get("summary", {}).get("m3")
-        latest_lots = h.get("latestLots")
-        if m3 is not None and latest_lots and latest_lots > 0:
-            orig = latest_lots - m3
-            if orig > 0:
-                pct = round(abs(m3) / orig * 100, 2)
-                company_m3_list.append({
-                    "code": code,
-                    "stockName": name,
-                    "industry": ind,
-                    "tags": stock_tags,
-                    "ytd": ytd_ret,
-                    "m3": round(m3, 3),
-                    "latestLots": latest_lots,
-                    "orig": round(orig, 3),
-                    "pct": pct,
-                    "type": "buy" if m3 > 0 else ("sell" if m3 < 0 else "flat"),
-                })
+        for yr, mo, mo_str in MONTHS:
+            mops_data = fetch_mops_insider(code, yr, mo)
+            records = parse_mops_records(mops_data)
+            for r in records:
+                net_mkt = r["net_mkt"]
+                p_name = r["name"].strip()
+                title = clean_title(r["title"])
 
-        for row in last_3:
-            month = row[0]
-            breakdowns = row[3] if len(row) > 3 else []
-            for b in breakdowns:
-                if b.get("is_person") and b.get("pct") is not None:
-                    person_txs.append({
-                        "code": code,
-                        "stockName": name,
-                        "industry": ind,
-                        "tags": stock_tags,
-                        "month": month,
-                        "name": b.get("name"),
-                        "title": b.get("title"),
-                        "delta": b.get("delta"),
-                        "orig": b.get("orig"),
-                        "pct": b.get("pct"),
-                        "ytd": ytd_ret,
-                        "type": "buy" if b.get("delta", 0) > 0 else "sell",
-                    })
+                if net_mkt != 0:
+                    company_market_net += net_mkt
+
+                    if p_name and is_individual(p_name):
+                        dedup_key = (code, mo_str, p_name, net_mkt)
+                        if dedup_key not in seen_person_month:
+                            seen_person_month.add(dedup_key)
+                            prev_hold = r["prev"]
+                            if prev_hold > 0:
+                                pct = round(abs(net_mkt) / prev_hold * 100, 2)
+                                orig = prev_hold
+                            else:
+                                curr_hold = r["curr"]
+                                orig = round(curr_hold - net_mkt, 3)
+                                pct = 100.0 if orig <= 0 else round(abs(net_mkt) / orig * 100, 2)
+
+                            pct = min(100.0, pct)
+                            person_txs.append({
+                                "code": code,
+                                "stockName": name,
+                                "tags": stock_tags,
+                                "month": mo_str,
+                                "name": p_name,
+                                "title": title or "內部人",
+                                "delta": net_mkt,
+                                "orig": orig,
+                                "pct": pct,
+                                "ytd": ytd_ret,
+                                "type": "buy" if net_mkt > 0 else "sell",
+                            })
+
+        s = insider.get("stocks", {}).get(code)
+        latest_lots = s.get("holding", {}).get("latestLots") if s else None
+        if latest_lots and latest_lots > 0:
+            orig_comp = round(latest_lots - company_market_net, 3)
+            pct_comp = round(abs(company_market_net) / orig_comp * 100, 2) if orig_comp > 0 else 0.0
+            company_m3_list.append({
+                "code": code,
+                "stockName": name,
+                "tags": stock_tags,
+                "ytd": ytd_ret,
+                "m3": round(company_market_net, 3),
+                "latestLots": latest_lots,
+                "orig": orig_comp,
+                "pct": pct_comp,
+                "type": "buy" if company_market_net > 0 else ("sell" if company_market_net < 0 else "flat"),
+            })
 
     all_pcts = [tx["pct"] for tx in person_txs]
     buy_pcts = [tx["pct"] for tx in person_txs if tx["type"] == "buy"]
@@ -118,7 +136,7 @@ def generate_stat() -> dict:
         "topPercent": 5,
         "topCount": top_5_pct_count,
         "cutoffReturn": cutoff_return,
-        "periodDescription": "最近3個月（依各檔最新持股月報）",
+        "periodDescription": "最近3個月（依公開資訊觀測站官方集中市場買進/賣出欄位）",
         "personStats": {
             "overallMedianPct": round(statistics.median(all_pcts), 2) if all_pcts else None,
             "sellMedianPct": round(statistics.median(sell_pcts), 2) if sell_pcts else None,
