@@ -468,11 +468,15 @@ def build_output(
         latest_lots = holdings[code][latest_month] if latest_month else None
         holding_summary: dict[str, float | None] = {}
         for key, months_back in HOLDING_WINDOWS.items():
-            if not latest_month or latest_lots is None:
+            if not latest_month:
                 holding_summary[key] = None
                 continue
-            prior = holdings[code].get(shift_month(latest_month, -months_back))
-            holding_summary[key] = None if prior is None else round(float(latest_lots) - float(prior), 3)
+            window_series = holding_series[-months_back:]
+            valid_deltas = [item[2] for item in window_series if len(item) > 2 and item[2] is not None]
+            if valid_deltas:
+                holding_summary[key] = round(sum(valid_deltas), 3)
+            else:
+                holding_summary[key] = None
 
         last_item_delta = holding_series[-1][2] if holding_series else None
         monthly_change = last_item_delta if last_item_delta is not None else holding_summary["m1"]
@@ -585,23 +589,24 @@ def main() -> int:
             parts = cache_file.stem.split("_")
             if len(parts) == 3:
                 code, yr, mo = parts
-                month_str = f"2026-{mo}"
+                cal_yr = int(yr) + 1911
+                month_str = f"{cal_yr}-{mo}"
                 try:
                     with open(cache_file, encoding="utf-8") as f:
                         mops_data = json.load(f)
                     records = parse_mops_records(mops_data)
-                    net_sum = sum(r["net_mkt"] for r in records)
-                    deltas[code][month_str] = round(net_sum, 3)
 
-                    # Build real market breakdowns
+                    # Deduplicate multiple roles of same shareholder in same month (per MOPS rule)
+                    seen_shareholder_delta = set()
+                    net_sum = 0.0
                     real_bd = []
-                    seen_bd = set()
                     for r in records:
                         if r["net_mkt"] != 0:
                             p_name = r["name"].strip()
-                            bd_key = (p_name, r["net_mkt"])
-                            if bd_key not in seen_bd:
-                                seen_bd.add(bd_key)
+                            dedup_key = (p_name, r["b_mkt"], r["s_mkt"], r["prev"], r["curr"])
+                            if dedup_key not in seen_shareholder_delta:
+                                seen_shareholder_delta.add(dedup_key)
+                                net_sum += r["net_mkt"]
                                 real_bd.append({
                                     "name": p_name,
                                     "title": clean_title(r["title"]) or "內部人",
@@ -609,6 +614,7 @@ def main() -> int:
                                     "is_exec": any(k in r["title"] for k in KEY_ROLES),
                                     "orig": r["prev"] if r["prev"] > 0 else max(0.001, r["curr"] - r["net_mkt"]),
                                 })
+                    deltas[code][month_str] = round(net_sum, 3)
                     breakdowns[code][month_str] = real_bd
                 except Exception:
                     pass
