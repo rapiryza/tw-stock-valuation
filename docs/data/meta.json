@@ -1,6 +1,6 @@
 {
  "asOf": "2026-10-16",
- "updatedAt": "2026-10-16T18:09:00",
+ "updatedAt": "2026-10-16T20:19:05",
  "counts": {
   "listed": 1088,
   "otc": 892,
@@ -18,7 +18,7 @@
    },
    "currentMonthCount": 1088,
    "olderMonthCount": 0,
-   "checkedAt": "2026-10-16T18:04:11+08:00",
+   "checkedAt": "2026-10-16T20:18:17+08:00",
    "sources": [
     {
      "url": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
@@ -39,7 +39,7 @@
   },
   "listed_income": 1080,
   "otc_quotes": 12587,
-  "otc_profile": 894,
+  "otc_profile": 893,
   "otc_pe": 885,
   "otc_revenue": 895,
   "otc_revenue_details": {
@@ -50,7 +50,7 @@
    },
    "currentMonthCount": 894,
    "olderMonthCount": 1,
-   "checkedAt": "2026-10-16T18:08:10+08:00",
+   "checkedAt": "2026-10-16T20:18:51+08:00",
    "sources": [
     {
      "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
@@ -81,7 +81,7 @@
    },
    "currentMonthCount": 367,
    "olderMonthCount": 5,
-   "checkedAt": "2026-10-16T18:09:00+08:00",
+   "checkedAt": "2026-10-16T20:19:05+08:00",
    "sources": [
     {
      "url": "https://www.tpex.org.tw/openapi/v1/t187ap05_R",

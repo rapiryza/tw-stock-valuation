@@ -15,10 +15,10 @@
   "otc": {
    "label": "上櫃",
    "count": 892,
-   "cap": 10990523963485,
+   "cap": 10991521973171,
    "pe": 19.51,
    "ps": 2.15,
-   "peWeighted": 25.12,
+   "peWeighted": 25.11,
    "psWeighted": 3.02,
    "withPE": 670,
    "withPS": 882
@@ -26,7 +26,7 @@
   "esb": {
    "label": "興櫃",
    "count": 372,
-   "cap": 1785290865856,
+   "cap": 1785782142941,
    "pe": null,
    "ps": 2.63,
    "peWeighted": null,
