@@ -1,0 +1,64 @@
+name: 外幣兌換損益（財報附註）
+
+# 一家公司一份 iXBRL，全市場約兩千份；每次限量下載，隔天自動接續。
+# 已確認的（公司, 期別）不會重抓，所以新一季財報公布後才會再有大量請求。
+on:
+  schedule:
+    - cron: "47 20 * * *"
+      timezone: "Asia/Taipei"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_fx_gains.py"
+      - "scripts/test_fx_gains.py"
+      - ".github/workflows/fx-gains.yml"
+  workflow_dispatch:
+    inputs:
+      max_requests:
+        description: "本次最多下載幾份財報"
+        required: false
+        default: "400"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fx-gains
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 單元測試
+        working-directory: scripts
+        run: python -m unittest -v test_fx_gains
+
+      - name: 讀取外幣兌換損益
+        working-directory: scripts
+        run: python build_fx_gains.py --max-requests "${{ github.event.inputs.max_requests || '400' }}"
+
+      - name: commit 資料
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/fx_gains.json
+          if git diff --staged --quiet; then
+            echo "外幣兌換損益無變化"
+          else
+            git commit -m "外幣兌換損益更新 $(TZ=Asia/Taipei date +%Y-%m-%d)"
+            git pull --rebase
+            git push
+          fi
