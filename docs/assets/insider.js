@@ -37,12 +37,13 @@
     style.id = "insider-style";
     style.textContent = `
       .ins-sec .note{margin:6px 0 0}
+      .ins-sec{--ins-buy:#e5484d;--ins-sell:#16a34a;--ins-rsu:#3b82f6}
       .ins-status{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
       .ins-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;
         background:var(--chip);color:var(--text-secondary);white-space:nowrap}
       .ins-badge.ok{background:var(--down-soft);color:var(--down)}
       .ins-badge.warn{background:var(--up-soft);color:var(--up)}
-      .ins-badge.rsu{background:var(--accent-soft);color:var(--accent)}
+      .ins-badge.rsu{background:color-mix(in srgb,var(--ins-rsu) 12%,transparent);color:var(--ins-rsu)}
       .ins-kv .v small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:2px}
       .ins-card{margin-top:12px;padding:14px 14px 10px}
       .ins-card .card-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
@@ -125,8 +126,15 @@
     const n = data.length;
     const step = (W - M.l - M.r) / n;
     const X = (i) => M.l + step * (i + 0.5);
-    const vals = data.map((d) => d.counted).filter((v) => v != null);
-    const maxAbs = Math.max(1, ...vals.map(Math.abs));
+    // 每月拆成「集中市場買賣」與「員工股/RSU」兩段；正向兩段疊在一起，總高度＝買進總數
+    const parts = data.map((d) => {
+      if (d.counted == null) return null;
+      const rsu = Math.max(0, d.meta.rsu || 0);
+      const market = d.meta.market != null ? d.meta.market : d.counted - rsu;
+      return { market, rsu };
+    });
+    const ext = parts.filter(Boolean).flatMap((p) => [Math.max(0, p.market) + p.rsu, -Math.min(0, p.market)]);
+    const maxAbs = Math.max(1, ...ext);
     const top = M.t, bottom = H - M.b, mid = (top + bottom) / 2;
     const Y = (v) => mid - (v / maxAbs) * (mid - top);
 
@@ -142,22 +150,24 @@
     unit.textContent = "張";
     svg.appendChild(unit);
 
-    // 長條：計入增減；沒有明細的月份畫灰色虛框
+    // 長條：集中市場買進（紅）／賣出（綠）＋員工股/RSU（藍）疊加
     const bw = Math.max(4, Math.min(18, step * 0.55));
-    data.forEach((d, i) => {
+    const seg = (x, from, to, fill) => {
+      const y1 = Y(from), y2 = Y(to);
+      const h = Math.abs(y2 - y1);
+      if (h <= 0) return;
+      svg.appendChild(mk("rect", { x, y: Math.min(y1, y2), width: bw, height: Math.max(1.5, h), fill }));
+    };
+    parts.forEach((p, i) => {
+      if (!p) return;
       const x = X(i) - bw / 2;
-      if (d.counted == null) return;
-      if (d.counted === 0) {
+      if (!p.market && !p.rsu) {
         svg.appendChild(mk("rect", { x, y: mid - 1, width: bw, height: 2, fill: "var(--muted)" }));
         return;
       }
-      const y = Y(d.counted);
-      const h = Math.max(2, Math.abs(y - mid));
-      svg.appendChild(mk("rect", { x, y: d.counted > 0 ? mid - h : mid, width: bw, height: h, rx: 2,
-        fill: d.counted > 0 ? "var(--up)" : "var(--down)" }));
-      if (d.meta.rsu) {
-        svg.appendChild(mk("circle", { cx: X(i), cy: (d.counted > 0 ? mid - h : mid + h) + (d.counted > 0 ? -5 : 5), r: 2.5, fill: "var(--accent)" }));
-      }
+      if (p.market > 0) seg(x, 0, p.market, "var(--ins-buy)");
+      if (p.market < 0) seg(x, 0, p.market, "var(--ins-sell)");
+      if (p.rsu) seg(x, Math.max(0, p.market), Math.max(0, p.market) + p.rsu, "var(--ins-rsu)");
     });
 
     // 月底股價（右軸）
@@ -290,9 +300,9 @@
           <div class="tooltip" hidden></div>
         </div>
         <div class="ins-legend">
-          <span><i style="background:var(--up)"></i>增加</span>
-          <span><i style="background:var(--down)"></i>減少</span>
-          <span><i style="background:var(--accent);border-radius:50%"></i>含員工股/RSU</span>
+          <span><i style="background:var(--ins-buy)"></i>集中市場買進</span>
+          <span><i style="background:var(--ins-sell)"></i>集中市場賣出</span>
+          <span><i style="background:var(--ins-rsu)"></i>員工股/RSU</span>
           <span><i class="line" style="background:var(--text-secondary)"></i>月底股價（虛線）</span>
         </div>
         <div class="ins-head"><span>月份</span><span class="r">總持股（張）</span><span class="r">增減（張）</span><span></span></div>
