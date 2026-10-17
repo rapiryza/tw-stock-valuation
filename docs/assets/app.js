@@ -34,7 +34,7 @@
   const state = {
     rows: [], view: [], meta: null, market: null, tags: {}, movers: null, history: null,
     tdcc: { date: null, base: null, d: {} },
-    performance: { stocks: {} }, returnPeriod: "d1", revenueNotes: {}, profitGrowth: {stocks:{}}, operating: {stocks:{}}, insider: {stocks:{}}, selectedColumns: ["p", "cap", "priceReturn", "insider_holding", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
+    performance: { stocks: {} }, returnPeriod: "d1", revenueNotes: {}, profitGrowth: {stocks:{}}, fxGains: {stocks:{}}, operating: {stocks:{}}, insider: {stocks:{}}, selectedColumns: ["p", "cap", "priceReturn", "insider_holding", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
@@ -422,6 +422,43 @@
     return `<span title="${d.year} Q${d.quarter} 年初至今累計，對比去年同期；${basis}">${label}</span><small class="profit-period">${d.year} Q${d.quarter} 累計</small>`;
   }
 
+  // 業外占比：分母（稅前淨利／營業利益）為正時才有值，來自綜合損益表年初至今累計。
+  function nonopCell(r, field, label) {
+    const fin = r.fin || {};
+    const v = fin[field];
+    const period = fin.y ? `${fin.y} Q${fin.q} 累計` : "";
+    if (v == null) {
+      const why = fin.y ? `${period}：${label}為負或為零、或損益表未提供業外收支，比例不適用` : "尚無財報資料";
+      return `<span class="na" title="${esc(why)}">—</span>${period ? `<small class="profit-period">${esc(period)}</small>` : ""}`;
+    }
+    return `<span title="${esc(period)}；業外收支 ÷ ${esc(label)}">${cell(v, 1, true)}</span><small class="profit-period">${esc(period)}</small>`;
+  }
+  // 外匯損益占淨利：外幣兌換利益（損失）取自 iXBRL 財報附註，需與損益表同一期別才計算。
+  function fxRecord(r) {
+    const d = state.fxGains.stocks[r.c], fin = r.fin || {};
+    if (!d || d.status !== "ok" || d.fx == null || !fin.y || d.year !== fin.y || d.quarter !== fin.q) return null;
+    return d;
+  }
+  function fxValue(r) {
+    const d = fxRecord(r), net = r.fin && r.fin.net;
+    if (!d || net == null || net <= 0) return null;
+    return Math.round(d.fx / (net * 1000) * 10000) / 100;
+  }
+  function fxCell(r) {
+    const fin = r.fin || {}, d = fxRecord(r), v = fxValue(r);
+    const period = fin.y ? `${fin.y} Q${fin.q} 累計` : "";
+    const small = period ? `<small class="profit-period">${esc(period)}</small>` : "";
+    if (v == null) {
+      const raw = state.fxGains.stocks[r.c];
+      const why = !fin.y ? "尚無財報資料"
+        : d ? "淨利為負或為零，比例不適用"
+        : raw && raw.status === "not_disclosed" && raw.year === fin.y && raw.quarter === fin.q ? "財報附註未揭露外幣兌換損益"
+        : "財報附註尚未讀取";
+      return `<span class="na" title="${esc(why)}">—</span>${small}`;
+    }
+    return `<span title="${esc(period)}；外幣兌換損益 ${esc(human(d.fx))} ÷ 歸屬母公司淨利">${cell(v, 1, true)}</span>${small}`;
+  }
+
   function operatingAmountCell(r, field, periodField) {
     const d = operatingOf(r.c), value = d[field], period = d[periodField];
     if (value == null) return cell(null);
@@ -477,6 +514,9 @@
     { k: "qrev_yoy", t: "季營收YoY%", get: (r) => operatingChangeCell(r, "revenueChange", "yoy"), val: (r) => operatingChangeValue(r, "revenueChange", "yoy") },
     { k: "net_yoy", t: "淨利年增%", get: profitCell, val: (r) => profitRecord(r)?.yoy ?? null },
     { k: "eps", t: "EPS", get: (r) => cell(r.fin && r.fin.eps), val: (r) => r.fin && r.fin.eps },
+    { k: "nonop_pt", t: "業外占稅前淨利%", get: (r) => nonopCell(r, "nonop_pt", "稅前淨利"), val: (r) => r.fin?.nonop_pt ?? null },
+    { k: "nonop_op", t: "業外占營業利益%", get: (r) => nonopCell(r, "nonop_op", "營業利益"), val: (r) => r.fin?.nonop_op ?? null },
+    { k: "fx_net", t: "外匯損益占淨利%", get: fxCell, val: fxValue },
     // 籌碼面：集保股權分散表，一張 = 1,000 股，所以「400 張以上」= 400,000 股以上
     { k: "big", t: "大戶持股%", sel: "400張以上大戶持股%", get: (r) => cell(tdccOf(r.c)[0]), val: (r) => tdccOf(r.c)[0] },
     { k: "big_chg", t: "月增減", sel: "大戶持股月增減", get: (r) => cell(tdccOf(r.c)[1], 2, true), val: (r) => tdccOf(r.c)[1] },
@@ -559,7 +599,7 @@
                     "contract", "contract_qoq", "contract_yoy",
                     "customer_receipts", "customer_receipts_qoq", "customer_receipts_yoy",
                     "inventory", "inventory_qoq", "inventory_yoy",
-                    "qrev", "qrev_qoq", "qrev_yoy", "net_yoy", "eps", "big", "big_chg"];
+                    "qrev", "qrev_qoq", "qrev_yoy", "net_yoy", "eps", "nonop_pt", "nonop_op", "fx_net", "big", "big_chg"];
 
   // ------------------------------------------------------------ 多欄排序
   const DEFAULT_SORTS = [{ k: "cap", dir: -1 }];   // 沒設條件時：市值由大到小
@@ -960,6 +1000,9 @@
         <div><div class="k">淨利率%</div><div class="v">${fmt(fin.npm, 1) ?? "—"}</div></div>
         <div><div class="k">淨利年增%</div><div class="v">${cell(fin.net_yoy, 1, true)}</div></div>
         <div><div class="k">營益年增%</div><div class="v">${cell(fin.op_yoy, 1, true)}</div></div>
+        <div><div class="k">業外占稅前淨利%</div><div class="v">${cell(fin.nonop_pt, 1, true)}</div></div>
+        <div><div class="k">業外占營業利益%</div><div class="v">${cell(fin.nonop_op, 1, true)}</div></div>
+        <div><div class="k">外匯損益占淨利%</div><div class="v">${cell(fxValue(base), 1, true)}</div></div>
       </div>
       <h4>營運先行指標</h4>
       <p class="note">合約負債先讀資產負債表主表；主表未單獨列示時，再讀官方 iXBRL／PDF 財報附註。客戶暫收款獨立儲存。合計圖非會計科目，只供營運觀察；合約負債使用已揭露總額，未揭露總額時使用流動部分。缺值維持空白，不以 0 代替。</p>
@@ -1190,7 +1233,7 @@
 
   // ---------------------------------------------------------------- 啟動
   (async function init() {
-    const [meta, market, rows, tags, movers, history, tdcc, performance, revenueNotes, profitGrowth, operating, insider] = await Promise.all([
+    const [meta, market, rows, tags, movers, history, tdcc, performance, revenueNotes, profitGrowth, operating, insider, fxGains] = await Promise.all([
       getJSON("data/meta.json", null),
       getJSON("data/market.json", null),
       getJSON("data/latest.json", []),
@@ -1203,10 +1246,12 @@
       getJSON("data/profit_growth.json", {stocks:{}}),
       getJSON("data/operating_latest.json", {stocks:{}}),
       getJSON("data/insider_flows.json?v=20261013-complete", {stocks:{}}),
+      getJSON("data/fx_gains.json", {stocks:{}}),
     ]);
     state.meta = meta; state.market = market;
     state.revenueNotes = revenueNotes || {};
     state.profitGrowth = profitGrowth || {stocks:{}};
+    state.fxGains = fxGains && fxGains.stocks ? fxGains : {stocks:{}};
     state.operating = operating || {stocks:{}};
     state.insider = insider || {stocks:{}};
     state.rows = rows || []; state.tags = tags || {}; state.movers = movers;
