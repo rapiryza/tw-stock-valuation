@@ -112,7 +112,8 @@
 
   // ------------------------------------------------------------ 圖：月增減長條 + 月底股價
   function drawHoldingChart(svg, tip, list, prices) {
-    const data = list.slice(-24);
+    const data = list.slice(-12);
+    const DETAIL_WINDOW = 6;  // 申報明細只抓最近 6 個月，更早的月份只有總持股
     const W = 640, H = 250, M = { t: 14, r: 48, b: 26, l: 52 };
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = "";
@@ -147,6 +148,7 @@
     data.forEach((d, i) => {
       const x = X(i) - bw / 2;
       if (d.counted == null) {
+        if (i < data.length - DETAIL_WINDOW) return;
         svg.appendChild(mk("rect", { x, y: mid - 7, width: bw, height: 14, rx: 2, fill: "none",
           stroke: "var(--muted)", "stroke-dasharray": "2 2", "stroke-width": 1 }));
         return;
@@ -208,7 +210,7 @@
       const p = prices.get(d.month);
       const rows = [
         ["內部人總持股（IRB110）", `${fmtLots(d.total)} 張`],
-        ["本月增減", d.counted == null ? (d.meta.noFiling ? "官方查無申報" : "明細尚未取得") : `${fmtLots(d.counted, true)} 張`],
+        ["本月增減", d.counted == null ? (d.meta.noFiling ? "官方查無申報" : i < n - DETAIL_WINDOW ? "超出明細範圍" : "明細尚未取得") : `${fmtLots(d.counted, true)} 張`],
       ];
       if (d.meta.market) rows.push(["　集中市場買賣", `${fmtLots(d.meta.market, true)} 張`]);
       if (d.meta.rsu) rows.push(["　員工股/RSU", `${fmtLots(d.meta.rsu, true)} 張`]);
