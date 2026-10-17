@@ -95,12 +95,26 @@
   const insiderTransferCell = (code) => {
     const v = insiderTransferValue(code), d = insiderTransferDate(code);
     if (v == null) return `<span class="na">—</span>${d ? `<small class="profit-period">${esc(d)}</small>` : ""}`;
-    return `<span title="${esc(d)} 轉讓事前申報，不代表已成交">${cell(-Math.abs(v), 2, true)}</span><small class="profit-period">${esc(d)}</small>`;
+    return `<span title="${esc(d)} 轉讓事前申報：預定轉讓 ${fmt(v, 0)} 張，不代表已成交，也不計入持股增減">${fmt(v, v >= 100 ? 0 : 2)} 張</span><small class="profit-period">${esc(d)} 申報</small>`;
   };
+  // 內部人持股增減：IRB110 為總額依據；單月增減只計集中市場買賣＋員工股/RSU
   const insiderHoldingCell = (code) => {
-    const v = insiderHoldingChange(code), month = insiderHoldingMonth(code);
-    if (v == null) return `<span class="na" title="${month ? `${month} 尚無前一月資料可比較` : "尚無持股月報"}">—</span>${month ? `<small class="profit-period">${esc(month)}</small>` : ""}`;
-    return `<span title="${month ? `${month} 持股餘額較前一月變化` : "最新持股月增減"}">${cell(v, 2, true)}</span><small class="profit-period">${esc(month)}</small>`;
+    const h = insiderOf(code).holding || {};
+    const v = h.monthlyChange ?? null, month = h.latestMonth || "";
+    const small = month ? `<small class="profit-period">${esc(month)}</small>` : "";
+    if (v == null) {
+      const why = !month ? "IRB110 月報沒有這家公司" : h.detail ? `${month} 為第一個月份，沒有前月可比較` : `${month} 事後申報明細尚未取得`;
+      return `<span class="na" title="${esc(why)}">—</span>${small}`;
+    }
+    const lotsTxt = (x) => (x == null ? "—" : `${x > 0 ? "+" : ""}${fmt(x, Math.abs(x) >= 100 ? 0 : 2)} 張`);
+    const tip = [
+      `${month} 內部人總持股 ${fmt(h.latestLots, 0)} 張（IRB110）`,
+      `本月增減 ${lotsTxt(v)}（集中市場買賣＋員工股/RSU）`,
+      h.rsu ? `其中員工股/RSU ${lotsTxt(h.rsu)}` : "",
+      h.verified === false ? "注意：申報明細加總與 IRB110 不符" : "",
+    ].filter(Boolean).join("\n");
+    const rsu = h.rsu ? ' <span class="est" title="含員工股/RSU">RSU</span>' : "";
+    return `<span title="${esc(tip)}">${cell(v, 2, true)}</span>${rsu}${small}`;
   };
 
   const revenueCell = (r, field) => {
@@ -1245,7 +1259,7 @@
       getJSON("data/revenue_notes.json", {}),
       getJSON("data/profit_growth.json", {stocks:{}}),
       getJSON("data/operating_latest.json", {stocks:{}}),
-      getJSON("data/insider_flows.json?v=20261013-complete", {stocks:{}}),
+      getJSON("data/insider_flows.json?v=20261017-irb110", {stocks:{}}),
       getJSON("data/fx_gains.json", {stocks:{}}),
     ]);
     state.meta = meta; state.market = market;
