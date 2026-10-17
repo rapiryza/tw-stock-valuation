@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import time
 
 from insider_sources import DetailClient, detail_needs_fetch, latest_months, load_irb110, save_detail
 from util import DATA_DIR, log, read_json
@@ -17,6 +18,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-requests", type=int, default=700)
     ap.add_argument("--codes", default="")
+    ap.add_argument("--max-minutes", type=float, default=40, help="時間到就停，保留時間給重算與 commit")
     args = ap.parse_args()
 
     irb = load_irb110(latest_months(count=DETAIL_MONTHS + 2))
@@ -45,17 +47,25 @@ def main() -> int:
 
     client = DetailClient()
     ok = fail = 0
-    for _, _, _, code, month in jobs:
+    started = time.monotonic()
+    sources: dict[str, int] = {}
+    for n, (_, _, _, code, month) in enumerate(jobs, 1):
+        if time.monotonic() - started > args.max_minutes * 60:
+            log(f"已達 {args.max_minutes:g} 分鐘上限，其餘留待下次")
+            break
         try:
             rows, source = client.fetch(code, month)
             save_detail(code, month, rows, source)
             ok += 1
+            sources[source] = sources.get(source, 0) + 1
         except RuntimeError as exc:
             fail += 1
             log(f"  [待重試] {code} {month}: {exc}")
             if fail >= 25 and ok == 0:
                 log("連續失敗，可能被官方站台限制，提前結束")
                 break
+        if n % 100 == 0:
+            log(f"  進度 {n}/{len(jobs)}，成功 {ok}、失敗 {fail}，來源 {sources}，{(time.monotonic() - started) / n:.1f} 秒/份")
     log(f"內部人申報明細完成：成功 {ok}、失敗 {fail}、尚餘 {max(0, total - ok)}")
     return 0
 
