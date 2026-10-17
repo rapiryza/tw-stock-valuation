@@ -38,15 +38,19 @@
     <button type="button" id="sheetAnalysis">分析</button><button type="button" onclick="location.href='spread.html'">台美價差</button><span class="sheet-readonly">唯讀 · 點選資料列查看明細</span>
   </nav>
 
-  <!-- ============ 漲幅排行與族群 ============ -->
+  <!-- ============ 漲跌幅排行與族群 ============ -->
   <details class="section worksheet-analysis" id="moversSection">
     <summary>展開排行與族群分析</summary>
     <div class="section-head">
-      <h2>漲幅排行與族群</h2>
+      <h2>漲跌幅排行與族群</h2>
       <p class="note" id="moversNote">載入中…</p>
     </div>
 
     <div class="seg-scroll">
+      <div class="seg" id="moverDirSeg" role="group" aria-label="選擇漲幅或跌幅" style="--n:2">
+        <button type="button" data-dir="up" aria-pressed="true">漲幅</button>
+        <button type="button" data-dir="down" aria-pressed="false">跌幅</button>
+      </div>
       <div class="seg" id="periodSeg" role="group" aria-label="選擇期間" style="--n:4">
         <button type="button" data-period="d1" aria-pressed="true">1 天</button>
         <button type="button" data-period="d5" aria-pressed="false">5 天</button>
@@ -62,8 +66,8 @@
 
     <div class="movers-grid">
       <div class="card">
-        <h3 class="card-h">最近在漲什麼</h3>
-        <p class="note">依業務標籤分組，取組內漲幅中位數排序。中位數要多數成員一起漲才會高，一檔飆股拉不動。</p>
+        <h3 class="card-h" id="groupTitle">最近在漲什麼</h3>
+        <p class="note" id="groupNote">依業務標籤分組，取組內漲跌幅中位數由高到低排序。中位數要多數成員一起漲才會高，一檔飆股拉不動。</p>
         <div id="groupBars"></div>
       </div>
       <div class="card">
@@ -158,7 +162,7 @@
 <div class="counterapi" ns="roseamyclara.github.io" action="view" key="tw-stock-valuation" invisible="true" aria-hidden="true"></div>
 <div class="counterapi" ns="roseamyclara.github.io" action="visitor" key="tw-stock-valuation" unique="true" invisible="true" aria-hidden="true"></div>
 
-<script src="assets/app.js?v=20261017-insider2"></script>
+<script src="assets/app.js?v=20261017-movers"></script>
 <script src="assets/op-ui.js?v=20261007-select-redraw-fix"></script>
 <script src="assets/insider.js?v=20261017-irb110c"></script>
 <script src="assets/op-layout-fix.js?v=20261008-insider-visible"></script>
