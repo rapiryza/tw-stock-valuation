@@ -102,10 +102,7 @@
     const h = insiderOf(code).holding || {};
     const v = h.monthlyChange ?? null, month = h.latestMonth || "";
     const small = month ? `<small class="profit-period">${esc(month)}</small>` : "";
-    if (v == null) {
-      const why = !month ? "IRB110 月報沒有這家公司" : h.detail ? `${month} 為第一個月份，沒有前月可比較` : `${month} 事後申報明細尚未取得`;
-      return `<span class="na" title="${esc(why)}">—</span>${small}`;
-    }
+    if (v == null) return `<span class="na">—</span>${small}`;
     const lotsTxt = (x) => (x == null ? "—" : `${x > 0 ? "+" : ""}${fmt(x, Math.abs(x) >= 100 ? 0 : 2)} 張`);
     const tip = [
       `${month} 內部人總持股 ${fmt(h.latestLots, 0)} 張（IRB110）`,
