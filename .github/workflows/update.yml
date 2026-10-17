@@ -92,5 +92,11 @@ jobs:
             echo "資料無變化（可能是國定假日），跳過 commit"
           else
             git commit -m "資料更新 $(TZ=Asia/Taipei date +%Y-%m-%d)"
-            git push
+            # 執行期間 main 可能有其他 commit（程式修改、營運先行指標），先 rebase 再推；資料檔以本次產出為準
+            for i in 1 2 3; do
+              git pull --rebase -X theirs origin main && git push && exit 0
+              git rebase --abort 2>/dev/null || true
+              sleep $((i * 15))
+            done
+            exit 1
           fi
