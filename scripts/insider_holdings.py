@@ -24,8 +24,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
-# compact row: [身分別, 姓名, 上月持股, 本月增加(集中), 本月增加(其它), 本月減少(集中), 本月減少(其它), 本月實際自有持股, 身分別備註]
-ID, NAME, PREV, INC_MKT, INC_OTH, DEC_MKT, DEC_OTH, CURR, NOTE = range(9)
+# compact row: [身分別, 姓名, 上月持股, 本月增加(集中), 本月增加(其它), 本月減少(集中), 本月減少(其它), 本月實際自有持股, 身分別備註, 持股種類]
+# 舊快取沒有第 10 欄「持股種類」，以數值組合區分不同股別。
+ID, NAME, PREV, INC_MKT, INC_OTH, DEC_MKT, DEC_OTH, CURR, NOTE, KIND = range(10)
 
 DIR_ROLES = {"董事長", "副董事長", "董事", "獨立董事", "監察人", "常務董事", "獨立常務董事", "常駐監察人"}
 MGR_HINT = ("經理", "總裁", "執行長", "協理", "主管", "營運長", "技術長", "策略長", "副總")
@@ -61,6 +62,7 @@ def compact_api_rows(data: list[list[Any]]) -> list[list[Any]]:
             str(r[0] or "").strip(), str(r[1] or "").strip(),
             num(r[4]), num(r[8]), num(r[9]), num(r[13]), num(r[14]), num(r[18]),
             str(r[23] or "").strip() if len(r) > 23 else "",
+            str(r[2] or "").strip(),
         ])
     return out
 
@@ -79,31 +81,93 @@ def is_corp(name: str) -> bool:
     return any(k in upper for k in CORP_HINT)
 
 
-def people_in_scope(rows: list[list[Any]]) -> dict[str, dict[str, Any]]:
-    """依 IRB110 口徑歸戶：同名只算一次。"""
-    people: dict[str, dict[str, Any]] = {}
+def kind_of(r: list[Any]) -> str:
+    return str(r[KIND]).strip() if len(r) > KIND else ""
+
+
+def person_key(r: list[Any]) -> tuple:
+    """同一人、同一股別只算一次。同一人兼多職（或法人董事派多位代表人）時各列數字完全相同；
+    特別股與普通股分列且數字不同，必須分開加總（IRB110 兩者都計入）。"""
+    # 一律帶上數字：同名的不同人（例：兩位同名經理）數字不同，不會被誤併。
+    return (r[NAME].strip(), kind_of(r), r[PREV], r[CURR], r[INC_MKT], r[INC_OTH], r[DEC_MKT], r[DEC_OTH])
+
+
+def people_in_scope(rows: list[list[Any]], drop: frozenset = frozenset(), merge_corp: bool = False) -> dict[tuple, dict[str, Any]]:
+    """依 IRB110 口徑歸戶。
+
+    IRB110 對「經理人同時是法人代表人或百分之十大股東」的歸類，各公司申報不一致
+    （例：統一羅智先不列經理人欄，台泥張安平則列入），由 compute_month 逐一嘗試、取與 IRB110 相符者。
+    """
+    rep_names = {r[NAME].strip() for r in rows if "法人代表人" in r[ID] and r[NAME].strip()}
+    big_names = {r[NAME].strip() for r in rows if r[ID].startswith("大股東") and r[NAME].strip()}
+    people: dict[tuple, dict[str, Any]] = {}
     for r in rows:
         role = role_of(r[ID])
         name = r[NAME].strip()
         if role is None or not name:
             continue
-        p = people.get(name)
+        key = person_key(r)
+        p = people.get(key)
         if p is None:
-            p = people[name] = {
-                "name": name, "roles": [], "prev": r[PREV], "curr": r[CURR],
+            kind = kind_of(r)
+            p = people[key] = {
+                "name": name, "kind": kind, "roles": [], "prev": r[PREV], "curr": r[CURR],
                 "inc_mkt": r[INC_MKT], "dec_mkt": r[DEC_MKT],
                 "inc_oth": r[INC_OTH], "dec_oth": r[DEC_OTH], "note": r[NOTE],
+                "is_rep": name in rep_names or "法人代表人" in r[NOTE],
+                "is_big": name in big_names or "大股東" in r[NOTE],
             }
         if role not in p["roles"]:
             p["roles"].append(role)
         if r[NOTE] and r[NOTE] not in p["note"]:
             p["note"] = (p["note"] + "、" + r[NOTE]).strip("、")
-    for p in people.values():
+    out: dict[tuple, dict[str, Any]] = {}
+    corp_seen: set[tuple] = set()
+    for key, p in people.items():
         p["is_dir"] = any(role in DIR_ROLES for role in p["roles"])
         p["is_mgr"] = any(role not in DIR_ROLES for role in p["roles"]) or any(h in p["note"] for h in MGR_HINT)
         p["is_corp"] = is_corp(p["name"])
-        p["title"] = "兼".join(p["roles"][:2])
-    return people
+        p["title"] = "兼".join(p["roles"][:2]) + (f"（{p['kind']}）" if p["kind"] and p["kind"] != "普通股" else "")
+        if key in drop:
+            continue
+        # 同一法人董事以不同寫法（全名、截斷名、受託保管名義）重複申報：持股數字完全相同即視為同一席
+        if merge_corp and p["is_dir"] and p["is_corp"] and p["curr"] > 0:
+            sig = key[1:]
+            if sig in corp_seen:
+                continue
+            corp_seen.add(sig)
+        out[key] = p
+    return out
+
+
+def scope_matching_irb(rows: list[list[Any]], irb_cur: dict[str, float]) -> tuple[dict[tuple, dict[str, Any]], bool, float, float]:
+    """取明細加總與 IRB110 董監欄、經理人欄逐股相符的歸類。
+
+    唯一不確定的是「兼任法人代表人或大股東的經理人」是否列入經理人欄；
+    逐一嘗試排除這些人的組合（通常 0～3 人），找出與 IRB110 相符者。
+    """
+    from itertools import combinations
+
+    first = None
+    # 法人董事以不同名稱重複申報（全名／截斷名／受託保管名義）時，部分公司在 IRB110 只算一席：兩種都試
+    for merge_corp in (False, True):
+        full = people_in_scope(rows, merge_corp=merge_corp)
+        dir_sum = sum(p["curr"] for p in full.values() if p["is_dir"])
+        mgr_sum = sum(p["curr"] for p in full.values() if not p["is_dir"])
+        if first is None:
+            first = (full, False, dir_sum, mgr_sum)
+        if round(dir_sum) != round(irb_cur.get("dir", -1)):
+            continue
+        target = mgr_sum - irb_cur.get("mgr", -1)
+        if round(target) == 0:
+            return full, True, dir_sum, mgr_sum
+        ambiguous = [k for k, p in full.items() if not p["is_dir"] and (p["is_rep"] or p["is_big"]) and p["curr"] > 0][:8]
+        for n in range(1, len(ambiguous) + 1):
+            for combo in combinations(ambiguous, n):
+                if round(sum(full[k]["curr"] for k in combo)) == round(target):
+                    people = people_in_scope(rows, frozenset(combo), merge_corp)
+                    return people, True, dir_sum, mgr_sum - sum(full[k]["curr"] for k in combo)
+    return first
 
 
 def corp_action_ratio(rows: list[list[Any]], issued_prev: float | None, issued_cur: float | None) -> float | None:
@@ -128,10 +192,7 @@ def compute_month(
     irb_prev: dict[str, float] | None,
 ) -> dict[str, Any]:
     """單一公司單月：核對 IRB110、拆出可計入與應剔除的變動。單位：張。"""
-    people = people_in_scope(rows)
-    dir_sum = sum(p["curr"] for p in people.values() if p["is_dir"])
-    mgr_sum = sum(p["curr"] for p in people.values() if not p["is_dir"])
-    verified = round(dir_sum) == round(irb_cur.get("dir", -1)) and round(mgr_sum) == round(irb_cur.get("mgr", -1))
+    people, verified, dir_sum, mgr_sum = scope_matching_irb(rows, irb_cur)
 
     g = corp_action_ratio(rows, (irb_prev or {}).get("issued"), irb_cur.get("issued"))
     gift_out = {r[DEC_OTH] for r in rows if r[DEC_OTH] > 0}
@@ -149,10 +210,11 @@ def compute_month(
                             "pct": round(abs(mkt) / p["prev"] * 100, 2) if p["prev"] > 0 else None})
 
         inc = p["inc_oth"]
-        if inc > 0 and g and p["prev"] > 0 and inc >= p["prev"] * g * 0.98:
-            part = min(inc, round(p["prev"] * g))
-            if inc - part <= LOT:  # 零股進位差
-                part = inc
+        if inc > 0 and g and p["prev"] > 0:
+            # 配股依基準日持股計算，月中新買的股數不配，所以實得可能少於「上月持股×比例」；
+            # 不超過應配股數（含零股誤差）的部分都視為配股／分割。
+            expected = p["prev"] * g
+            part = inc if inc <= expected * 1.02 + LOT else round(expected)
             corp += part
             inc -= part
             excluded.append({**base, "delta": to_lots(part), "reason": "股票分割" if g >= 0.5 else "除權配股"})
@@ -182,6 +244,9 @@ def compute_month(
     counted.sort(key=lambda x: -abs(x["delta"]))
     excluded.sort(key=lambda x: -abs(x["delta"]))
     top = sorted(people.values(), key=lambda p: -p["curr"])[:12]
+    # 同名多股別（普通股、特別股）只在 people 清單合併顯示一次
+    seen_names: set[str] = set()
+    top = [p for p in top if not (p["name"] in seen_names or seen_names.add(p["name"]))]
     return {
         "verified": verified,
         "counted": to_lots(market + rsu),
@@ -231,7 +296,8 @@ def parse_mopsov_html(html: str) -> list[list[Any]]:
             continue
         note_m = re.search(r"身份別備註：(.*)", re.sub(r"<[^>]+>", "", tds[6]), re.S)
         note = re.sub(r"\s+", "", note_m.group(1)) if note_m else ""
-        rows.append([identity, name, num(before[1]), num(inc[0]), num(inc[1]), num(dec[0]), num(dec[1]), num(after[0]), note])
+        kind = re.sub(r"<[^>]+>|&nbsp;|\s+", "", tds[2])
+        rows.append([identity, name, num(before[1]), num(inc[0]), num(inc[1]), num(dec[0]), num(dec[1]), num(after[0]), note, kind])
     return rows
 
 
