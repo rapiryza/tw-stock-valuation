@@ -1,0 +1,72 @@
+name: 內部人持股申報明細
+
+# 內部人持股異動事後申報表一家一份，近 6 個月約上萬份；每次限量抓取、隔次接續。
+# 已抓到的不重抓，補齊之後每次只剩新月份與尚未申報的公司。
+# 與「每日更新」共用 concurrency group，兩者不會同時推送資料。
+on:
+  schedule:
+    - cron: "17 2,8,22 * * *"
+      timezone: "Asia/Taipei"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/insider_holdings.py"
+      - "scripts/insider_sources.py"
+      - "scripts/fetch_insider_detail.py"
+      - "scripts/build_insider_flows.py"
+      - "scripts/test_insider_holdings.py"
+      - ".github/workflows/insider-detail.yml"
+  workflow_dispatch:
+    inputs:
+      max_requests:
+        description: "本次最多抓幾份申報明細"
+        required: false
+        default: "900"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 單元測試（官方資料樣本）
+        working-directory: scripts
+        run: python -m unittest -v test_insider_holdings
+
+      - name: 抓取申報明細
+        working-directory: scripts
+        run: python fetch_insider_detail.py --max-requests "${{ github.event.inputs.max_requests || '900' }}"
+
+      - name: 重算內部人持股與轉讓申報
+        working-directory: scripts
+        run: python build_insider_flows.py
+
+      - name: commit 資料
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/insider_detail docs/data/insider_irb110 docs/data/insider_flows.json
+          if git diff --staged --quiet; then
+            echo "內部人資料無變化"
+          else
+            git commit -m "內部人持股申報明細 $(TZ=Asia/Taipei date +%Y-%m-%d)"
+            git pull --rebase
+            git push
+          fi
