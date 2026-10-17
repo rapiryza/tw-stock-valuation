@@ -113,7 +113,6 @@
   // ------------------------------------------------------------ 圖：月增減長條 + 月底股價
   function drawHoldingChart(svg, tip, list, prices) {
     const data = list.slice(-12);
-    const DETAIL_WINDOW = 6;  // 申報明細只抓最近 6 個月，更早的月份只有總持股
     const W = 640, H = 250, M = { t: 14, r: 48, b: 26, l: 52 };
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = "";
@@ -147,12 +146,7 @@
     const bw = Math.max(4, Math.min(18, step * 0.55));
     data.forEach((d, i) => {
       const x = X(i) - bw / 2;
-      if (d.counted == null) {
-        if (i < data.length - DETAIL_WINDOW) return;
-        svg.appendChild(mk("rect", { x, y: mid - 7, width: bw, height: 14, rx: 2, fill: "none",
-          stroke: "var(--muted)", "stroke-dasharray": "2 2", "stroke-width": 1 }));
-        return;
-      }
+      if (d.counted == null) return;
       if (d.counted === 0) {
         svg.appendChild(mk("rect", { x, y: mid - 1, width: bw, height: 2, fill: "var(--muted)" }));
         return;
@@ -210,8 +204,8 @@
       const p = prices.get(d.month);
       const rows = [
         ["內部人總持股（IRB110）", `${fmtLots(d.total)} 張`],
-        ["本月增減", d.counted == null ? (d.meta.noFiling ? "官方查無申報" : i < n - DETAIL_WINDOW ? "超出明細範圍" : "明細尚未取得") : `${fmtLots(d.counted, true)} 張`],
       ];
+      if (d.counted != null) rows.push(["本月增減", `${fmtLots(d.counted, true)} 張`]);
       if (d.meta.market) rows.push(["　集中市場買賣", `${fmtLots(d.meta.market, true)} 張`]);
       if (d.meta.rsu) rows.push(["　員工股/RSU", `${fmtLots(d.meta.rsu, true)} 張`]);
       if (p != null) rows.push(["月底股價", `${p.toLocaleString("zh-TW")} 元`]);
@@ -244,17 +238,12 @@
   function monthRow(m) {
     const verified = m.meta.verified === true ? '<span class="ins-badge ok">✓ 明細與 IRB110 相符</span>'
       : m.meta.verified === false ? `<span class="ins-badge warn">明細加總 ${fmtLots(m.meta.detailTotal)} 張與 IRB110 不符</span>` : "";
-    let body;
-    if (!m.meta.detail) {
-      body = `<p class="note">${m.meta.noFiling ? "公開資訊觀測站查無本月申報。" : "本月事後申報明細尚未取得。"}</p>`;
-    } else {
-      const counted = m.breakdown.length ? personLines(m.breakdown, "counted") : '<p class="note">本月沒有買賣或員工股取得。</p>';
-      body = `<div class="ins-status">${verified}</div>${counted}`;
-    }
+    const counted = m.breakdown.length ? personLines(m.breakdown, "counted") : '<p class="note">本月沒有買賣或員工股取得。</p>';
+    const body = `<div class="ins-status">${verified}</div>${counted}`;
     return `<details class="ins-month">
       <summary><span class="m">${esc(m.month)}</span>
         <span class="r">${fmtLots(m.total)}</span>
-        <span class="r">${m.counted == null ? '<span class="na">待補</span>' : lotsHtml(m.counted)}${m.meta.rsu ? ' <span class="ins-badge rsu" title="含員工股/RSU">RSU</span>' : ""}</span>
+        <span class="r">${lotsHtml(m.counted)}${m.meta.rsu ? ' <span class="ins-badge rsu" title="含員工股/RSU">RSU</span>' : ""}</span>
       </summary>
       <div class="ins-body">${body}</div>
     </details>`;
@@ -281,7 +270,6 @@
     const statusBadges = [];
     if (h.verified === true) statusBadges.push('<span class="ins-badge ok">✓ 申報明細與 IRB110 逐股相符</span>');
     if (h.verified === false) statusBadges.push('<span class="ins-badge warn">申報明細與 IRB110 不符，請以官方為準</span>');
-    if (last && !h.detail) statusBadges.push('<span class="ins-badge">最新月申報明細待補</span>');
     if (h.rsu) statusBadges.push(`<span class="ins-badge rsu">含員工股/RSU ${fmtLots(h.rsu, true)} 張</span>`);
 
     const sec = document.createElement("div");
@@ -305,11 +293,10 @@
           <span><i style="background:var(--up)"></i>增加</span>
           <span><i style="background:var(--down)"></i>減少</span>
           <span><i style="background:var(--accent);border-radius:50%"></i>含員工股/RSU</span>
-          <span><i style="border:1px dashed var(--muted)"></i>明細待補</span>
           <span><i class="line" style="background:var(--text-secondary)"></i>月底股價（虛線）</span>
         </div>
         <div class="ins-head"><span>月份</span><span class="r">總持股（張）</span><span class="r">增減（張）</span><span></span></div>
-        <div class="ins-months">${list.slice(-6).reverse().map(monthRow).join("")}</div>
+        <div class="ins-months">${list.filter((m) => m.counted != null).slice(-6).reverse().map(monthRow).join("")}</div>
       </div>` : '<p class="note">IRB110 月報沒有這家公司的內部人持股資料。</p>'}
 
       <details class="disclosure ins-method">
@@ -319,7 +306,6 @@
           <li>同一人兼任多職、同一法人董事派多位代表人，都只算一次。</li>
           <li><b>本月增減</b>只計公開資訊觀測站內部人持股異動事後申報表的集中市場買進−賣出，以及經理人取得的<b>員工股/RSU</b>（明確標示）。</li>
           <li>「選任時持股」與目前持股的差距是任期內累計，不當成單月增減。</li>
-          <li>明細尚未取得的月份，增減留白。</li>
         </ul>
       </details>`;
 
