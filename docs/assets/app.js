@@ -34,11 +34,11 @@
   const state = {
     rows: [], view: [], meta: null, market: null, tags: {}, movers: null, history: null,
     tdcc: { date: null, base: null, d: {} },
-    performance: { stocks: {} }, returnPeriod: "d1", revenueNotes: {}, profitGrowth: {stocks:{}}, fxGains: {stocks:{}}, operating: {stocks:{}}, insider: {stocks:{}}, selectedColumns: ["p", "cap", "priceReturn", "insider_holding", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
+    performance: { stocks: {} }, returnPeriod: "d1", revenueNotes: {}, profitGrowth: {stocks:{}}, fxGains: {stocks:{}}, operating: {stocks:{}}, insider: {stocks:{}}, selectedColumns: ["p", "cap", "priceReturn", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
-    shown: 200, period: "d1", moverMarket: "listed",
+    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up",
   };
 
   const tagsOf = (code) => state.tags[code] || [];
@@ -709,15 +709,6 @@
     syncSortUI();
   }
 
-  /** 還原成預設排序（市值由大到小） */
-  function resetSort() {
-    if (!state.sorts.length) return;
-    state.sorts = [];
-    state.shown = 200;
-    applyFilters();
-    syncSortUI();
-  }
-
   function syncSortUI() {
     paintHead();
     const sel = $("sortMobile");
@@ -741,19 +732,6 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove("is-on"), 2000);
   }
-
-  // 點到頁面「真正的空白處」才還原預設排序；點表格、控制項、卡片都不算
-  const KEEP_SORT = "#tbl, #sortMobile, a, button, input, select, textarea, label," +
-    " [role='button'], [role='group'], dialog, .modal, .sheet, .card, .tile," +
-    " .stock-cards, .rank, details, summary, .toast";
-  // 用捕獲階段判斷：等到冒泡才判斷的話，表格早就重繪了，e.target 已經脫離 DOM，
-  // closest() 會一律回傳 null，變成點表頭也被當成「點空白處」。
-  document.addEventListener("click", (e) => {
-    if (!state.sorts.length) return;
-    const t = e.target;
-    if (t instanceof Element && (t.closest(KEEP_SORT) || !t.isConnected)) return;
-    resetSort();
-  }, true);
 
   // 固定高度的表格捲動區；表頭與左右捲動共用同一個容器。
   const shell = document.querySelector(".table-shell");
@@ -1171,12 +1149,12 @@
     paint();
   }
 
-  // ---------------------------------------------------------------- 漲幅排行
+  // ---------------------------------------------------------------- 漲跌幅排行
   function renderMovers() {
     const mv = state.movers;
     const note = $("moversNote");
     if (!mv || !mv.periods || !Object.keys(mv.periods).length) {
-      note.textContent = "漲幅資料尚未產生 —— 到 GitHub 的 Actions 頁執行一次「每日更新」即可。";
+      note.textContent = "漲跌幅資料尚未產生 —— 到 GitHub 的 Actions 頁執行一次「每日更新」即可。";
       $("groupBars").innerHTML = "";
       $("rankList").innerHTML = "";
       return;
@@ -1184,13 +1162,19 @@
     const keys = Object.keys(mv.periods);
     if (!mv.periods[state.period]) state.period = keys[0];
     const p = mv.periods[state.period];
+    const down = state.moverDir === "down";
+    const word = down ? "跌幅" : "漲幅";
+    $("groupTitle").textContent = down ? "最近在跌什麼" : "最近在漲什麼";
+    $("groupNote").textContent = down
+      ? "依業務標籤分組，取組內漲跌幅中位數由低到高排序。中位數要多數成員一起跌才會低，一檔重挫拉不動。"
+      : "依業務標籤分組，取組內漲跌幅中位數由高到低排序。中位數要多數成員一起漲才會高，一檔飆股拉不動。";
 
     note.innerHTML = `以 <strong>${p.from}</strong> 收盤為基準，比到 <strong>${mv.asOf}</strong>，`
       + `共 ${p.days} 個交易日。`
-      + (p.counts.esb ? "" : "<strong>興櫃的中長天期漲幅要等資料累積</strong>——官方沒有整批的興櫃歷史每日行情端點，只能從本站開始逐日收集。");
+      + (p.counts.esb ? "" : "<strong>興櫃的中長天期漲跌幅要等資料累積</strong>——官方沒有整批的興櫃歷史每日行情端點，只能從本站開始逐日收集。");
 
     // ---- 族群長條 ----
-    const gs = (p.groups || []).filter((g) => g.med != null).slice(0, 12);
+    const gs = ((down ? p.groupsDown : p.groups) || []).filter((g) => g.med != null).slice(0, 12);
     const maxAbs = Math.max(...gs.map((g) => Math.abs(g.med)), 1);
     $("groupBars").innerHTML = gs.length
       ? gs.map((g) => {
@@ -1203,7 +1187,7 @@
             <span class="gn">${g.n} 檔</span>
           </button>`;
         }).join("")
-      : '<p class="note">這個期間還沒有足夠的族群資料。</p>';
+      : `<p class="note">${down && !p.groupsDown ? "跌幅族群要等下一次每日更新產生。" : `這個期間沒有中位數${down ? "下跌" : "上漲"}的族群。`}</p>`;
 
     // 下一幀才設寬度，讓長條有一次生長動畫
     requestAnimationFrame(() => {
@@ -1221,8 +1205,9 @@
     );
 
     // ---- 個股排行 ----
-    const list = (p.markets && p.markets[state.moverMarket]) || [];
-    $("rankTitle").textContent = `${LABEL[state.moverMarket]}漲幅排行`;
+    const src = down ? p.losers : p.markets;
+    const list = (src && src[state.moverMarket]) || [];
+    $("rankTitle").textContent = `${LABEL[state.moverMarket]}${word}排行`;
     $("rankList").innerHTML = list.length
       ? list.slice(0, 25).map((s) => {
           const ts = (s.t && s.t.length ? s.t : (s.i ? [s.i] : []));
@@ -1234,7 +1219,7 @@
             <span class="rr ${s.r >= 0 ? "pos" : "neg"}">${s.r > 0 ? "+" : ""}${fmt(s.r, 1)}%</span>
           </li>`;
         }).join("")
-      : `<li class="empty">${LABEL[state.moverMarket]}在這個期間還沒有資料。</li>`;
+      : `<li class="empty">${down && !src ? "跌幅排行要等下一次每日更新產生。" : `${LABEL[state.moverMarket]}在這個期間沒有${down ? "下跌" : "上漲"}的個股。`}</li>`;
     $("rankList").querySelectorAll("li[data-c]").forEach((li) =>
       li.addEventListener("click", () => openStock(li.dataset.c))
     );
@@ -1318,6 +1303,7 @@
     bindSeg("marketSeg", "market", "filterMarket", () => { state.shown = 200; applyFilters(); });
     bindSeg("periodSeg", "period", "period", renderMovers);
     bindSeg("moverMarketSeg", "mm", "moverMarket", renderMovers);
+    bindSeg("moverDirSeg", "dir", "moverDir", renderMovers);
 
     // 桌機／手機切換時重畫圖表尺寸
     MOBILE.addEventListener("change", () => draw());
