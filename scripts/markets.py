@@ -239,6 +239,7 @@ INC_KEYS = {
     "gross": ("營業毛利（毛損）淨額", "營業毛利（毛損）", "營業毛利"),
     "op": ("營業利益（損失）", "營業利益"),
     "pretax": ("稅前淨利（淨損）", "繼續營業單位稅前淨利（淨損）", "稅前淨利"),
+    "nonop": ("營業外收入及支出", "營業外收入及支出合計"),
     "net": ("淨利（淨損）歸屬於母公司業主", "本期淨利（淨損）", "本期稅後淨利（淨損）"),
     "eps": ("基本每股盈餘（元）", "基本每股盈餘"),
 }
@@ -263,6 +264,7 @@ def norm_income(rows: list[dict]) -> dict[str, dict]:
             "gross": num(_first(r, *INC_KEYS["gross"])),
             "op": num(_first(r, *INC_KEYS["op"])),
             "pretax": num(_first(r, *INC_KEYS["pretax"])),
+            "nonop": num(_first(r, *INC_KEYS["nonop"])),
             "net": num(_first(r, *INC_KEYS["net"])),
             "eps": num(_first(r, *INC_KEYS["eps"])),
         }
