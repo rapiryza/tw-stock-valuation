@@ -222,6 +222,19 @@ def profit_growth(cur: dict, prev: dict | None) -> dict | None:
         out["gpm"] = rnd((cur.get("gross") or 0) / revv * 100) if cur.get("gross") else None
         out["opm"] = rnd((cur.get("op") or 0) / revv * 100) if cur.get("op") else None
         out["npm"] = rnd((cur.get("net") or 0) / revv * 100) if cur.get("net") else None
+    # 業外占比：業外收支 ÷ 稅前淨利、÷ 營業利益。分母 ≤ 0 時比例沒有意義，留白。
+    # 損益表沒有單列業外時（部分業別），以「稅前淨利 − 營業利益」回推。
+    op, pretax = cur.get("op"), cur.get("pretax")
+    nonop = cur.get("nonop")
+    if nonop is None and op is not None and pretax is not None:
+        nonop = pretax - op
+    if nonop is not None:
+        out["nonop"] = nonop
+        out["nonop_pt"] = rnd(nonop / pretax * 100) if pretax and pretax > 0 else None
+        out["nonop_op"] = rnd(nonop / op * 100) if op and op > 0 else None
+    # 淨利（千元）供前端計算外匯損益占淨利
+    if cur.get("net") is not None:
+        out["net"] = cur.get("net")
     if prev:
         out["net_yoy"] = rnd(pct_change(cur.get("net"), prev.get("net")))
         out["op_yoy"] = rnd(pct_change(cur.get("op"), prev.get("op")))
@@ -294,7 +307,7 @@ def update_fundamentals(stocks: dict[str, dict]) -> None:
                 entry.setdefault("rev_cum", {})[month_key(*parsed)] = r["cum"]
         if i.get("year") and i.get("quarter"):
             entry.setdefault("income", {})[f"{i['year']}Q{i['quarter']}"] = {
-                k: i.get(k) for k in ("revenue", "gross", "op", "pretax", "net", "eps")
+                k: i.get(k) for k in ("revenue", "gross", "op", "pretax", "nonop", "net", "eps")
             }
     write_json(path, store)
 
