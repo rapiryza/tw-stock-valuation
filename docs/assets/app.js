@@ -891,10 +891,14 @@
     const base = state.rows.find((r) => r.c === code);
     if (!base) return;
     // 個股檔只存歷史；營運先行指標另按需載入，不增加首頁初始下載量。
-    const [dRaw, opRaw] = await Promise.all([
+    const [dRaw, opRaw, fhRaw] = await Promise.all([
       getJSON(`data/stock/${code}.json`, null),
       getJSON(`data/operating/${code}.json`, null),
+      getJSON(`data/fin_history/${code}.json`, null),
     ]);
+    const fh = fhRaw || {};
+    const revMonths = Object.keys(fh.rev || {}).sort();
+    const marginQuarters = Object.keys(fh.margin || {}).sort();
     const d = dRaw || {}, op = opRaw || {};
     const rev = base.rev || {}, fin = base.fin || {};
     const opPeriods = op.periods || {};
@@ -1023,6 +1027,17 @@
       <p class="note" id="opCombinedNote" hidden>非會計科目，只供營運觀察。採同季合約負債總額（未揭露總額時採流動部分）＋客戶暫收款合計；任一項缺值即不顯示合計。</p>
       <p class="note" id="opSourceNote"></p>
       <div class="card"><div class="op-chart-head"><strong id="opSelectedTitle">合約負債</strong><span id="opSelectedUnit">億元</span></div><div class="chart-wrap"><div class="chart-scroll"><svg class="chart" id="opSelectedChart" role="img" aria-label="所選營運指標"></svg></div><div class="tooltip" id="opSelectedTip" hidden></div></div></div>
+      <h4 id="finHistHead">歷年月營收</h4>
+      <p class="note">${revMonths.length ? `公開資訊觀測站每月營收彙總表，${revMonths[0]} 至 ${revMonths[revMonths.length - 1]}，每月一筆；缺值留白。` : "歷年月營收每日自動補抓中，尚無這家公司的資料。"}</p>
+      <div class="op-controls" role="group" aria-label="月營收圖表模式">
+        <button type="button" data-rev-mode="amount" aria-pressed="true">金額</button>
+        <button type="button" data-rev-mode="mom" aria-pressed="false">MoM</button>
+        <button type="button" data-rev-mode="yoy" aria-pressed="false">YoY</button>
+      </div>
+      <div class="card"><div class="op-chart-head"><strong>月營收</strong><span id="revHistUnit">億元</span></div><div class="chart-wrap"><div class="chart-scroll"><svg class="chart" id="revHistChart" role="img" aria-label="${esc(base.n)} 歷年月營收"></svg></div><div class="tooltip" id="revHistTip" hidden></div></div></div>
+      <h4>歷年毛利率、營業利益率、淨利率</h4>
+      <p class="note">${marginQuarters.length ? `公開資訊觀測站財務比較 E 點通單季數字，${marginQuarters[0]} 至 ${marginQuarters[marginQuarters.length - 1]}；淨利率為稅後純益率。金融業沒有毛利率與營業利益率，缺值留白。` : "利潤率每日自動補抓中，尚無這家公司的資料。"}</p>
+      <div class="card"><div class="op-chart-head"><strong>單季利潤率</strong><span>%</span></div><div class="chart-wrap"><div class="chart-scroll"><svg class="chart" id="marginChart" role="img" aria-label="${esc(base.n)} 歷年毛利率、營業利益率、淨利率"></svg></div><div class="tooltip" id="marginTip" hidden></div></div></div>
       <h4>歷年本益比</h4>
       <div class="card" style="margin-top:12px"><div class="chart-wrap">
         <div class="chart-scroll"><svg class="chart" id="stockChart" role="img" aria-label="${esc(base.n)} 歷年本益比"></svg></div>
@@ -1113,6 +1128,41 @@
         renderOperating(button.dataset.opMode);
       });
     });
+
+    // 歷年月營收（千元 → 億元）與 MoM／YoY
+    const revOf = (ym) => (fh.rev || {})[ym] ?? null;
+    const revShift = (ym, n) => {
+      const t = Number(ym.slice(0, 4)) * 12 + Number(ym.slice(5, 7)) - 1 + n;
+      return `${Math.floor(t / 12)}-${String(t % 12 + 1).padStart(2, "0")}`;
+    };
+    const revDelta = (ym, back) => {
+      const cur = revOf(ym), old = revOf(revShift(ym, -back));
+      return cur == null || old == null || old === 0 ? null : (cur - old) / Math.abs(old) * 100;
+    };
+    const renderRevenue = (mode) => {
+      ov.querySelector("#revHistUnit").textContent = mode === "amount" ? "億元" : "%";
+      const points = revMonths.map((ym) => [ym, mode === "amount" ? (revOf(ym) == null ? null : revOf(ym) / 1e5)
+        : revDelta(ym, mode === "mom" ? 1 : 12)]);
+      lineChart(ov.querySelector("#revHistChart"), ov.querySelector("#revHistTip"),
+        revMonths.length ? [{ key: "rev", name: mode === "amount" ? "月營收" : mode === "mom" ? "月增率" : "年增率", color: "var(--accent)", points }] : [],
+        { unit: mode === "amount" ? "億元" : "%", allowNegative: mode !== "amount", height: MOBILE.matches ? 220 : 250 });
+    };
+    renderRevenue("amount");
+    ov.querySelectorAll("[data-rev-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        ov.querySelectorAll("[data-rev-mode]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        button.setAttribute("aria-pressed", "true");
+        renderRevenue(button.dataset.revMode);
+      });
+    });
+    const marginSeries = (slot) => marginQuarters.map((q) => [q, (fh.margin[q] || [])[slot] ?? null]);
+    lineChart(ov.querySelector("#marginChart"), ov.querySelector("#marginTip"),
+      marginQuarters.length ? [
+        { key: "gpm", name: "毛利率", color: "var(--accent)", points: marginSeries(0) },
+        { key: "opm", name: "營益率", color: "var(--series-1)", points: marginSeries(1) },
+        { key: "npm", name: "淨利率", color: "var(--series-2)", points: marginSeries(2) },
+      ].filter((s) => s.points.some((p) => p[1] != null)) : [],
+      { unit: "%", allowNegative: true, height: MOBILE.matches ? 220 : 250 });
 
     const hist = peHistoryPoints(d.hist || []);
     lineChart(ov.querySelector("#stockChart"), ov.querySelector("#stockTip"),
