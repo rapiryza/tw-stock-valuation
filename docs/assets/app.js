@@ -38,7 +38,7 @@
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
-    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50,
+    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null,
   };
 
   const tagsOf = (code) => state.tags[code] || [];
@@ -1280,13 +1280,56 @@
     renderRecords();
   }
 
-  function recordValue(it, unit) {
-    if (unit === "pct") return [`${fmt(it.v, 2)}%`, `前高 ${fmt(it.prev, 2)}%（${it.prevPeriod}）`];
-    if (unit === "amt") return [human(it.v), `前高 ${human(it.prev)}（${it.prevPeriod}）`];
-    if (unit === "ps") return [`${fmt(it.v, 2)} 倍`,
-      `P95 ${fmt(it.q95, 2)} · P5 ${fmt(it.q05, 2)} · 最高 ${fmt(it.max, 2)}`];
-    const word = state.recordKind === "price_low" ? "前低" : "前高";
-    return [fmt(it.v, 2), `${word} ${fmt(it.prev, 2)}（${it.period}）`];
+  // 各榜單自己的欄位；其後接個股指標的同名欄位（數值與格式一致）
+  const RECORD_EXTRA = ["ps", "pe", "rev_yoy", "rev_cum", "contract_yoy", "net_yoy", "rev_note"];
+  const TEXT_KEYS = new Set(["c", "n", "period", "prevPeriod", "rev_note"]);
+  const noteText = (r) => String((r.rev && r.rev.note) || state.revenueNotes[r.c]?.note || "").trim() || null;
+
+  function recordColumns(kind, unit) {
+    const num = (k, t, d = 2, f = null) => ({ k, t, val: (it) => it[k] ?? null,
+      get: (it) => it[k] == null ? '<span class="na">—</span>' : esc(f ? f(it[k]) : fmt(it[k], d)) });
+    const metric = {
+      price_high: "收盤價", price_low: "收盤價", gpm_high: "毛利率%", opm_high: "營業利益率%",
+      npm_high: "淨利率%", revenue_high: "單月營收", contract_high: "合約負債",
+    }[kind];
+    const prevWord = kind === "price_low" ? "前低" : "前高";
+    let own;
+    if (unit === "ps") {
+      own = [num("v", "目前 P/S"), num("q95", "P95 上界"), num("q05", "P5 下界"), num("max", "歷史最高")];
+    } else if (unit === "amt") {
+      own = [num("v", metric, 0, human), num("prev", prevWord, 0, human),
+        { k: "prevPeriod", t: `${prevWord}期別`, val: (it) => it.prevPeriod, get: (it) => esc(it.prevPeriod || "—") }];
+    } else if (unit === "pct") {
+      own = [num("v", metric), num("prev", `${prevWord}%`),
+        { k: "prevPeriod", t: `${prevWord}期別`, val: (it) => it.prevPeriod, get: (it) => esc(it.prevPeriod || "—") }];
+    } else {
+      own = [num("v", metric), num("prev", prevWord),
+        { k: "period", t: `${prevWord}日期`, val: (it) => it.period, get: (it) => esc(it.period || "—") }];
+    }
+    const extras = RECORD_EXTRA.filter((k) => !(unit === "ps" && k === "ps")).map((k) => {
+      const col = COLS.find((c) => c.k === k);
+      return { k, t: col.t, cls: col.cls, row: true,
+        val: (it, r) => (k === "rev_note" ? noteText(r) : valueOf(r, k)),
+        get: (it, r) => col.get(r) ?? '<span class="na">—</span>' };
+    });
+    return [
+      { k: "c", t: "代號", val: (it) => it.c, get: (it) => it.c },
+      { k: "n", t: "名稱", val: (it) => it.n,
+        get: (it) => `${esc(it.n)} <span class="tag static">${LABEL[it.m] || ""}</span>` },
+      ...own,
+      { k: "cap", t: "市值", val: (it) => it.cap ?? null, get: (it) => esc(human(it.cap) ?? "—") },
+      ...extras,
+    ];
+  }
+
+  function sortRecordsBy(k) {
+    const cur = state.recordSort;
+    const first = TEXT_KEYS.has(k) ? 1 : -1;
+    if (!cur || cur.k !== k) state.recordSort = { k, dir: first };
+    else if (cur.dir === first) state.recordSort = { k, dir: -first };
+    else state.recordSort = null;
+    state.recordShown = 50;
+    renderRecords();
   }
 
   function renderRecords() {
@@ -1294,27 +1337,40 @@
     if (!rec) return;
     const [title, rule, unit] = RECORD_KINDS[state.recordKind];
     const a = rec.asOf || {};
-    $("recordsNote").textContent = `股價 ${a.price || "—"}、月營收 ${a.revenue || "—"}、財報 ${a.quarter || "—"}、合約負債 ${a.contract || "—"}；依市值由大到小排列。`;
-    const all = (rec.lists || {})[state.recordKind] || [];
-    const list = all.filter((it) => !state.recordMarket || it.m === state.recordMarket);
+    $("recordsNote").textContent = `股價 ${a.price || "—"}、月營收 ${a.revenue || "—"}、財報 ${a.quarter || "—"}、合約負債 ${a.contract || "—"}。點欄位標題排序：第一次由大到小、再點一次由小到大、第三次回到市值排序。`;
+    if (!state.rowByCode || state.rowByCode.size !== state.rows.length) state.rowByCode = new Map(state.rows.map((r) => [r.c, r]));
+    const cols = recordColumns(state.recordKind, unit);
+    if (state.recordSort && !cols.some((c) => c.k === state.recordSort.k)) state.recordSort = null;
+    const sort = state.recordSort || { k: "cap", dir: -1 };
+    const col = cols.find((c) => c.k === sort.k);
+    const rowOf = (c) => state.rowByCode.get(c) || { c, rev: {} };
+    const list = ((rec.lists || {})[state.recordKind] || [])
+      .filter((it) => !state.recordMarket || it.m === state.recordMarket)
+      .map((it) => ({ it, r: rowOf(it.c), key: col.val(it, rowOf(it.c)) }));
+    list.sort((x, y) => {
+      if (x.key == null && y.key == null) return 0;
+      if (x.key == null) return 1;
+      if (y.key == null) return -1;
+      return (typeof x.key === "string" || typeof y.key === "string")
+        ? String(x.key).localeCompare(String(y.key), "zh-Hant") * sort.dir
+        : (x.key - y.key) * sort.dir;
+    });
     $("recordTitle").textContent = `${title}（${list.length} 檔）`;
     $("recordRule").textContent = rule;
-    $("recordList").innerHTML = list.length
-      ? list.slice(0, state.recordShown).map((it) => {
-          const [v, sub] = recordValue(it, unit);
-          const ts = tagsOf(it.c).slice(0, 3);
-          return `<li data-c="${it.c}">
-            <div class="rinfo">
-              <div class="rhead"><span class="rc">${it.c}</span><span class="rn">${esc(it.n)}</span><span class="tag static">${LABEL[it.m] || ""}</span></div>
-              ${ts.length ? `<div class="rt">${ts.map((t) => `<span class="tag static">${esc(t)}</span>`).join("")}</div>` : ""}
-            </div>
-            <span class="rr">${esc(v)}<small style="display:block;font-size:11px;font-weight:500;color:var(--muted)">${esc(sub)}</small></span>
-          </li>`;
-        }).join("")
-      : '<li class="empty">目前沒有符合的個股。</li>';
+    $("recordHead").innerHTML = cols.map((c) => {
+      const on = state.recordSort && state.recordSort.k === c.k;
+      const aria = on ? (state.recordSort.dir > 0 ? "ascending" : "descending") : "none";
+      const ind = on ? `<span class="sort-ind" aria-hidden="true">${state.recordSort.dir > 0 ? "↑" : "↓"}</span>` : "";
+      return `<th data-k="${c.k}" aria-sort="${aria}" title="點一次由大到小、再點一次由小到大、第三次回到市值排序">${esc(c.t)}${ind}</th>`;
+    }).join("");
+    $("recordBody").innerHTML = list.length
+      ? list.slice(0, state.recordShown).map(({ it, r }) =>
+          `<tr data-c="${it.c}">${cols.map((c) => `<td class="${c.cls || ""}">${c.get(it, r)}</td>`).join("")}</tr>`).join("")
+      : `<tr><td colspan="${cols.length}" class="na" style="text-align:left">目前沒有符合的個股。</td></tr>`;
     $("recordMore").style.display = list.length > state.recordShown ? "" : "none";
-    $("recordList").querySelectorAll("li[data-c]").forEach((li) =>
-      li.addEventListener("click", () => openStock(li.dataset.c)));
+    $("recordHead").querySelectorAll("th").forEach((th) => th.addEventListener("click", () => sortRecordsBy(th.dataset.k)));
+    $("recordBody").querySelectorAll("tr[data-c]").forEach((tr) =>
+      tr.addEventListener("click", (e) => { if (!e.target.closest("a")) openStock(tr.dataset.c); }));
   }
 
   function draw() { renderMovers(); }
@@ -1397,7 +1453,7 @@
     bindSeg("moverMarketSeg", "mm", "moverMarket", renderMovers);
     bindSeg("moverDirSeg", "dir", "moverDir", renderMovers);
     bindSeg("recordMarketSeg", "rm", "recordMarket", () => { state.recordShown = 50; renderRecords(); });
-    $("recordKind").addEventListener("change", (e) => { state.recordKind = e.target.value; state.recordShown = 50; renderRecords(); });
+    $("recordKind").addEventListener("change", (e) => { state.recordKind = e.target.value; state.recordShown = 50; state.recordSort = null; renderRecords(); });
     $("recordMore").addEventListener("click", () => { state.recordShown += 100; renderRecords(); });
     showPage();
 
