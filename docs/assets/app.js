@@ -38,7 +38,7 @@
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
-    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null,
+    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null, recordReturn: "d1",
   };
 
   const tagsOf = (code) => state.tags[code] || [];
@@ -1282,7 +1282,9 @@
 
   // 各榜單自己的欄位；其後接個股指標的同名欄位（數值與格式一致）
   const RECORD_EXTRA = ["ps", "pe", "rev_yoy", "rev_cum", "contract_yoy", "net_yoy", "rev_note"];
-  const TEXT_KEYS = new Set(["c", "n", "period", "prevPeriod", "rev_note"]);
+  const TEXT_KEYS = new Set(["c", "n", "tags", "period", "prevPeriod", "rev_note"]);
+  const RECORD_RETURN = [["d1", "1日"], ["w1", "1週"], ["m1", "30天"], ["m3", "3個月"], ["ytd", "今年迄今"], ["y1", "1年"], ["y5", "5年"]];
+  const recordReturnOf = (c) => (performanceOf(c).returns || {})[state.recordReturn] ?? null;
   const noteText = (r) => String((r.rev && r.rev.note) || state.revenueNotes[r.c]?.note || "").trim() || null;
 
   function recordColumns(kind, unit) {
@@ -1316,7 +1318,17 @@
       { k: "c", t: "代號", val: (it) => it.c, get: (it) => it.c },
       { k: "n", t: "名稱", val: (it) => it.n,
         get: (it) => `${esc(it.n)} <span class="tag static">${LABEL[it.m] || ""}</span>` },
+      { k: "tags", t: "業務標籤", cls: "ind",
+        val: (it) => (tagsOf(it.c)[0] || it.i || null),
+        get: (it) => {
+          const ts = tagsOf(it.c);
+          return ts.length ? ts.map((t) => `<span class="tag static">${esc(t)}</span>`).join(" ")
+            : it.i ? `<span class="tag static ind-tag">${esc(it.i)}</span>` : '<span class="na">—</span>';
+        } },
       ...own,
+      { k: "ret", t: "漲跌幅%", val: (it) => recordReturnOf(it.c), get: (it) => cell(recordReturnOf(it.c), 2, true),
+        head: `<select class="return-period" id="recordReturn" aria-label="選擇漲跌幅期間">${RECORD_RETURN.map(([k, t]) =>
+          `<option value="${k}"${state.recordReturn === k ? " selected" : ""}>${t}</option>`).join("")}</select>` },
       { k: "cap", t: "市值", val: (it) => it.cap ?? null, get: (it) => esc(human(it.cap) ?? "—") },
       ...extras,
     ];
@@ -1361,14 +1373,17 @@
       const on = state.recordSort && state.recordSort.k === c.k;
       const aria = on ? (state.recordSort.dir > 0 ? "ascending" : "descending") : "none";
       const ind = on ? `<span class="sort-ind" aria-hidden="true">${state.recordSort.dir > 0 ? "↑" : "↓"}</span>` : "";
-      return `<th data-k="${c.k}" aria-sort="${aria}" title="點一次由大到小、再點一次由小到大、第三次回到市值排序">${esc(c.t)}${ind}</th>`;
+      return `<th data-k="${c.k}" aria-sort="${aria}" title="點一次由大到小、再點一次由小到大、第三次回到市值排序">${esc(c.t)}${ind}${c.head ? `<br>${c.head}` : ""}</th>`;
     }).join("");
     $("recordBody").innerHTML = list.length
       ? list.slice(0, state.recordShown).map(({ it, r }) =>
           `<tr data-c="${it.c}">${cols.map((c) => `<td class="${c.cls || ""}">${c.get(it, r)}</td>`).join("")}</tr>`).join("")
       : `<tr><td colspan="${cols.length}" class="na" style="text-align:left">目前沒有符合的個股。</td></tr>`;
     $("recordMore").style.display = list.length > state.recordShown ? "" : "none";
-    $("recordHead").querySelectorAll("th").forEach((th) => th.addEventListener("click", () => sortRecordsBy(th.dataset.k)));
+    $("recordHead").querySelectorAll("th").forEach((th) => th.addEventListener("click", (e) => {
+      if (!e.target.closest("select")) sortRecordsBy(th.dataset.k);
+    }));
+    $("recordReturn")?.addEventListener("change", (e) => { state.recordReturn = e.target.value; renderRecords(); });
     $("recordBody").querySelectorAll("tr[data-c]").forEach((tr) =>
       tr.addEventListener("click", (e) => { if (!e.target.closest("a")) openStock(tr.dataset.c); }));
   }
