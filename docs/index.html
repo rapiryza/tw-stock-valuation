@@ -6,25 +6,21 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f4f4f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#08080c" media="(prefers-color-scheme: dark)">
-<title>資料工作表</title>
+<title>台股觀測站｜價格、產業與估值</title>
 <meta name="description" content="台灣股市上市、上櫃、興櫃的估值、營收、合約負債與存貨趨勢追蹤，資料取自證交所、櫃買中心與公開資訊觀測站官方公開資料。">
-<link rel="stylesheet" href="assets/style.css?v=20261008-insider-holding-periods">
+<link rel="stylesheet" href="assets/style.css?v=20261018-pages">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='12' height='12' rx='1' fill='%236b7280'/><path d='M3 6h10M3 10h10M7 3v10' stroke='white'/></svg>">
 </head>
-<body class="work-sheet">
+<body class="off-hours">
 
 <!-- ============ 頂欄 ============ -->
 <header class="topbar" id="topbar">
   <div class="topbar-in">
     <a class="brand" href="#top">
-      <span class="brand-mark" aria-hidden="true">▤</span>
-      <span class="brand-txt">資料工作表</span>
+      <span class="brand-mark" aria-hidden="true">TW</span>
+      <span class="brand-txt">台股觀測站</span>
     </a>
     <span class="asof" id="asof">載入中…</span>
-    <div class="display-modes" role="group" aria-label="顯示模式">
-      <button type="button" data-display-mode="work" aria-pressed="true">上班</button>
-      <button type="button" data-display-mode="off" aria-pressed="false">下班</button>
-    </div>
     <button class="icon-btn" id="themeToggle" type="button" aria-label="切換深淺色"></button>
   </div>
 </header>
@@ -32,15 +28,15 @@
 <div class="wrap" id="top">
 
 
-  <nav class="sheet-toolbar" aria-label="工作表工具列">
-    <span class="sheet-file">▤ 每日資料</span><span class="sheet-divider"></span>
-    <button type="button" id="sheetSearch">搜尋</button><button type="button" id="sheetColumns">欄位</button>
-    <button type="button" id="sheetAnalysis">分析</button><button type="button" onclick="location.href='spread.html'">台美價差</button><span class="sheet-readonly">唯讀 · 點選資料列查看明細</span>
+  <nav class="page-tabs" aria-label="頁面">
+    <a href="#stocks" data-page="stocks" aria-current="page">個股指標</a>
+    <a href="#movers" data-page="movers">漲跌幅排行與族群</a>
+    <a href="#records" data-page="records">創新高與新低榜</a>
+    <a href="spread.html" class="ext">台美價差 ↗</a>
   </nav>
 
   <!-- ============ 漲跌幅排行與族群 ============ -->
-  <details class="section worksheet-analysis" id="moversSection">
-    <summary>展開排行與族群分析</summary>
+  <section class="section worksheet-analysis page" id="moversSection" data-page="movers" hidden>
     <div class="section-head">
       <h2>漲跌幅排行與族群</h2>
       <p class="note" id="moversNote">載入中…</p>
@@ -75,11 +71,10 @@
         <ol class="rank" id="rankList"></ol>
       </div>
     </div>
-  </details>
+  </section>
 
   <!-- ============ 創新高與新低榜 ============ -->
-  <details class="section worksheet-analysis" id="recordsSection">
-    <summary>展開創新高／新低榜</summary>
+  <section class="section worksheet-analysis page" id="recordsSection" data-page="records" hidden>
     <div class="section-head">
       <h2>創新高與新低榜</h2>
       <p class="note" id="recordsNote">載入中…</p>
@@ -99,10 +94,10 @@
       <ol class="rank" id="recordList"></ol>
       <button type="button" class="more" id="recordMore" style="display:none">顯示更多</button>
     </div>
-  </details>
+  </section>
 
   <!-- ============ 個股表 ============ -->
-  <section class="section" id="stocks">
+  <section class="section page" id="stocks" data-page="stocks">
     <!-- 標題與篩選列釘住，捲個股清單時一直看得到 -->
     <div class="stock-bar">
       <div class="stock-bar-head">
@@ -155,7 +150,6 @@
       </div>
     </div>
 
-    <nav class="sheet-tabs" aria-label="工作表分頁"><a href="#stocks" aria-current="page">資料表 ▾</a><button type="button" id="sheetAnalysisTab">排行分析</button></nav>
 
     <!-- 手機：卡片列表 -->
     <div class="stock-cards" id="cards"></div>
@@ -186,7 +180,7 @@
 <div class="counterapi" ns="roseamyclara.github.io" action="view" key="tw-stock-valuation" invisible="true" aria-hidden="true"></div>
 <div class="counterapi" ns="roseamyclara.github.io" action="visitor" key="tw-stock-valuation" unique="true" invisible="true" aria-hidden="true"></div>
 
-<script src="assets/app.js?v=20261018-records"></script>
+<script src="assets/app.js?v=20261018-pages"></script>
 <script src="assets/op-ui.js?v=20261007-select-redraw-fix"></script>
 <script src="assets/insider.js?v=20261018-finhist"></script>
 <script src="assets/op-layout-fix.js?v=20261008-insider-visible"></script>
