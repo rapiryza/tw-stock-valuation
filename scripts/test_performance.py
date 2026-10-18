@@ -9,6 +9,7 @@ class PerformanceTest(unittest.TestCase):
         self.assertEqual(str(t['y1']),'2023-02-28')
         self.assertEqual(str(t['ytd']),'2023-12-31')
         self.assertEqual(str(targets(date(2024,3,31))['m1']),'2024-02-29')
+        self.assertEqual(str(t['y3']),'2021-02-28')
     def test_weekend_preceding_not_future(self):
         p={'dates':['2025-02-28','2025-03-03','2025-03-10'],'p':{'1234':[100,150,200]}}
         x=calculate(p,{},[{'c':'1234','m':'listed'}])['stocks']['1234']
