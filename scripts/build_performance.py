@@ -12,7 +12,7 @@ def shift_months(day, months):
 
 
 def targets(day):
-    return {'d1': day - timedelta(days=1), 'y5': shift_months(day, -60), 'y1': shift_months(day, -12),
+    return {'d1': day - timedelta(days=1), 'y5': shift_months(day, -60), 'y3': shift_months(day, -36), 'y1': shift_months(day, -12),
             'ytd': date(day.year, 1, 1) - timedelta(days=1),
             'm3': shift_months(day, -3), 'm1': shift_months(day, -1),
             'w1': day - timedelta(days=7)}
