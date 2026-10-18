@@ -43,6 +43,11 @@ jobs:
         working-directory: scripts
         run: python build_financial_history.py --max-minutes 45
 
+      - name: 創新高／新低榜
+        working-directory: scripts
+        run: python -m unittest test_records && python build_records.py
+        continue-on-error: true
+
       - name: commit 資料
         shell: bash
         run: |
@@ -50,6 +55,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/data/fin_history
+          git add docs/data/records.json 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "歷年月營收與利潤率無變化"
             exit 0
