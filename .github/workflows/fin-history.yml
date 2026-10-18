@@ -1,0 +1,63 @@
+name: 歷年月營收與利潤率
+
+# 月營收（t21sc03 每月彙總 CSV）只補沒抓過的月份並重抓最近 3 個月；
+# 毛利率、營業利益率、淨利率（財務比較 E 點通）每次整批重抓。
+on:
+  schedule:
+    - cron: "33 21 * * *"
+      timezone: "Asia/Taipei"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_financial_history.py"
+      - "scripts/test_financial_history.py"
+      - ".github/workflows/fin-history.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fin-history
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 單元測試
+        working-directory: scripts
+        run: python -m unittest -v test_financial_history
+
+      - name: 抓取歷年月營收與利潤率
+        working-directory: scripts
+        run: python build_financial_history.py --max-minutes 45
+
+      - name: commit 資料
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/fin_history
+          if git diff --staged --quiet; then
+            echo "歷年月營收與利潤率無變化"
+            exit 0
+          fi
+          git commit -m "歷年月營收與利潤率更新 $(TZ=Asia/Taipei date +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 15))
+          done
+          exit 1
