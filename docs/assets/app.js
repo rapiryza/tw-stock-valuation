@@ -160,41 +160,22 @@
     draw();
   });
 
-  // 顯示模式只改呈現，保留搜尋、欄位與排序狀態。
-  function applyDisplayMode(mode) {
-    const working = mode !== "off";
-    document.body.classList.toggle("work-sheet", working);
-    document.body.classList.toggle("off-hours", !working);
-    document.querySelectorAll("[data-display-mode]").forEach(button => {
-      button.setAttribute("aria-pressed", String(button.dataset.displayMode === (working ? "work" : "off")));
+  // ---------------------------------------------------------------- 分頁
+  // 個股指標為首頁；#movers 漲跌幅排行與族群、#records 創新高與新低榜
+  const PAGES = { stocks: "stocks", movers: "moversSection", records: "recordsSection" };
+  function showPage() {
+    const key = location.hash.slice(1);
+    const page = key === "movers" || key === "records" ? key : "stocks";
+    for (const [name, id] of Object.entries(PAGES)) $(id).hidden = name !== page;
+    document.querySelectorAll(".page-tabs a[data-page]").forEach((a) => {
+      if (a.dataset.page === page) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
     });
-    document.title = working ? "資料工作表" : "台股觀測站｜價格、產業與估值";
-    document.querySelector(".brand-txt").textContent = working ? "資料工作表" : "台股觀測站";
-    document.querySelector(".brand-mark").textContent = working ? "▤" : "TW";
-    $("moversSection").open = !working;
+    if (page === "records") loadRecords();
+    if (page === "movers") renderMovers();
+    window.scrollTo(0, 0);
   }
-  let savedDisplayMode = "work";
-  try { savedDisplayMode = localStorage.getItem("tw-display-mode") || "work"; } catch (_) {}
-  applyDisplayMode(savedDisplayMode);
-  document.querySelectorAll("[data-display-mode]").forEach(button => {
-    button.addEventListener("click", () => {
-      const mode = button.dataset.displayMode;
-      applyDisplayMode(mode);
-      try { localStorage.setItem("tw-display-mode", mode); } catch (_) {}
-    });
-  });
-
-  $("sheetSearch")?.addEventListener("click", () => $("q").focus());
-  $("sheetColumns")?.addEventListener("click", () => {
-    document.querySelector(".column-picker").scrollIntoView({ block: "center" });
-    document.querySelector(".column-chip")?.focus({ preventScroll: true });
-  });
-  for (const id of ["sheetAnalysis", "sheetAnalysisTab"]) {
-    $(id)?.addEventListener("click", () => {
-      $("moversSection").open = true;
-      $("moversSection").scrollIntoView({ block: "start" });
-    });
-  }
+  window.addEventListener("hashchange", showPage);
 
   // ---------------------------------------------------------------- 頂欄與回頂端
   const topbar = $("topbar");
@@ -1418,7 +1399,7 @@
     bindSeg("recordMarketSeg", "rm", "recordMarket", () => { state.recordShown = 50; renderRecords(); });
     $("recordKind").addEventListener("change", (e) => { state.recordKind = e.target.value; state.recordShown = 50; renderRecords(); });
     $("recordMore").addEventListener("click", () => { state.recordShown += 100; renderRecords(); });
-    $("recordsSection").addEventListener("toggle", (e) => { if (e.target.open) loadRecords(); });
+    showPage();
 
     // 桌機／手機切換時重畫圖表尺寸
     MOBILE.addEventListener("change", () => draw());
