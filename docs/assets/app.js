@@ -43,7 +43,7 @@
 
   const tagsOf = (code) => state.tags[code] || [];
 
-  const RETURN_PERIODS = { d1: "一日", y5: "五年", y1: "一年", ytd: "今年迄今", m3: "三個月", m1: "一個月", w1: "一週" };
+  const RETURN_PERIODS = { d1: "1日", w1: "1週", m1: "30天", m3: "3個月", ytd: "今年迄今", y1: "1年", y3: "3年", y5: "5年" };
   const performanceOf = (code) => state.performance.stocks[code] || {};
   const operatingOf = (code) => state.operating.stocks[code] || {};
   const insiderOf = (code) => state.insider.stocks[code] || {};
@@ -1284,7 +1284,7 @@
   // 可選欄位：預設不顯示，像個股指標一樣點選或拖入表格才加入
   const RECORD_EXTRA = ["p", "cap", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"];
   const TEXT_KEYS = new Set(["c", "n", "tags", "period", "prevPeriod", "rev_note"]);
-  const RECORD_RETURN = [["d1", "1日"], ["w1", "1週"], ["m1", "30天"], ["m3", "3個月"], ["ytd", "今年迄今"], ["y1", "1年"], ["y5", "5年"]];
+  const RECORD_RETURN = Object.entries(RETURN_PERIODS);
   const recordReturnOf = (c) => (performanceOf(c).returns || {})[state.recordReturn] ?? null;
   const noteText = (r) => String((r.rev && r.rev.note) || state.revenueNotes[r.c]?.note || "").trim() || null;
 
