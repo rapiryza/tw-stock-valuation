@@ -1564,3 +1564,15 @@ th[data-k="rev_note"] { cursor: grab; }
 .page-tabs a.ext { margin-left:auto; font-weight:500; font-size:13px; }
 .page[hidden] { display:none !important; }
 @media (max-width:640px) { .page-tabs a { padding:10px 11px; font-size:13.5px; } }
+
+/* 創新高與新低榜表格：代號、名稱固定在左側 */
+.rec-table { min-width: 1280px; }
+.rec-table th:first-child, .rec-table td:first-child { position: sticky; left: 0; width: 64px; min-width: 64px; }
+.rec-table th:nth-child(2), .rec-table td:nth-child(2) { position: sticky; left: 64px; min-width: 120px; border-right: 1px solid var(--border); text-align: left; }
+.rec-table td:first-child, .rec-table td:nth-child(2) { z-index: 1; background: var(--surface-1); }
+.rec-table th:first-child, .rec-table th:nth-child(2) { z-index: 3; }
+.rec-table tr:hover td:first-child, .rec-table tr:hover td:nth-child(2) { background: var(--surface-2); }
+.rec-table thead th:nth-child(3) { text-align: right; }
+#recordsSection .table-scroll { max-height: min(72svh, 760px); }
+#recordsSection .card { overflow: visible; }
+.rec-table thead th:last-child { text-align: left; }
