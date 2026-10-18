@@ -319,7 +319,7 @@
         </ul>
       </details>`;
 
-    const before = [...panel.querySelectorAll("h4")].find((x) => x.textContent.includes("歷年本益比"));
+    const before = panel.querySelector("#finHistHead") || [...panel.querySelectorAll("h4")].find((x) => x.textContent.includes("歷年本益比"));
     if (before) before.before(sec); else panel.appendChild(sec);
 
     if (last) {
