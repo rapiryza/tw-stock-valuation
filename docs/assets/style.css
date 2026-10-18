@@ -1566,7 +1566,7 @@ th[data-k="rev_note"] { cursor: grab; }
 @media (max-width:640px) { .page-tabs a { padding:10px 11px; font-size:13.5px; } }
 
 /* 創新高與新低榜表格：代號、名稱固定在左側 */
-.rec-table { min-width: 1500px; }
+.rec-table { min-width: 900px; }
 .rec-table th:first-child, .rec-table td:first-child { position: sticky; left: 0; width: 64px; min-width: 64px; }
 .rec-table th:nth-child(2), .rec-table td:nth-child(2) { position: sticky; left: 64px; min-width: 120px; border-right: 1px solid var(--border); text-align: left; }
 .rec-table td:first-child, .rec-table td:nth-child(2) { z-index: 1; background: var(--surface-1); }
@@ -1579,3 +1579,5 @@ th[data-k="rev_note"] { cursor: grab; }
 .rec-table td.ind { min-width: 170px; max-width: 260px; white-space: normal; text-align: left; line-height: 1.9; }
 .rec-table thead th[data-k="tags"] { text-align: left; }
 .rec-table .return-period { margin-top: 4px; font: inherit; font-size: 11.5px; }
+.rec-table th.rec-extra { cursor: grab; }
+#recordsSection .column-picker { margin: 10px 0 12px; }
