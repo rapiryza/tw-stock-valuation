@@ -38,7 +38,7 @@
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
-    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null, recordReturn: "d1", recordExtra: [], recordOff: [],
+    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null, recordReturn: "d1", recordExtra: ["p", "cap", "ret", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"],
   };
 
   const tagsOf = (code) => state.tags[code] || [];
@@ -1282,7 +1282,7 @@
 
   // 各榜單自己的欄位；其後接個股指標的同名欄位（數值與格式一致）
   // 可選欄位：預設不顯示，像個股指標一樣點選或拖入表格才加入
-  const RECORD_EXTRA = ["cap", "ps", "pe", "rev_yoy", "rev_cum", "contract_yoy", "net_yoy", "rev_note"];
+  const RECORD_EXTRA = ["p", "cap", "pe", "ps", "rev_yoy", "rev_cum", "contract_yoy", "customer_receipts_yoy", "net_yoy", "rev_note"];
   const TEXT_KEYS = new Set(["c", "n", "tags", "period", "prevPeriod", "rev_note"]);
   const RECORD_RETURN = [["d1", "1日"], ["w1", "1週"], ["m1", "30天"], ["m3", "3個月"], ["ytd", "今年迄今"], ["y1", "1年"], ["y5", "5年"]];
   const recordReturnOf = (c) => (performanceOf(c).returns || {})[state.recordReturn] ?? null;
@@ -1309,7 +1309,7 @@
       own = [num("v", metric), num("prev", prevWord),
         { k: "period", t: `${prevWord}日期`, val: (it) => it.period, get: (it) => esc(it.period || "—") }];
     }
-    const extras = RECORD_EXTRA.filter((k) => !(unit === "ps" && k === "ps")).map((k) => {
+    const extras = RECORD_EXTRA.map((k) => {
       const col = COLS.find((c) => c.k === k);
       if (k === "cap") return { k, t: "市值", extra: true, val: (it) => it.cap ?? null, get: (it) => esc(human(it.cap) ?? "—") };
       return { k, t: col.t, cls: col.cls, extra: true,
@@ -1327,21 +1327,19 @@
           return ts.length ? `<div class="rec-tags">${ts.map((t) => `<span class="tag static">${esc(t)}</span>`).join("")}</div>`
             : it.i ? `<span class="tag static ind-tag">${esc(it.i)}</span>` : '<span class="na">—</span>';
         }, fixed: true },
-      ...own.map((c) => ({ ...c, def: true })),
+      ...own,
       { k: "ret", t: "漲跌幅%", val: (it) => recordReturnOf(it.c), get: (it) => cell(recordReturnOf(it.c), 2, true),
         head: `<select class="return-period" id="recordReturn" aria-label="選擇漲跌幅期間">${RECORD_RETURN.map(([k, t]) =>
-          `<option value="${k}"${state.recordReturn === k ? " selected" : ""}>${t}</option>`).join("")}</select>`, def: true },
+          `<option value="${k}"${state.recordReturn === k ? " selected" : ""}>${t}</option>`).join("")}</select>` },
       ...extras,
     ];
   }
 
-  // 代號、名稱、業務標籤固定；其他欄位都可拖回可選欄位，或從可選欄位點選、拖入
+  // 代號、名稱、業務標籤固定；其他欄位預設與個股指標相同，都可拖回可選欄位，或從可選欄位點選、拖入
   function visibleRecordColumns(all) {
-    const off = new Set(state.recordOff);
     return [
       ...all.filter((c) => c.fixed),
-      ...all.filter((c) => c.def && !off.has(c.k)),
-      ...state.recordExtra.map((k) => all.find((c) => c.k === k && !c.fixed && !c.def)).filter(Boolean),
+      ...state.recordExtra.map((k) => all.find((c) => c.k === k && !c.fixed)).filter(Boolean),
     ];
   }
 
@@ -1349,16 +1347,12 @@
     const all = recordColumns(state.recordKind, RECORD_KINDS[state.recordKind][2]);
     const col = all.find((c) => c.k === k);
     if (!col || col.fixed) return;
-    if (col.def) {
-      state.recordOff = remove ? [...new Set([...state.recordOff, k])] : state.recordOff.filter((x) => x !== k);
-    } else {
-      const next = state.recordExtra.filter((x) => x !== k);
-      if (!remove) {
-        const at = before ? next.indexOf(before) : -1;
-        next.splice(at < 0 ? next.length : at, 0, k);
-      }
-      state.recordExtra = next;
+    const next = state.recordExtra.filter((x) => x !== k);
+    if (!remove) {
+      const at = before ? next.indexOf(before) : -1;
+      next.splice(at < 0 ? next.length : at, 0, k);
     }
+    state.recordExtra = next;
     renderRecords();
   }
 
