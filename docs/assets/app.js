@@ -38,7 +38,7 @@
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
-    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null, recordReturn: "d1", recordExtra: [],
+    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50, recordSort: null, recordReturn: "d1", recordExtra: [], recordOff: [],
   };
 
   const tagsOf = (code) => state.tags[code] || [];
@@ -1309,7 +1309,7 @@
       own = [num("v", metric), num("prev", prevWord),
         { k: "period", t: `${prevWord}日期`, val: (it) => it.period, get: (it) => esc(it.period || "—") }];
     }
-    const extras = state.recordExtra.filter((k) => !(unit === "ps" && k === "ps")).map((k) => {
+    const extras = RECORD_EXTRA.filter((k) => !(unit === "ps" && k === "ps")).map((k) => {
       const col = COLS.find((c) => c.k === k);
       if (k === "cap") return { k, t: "市值", extra: true, val: (it) => it.cap ?? null, get: (it) => esc(human(it.cap) ?? "—") };
       return { k, t: col.t, cls: col.cls, extra: true,
@@ -1317,41 +1317,58 @@
         get: (it, r) => col.get(r) ?? '<span class="na">—</span>' };
     });
     return [
-      { k: "c", t: "代號", val: (it) => it.c, get: (it) => it.c },
-      { k: "n", t: "名稱", val: (it) => it.n,
+      { k: "c", t: "代號", val: (it) => it.c, get: (it) => it.c, fixed: true },
+      { k: "n", t: "名稱", val: (it) => it.n, fixed: true,
         get: (it) => `${esc(it.n)} <span class="tag static">${LABEL[it.m] || ""}</span>` },
       { k: "tags", t: "業務標籤", cls: "ind",
         val: (it) => (tagsOf(it.c)[0] || it.i || null),
         get: (it) => {
           const ts = tagsOf(it.c);
-          return ts.length ? ts.map((t) => `<span class="tag static">${esc(t)}</span>`).join(" ")
+          return ts.length ? `<div class="rec-tags">${ts.map((t) => `<span class="tag static">${esc(t)}</span>`).join("")}</div>`
             : it.i ? `<span class="tag static ind-tag">${esc(it.i)}</span>` : '<span class="na">—</span>';
-        } },
-      ...own,
+        }, fixed: true },
+      ...own.map((c) => ({ ...c, def: true })),
       { k: "ret", t: "漲跌幅%", val: (it) => recordReturnOf(it.c), get: (it) => cell(recordReturnOf(it.c), 2, true),
         head: `<select class="return-period" id="recordReturn" aria-label="選擇漲跌幅期間">${RECORD_RETURN.map(([k, t]) =>
-          `<option value="${k}"${state.recordReturn === k ? " selected" : ""}>${t}</option>`).join("")}</select>` },
+          `<option value="${k}"${state.recordReturn === k ? " selected" : ""}>${t}</option>`).join("")}</select>`, def: true },
       ...extras,
     ];
   }
 
+  // 代號、名稱、業務標籤固定；其他欄位都可拖回可選欄位，或從可選欄位點選、拖入
+  function visibleRecordColumns(all) {
+    const off = new Set(state.recordOff);
+    return [
+      ...all.filter((c) => c.fixed),
+      ...all.filter((c) => c.def && !off.has(c.k)),
+      ...state.recordExtra.map((k) => all.find((c) => c.k === k && !c.fixed && !c.def)).filter(Boolean),
+    ];
+  }
+
   function changeRecordColumn(k, remove = false, before = null) {
-    const next = state.recordExtra.filter((x) => x !== k);
-    if (!remove) {
-      const at = before ? next.indexOf(before) : -1;
-      next.splice(at < 0 ? next.length : at, 0, k);
+    const all = recordColumns(state.recordKind, RECORD_KINDS[state.recordKind][2]);
+    const col = all.find((c) => c.k === k);
+    if (!col || col.fixed) return;
+    if (col.def) {
+      state.recordOff = remove ? [...new Set([...state.recordOff, k])] : state.recordOff.filter((x) => x !== k);
+    } else {
+      const next = state.recordExtra.filter((x) => x !== k);
+      if (!remove) {
+        const at = before ? next.indexOf(before) : -1;
+        next.splice(at < 0 ? next.length : at, 0, k);
+      }
+      state.recordExtra = next;
     }
-    state.recordExtra = next;
     renderRecords();
   }
 
-  function renderRecordPicker(unit) {
+  function renderRecordPicker(all, shown) {
     const pool = $("recordPool");
-    const avail = RECORD_EXTRA.filter((k) => !state.recordExtra.includes(k) && !(unit === "ps" && k === "ps"));
-    pool.innerHTML = avail.map((k) => {
-      const t = k === "cap" ? "市值" : COLS.find((c) => c.k === k).t;
-      return `<button type="button" class="column-chip" draggable="true" data-rec-col="${k}" aria-label="加入${esc(t)}">＋ ${esc(t)}</button>`;
-    }).join("") || '<span class="column-empty">所有欄位都已加入；拖曳表頭到此處即可移除</span>';
+    const on = new Set(shown.map((c) => c.k));
+    const avail = all.filter((c) => !c.fixed && !on.has(c.k));
+    pool.innerHTML = avail.map((c) =>
+      `<button type="button" class="column-chip" draggable="true" data-rec-col="${c.k}" aria-label="加入${esc(c.t)}">＋ ${esc(c.t)}</button>`).join("")
+      || '<span class="column-empty">所有欄位都已加入；拖曳表頭到此處即可移除</span>';
     pool.querySelectorAll("[data-rec-col]").forEach((el) => {
       el.addEventListener("click", () => changeRecordColumn(el.dataset.recCol));
       el.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/plain", "rec:" + el.dataset.recCol));
@@ -1362,7 +1379,7 @@
     const keyOf = (e) => { const v = e.dataTransfer.getData("text/plain"); return v.startsWith("rec:") ? v.slice(4) : null; };
     const pool = $("recordPool"), table = document.querySelector("#recordsSection .table-scroll");
     for (const el of [pool, table]) el.addEventListener("dragover", (e) => e.preventDefault());
-    pool.addEventListener("drop", (e) => { e.preventDefault(); const k = keyOf(e); if (k && state.recordExtra.includes(k)) changeRecordColumn(k, true); });
+    pool.addEventListener("drop", (e) => { e.preventDefault(); const k = keyOf(e); if (k) changeRecordColumn(k, true); });
     table.addEventListener("drop", (e) => {
       e.preventDefault();
       const k = keyOf(e); if (!k) return;
@@ -1388,11 +1405,12 @@
     const a = rec.asOf || {};
     $("recordsNote").textContent = `股價 ${a.price || "—"}、月營收 ${a.revenue || "—"}、財報 ${a.quarter || "—"}、合約負債 ${a.contract || "—"}。點欄位標題排序：第一次由大到小、再點一次由小到大、第三次回到市值排序。`;
     if (!state.rowByCode || state.rowByCode.size !== state.rows.length) state.rowByCode = new Map(state.rows.map((r) => [r.c, r]));
-    const cols = recordColumns(state.recordKind, unit);
+    const allCols = recordColumns(state.recordKind, unit);
+    const cols = visibleRecordColumns(allCols);
     if (state.recordSort && !cols.some((c) => c.k === state.recordSort.k)) state.recordSort = null;
     const sort = state.recordSort || { k: "cap", dir: -1 };
     const col = cols.find((c) => c.k === sort.k) || { val: (it) => it.cap ?? null };
-    renderRecordPicker(unit);
+    renderRecordPicker(allCols, cols);
     const rowOf = (c) => state.rowByCode.get(c) || { c, rev: {} };
     const list = ((rec.lists || {})[state.recordKind] || [])
       .filter((it) => !state.recordMarket || it.m === state.recordMarket)
@@ -1411,7 +1429,7 @@
       const on = state.recordSort && state.recordSort.k === c.k;
       const aria = on ? (state.recordSort.dir > 0 ? "ascending" : "descending") : "none";
       const ind = on ? `<span class="sort-ind" aria-hidden="true">${state.recordSort.dir > 0 ? "↑" : "↓"}</span>` : "";
-      return `<th data-k="${c.k}" aria-sort="${aria}"${c.extra ? ' draggable="true" class="rec-extra"' : ""} title="點一次由大到小、再點一次由小到大、第三次回到市值排序${c.extra ? "；拖回可選欄位即可移除" : ""}">${esc(c.t)}${ind}${c.head ? `<br>${c.head}` : ""}</th>`;
+      return `<th data-k="${c.k}" aria-sort="${aria}"${c.fixed ? "" : ' draggable="true" class="rec-extra"'} title="點一次由大到小、再點一次由小到大、第三次回到市值排序${c.fixed ? "" : "；拖回可選欄位即可移除"}">${esc(c.t)}${ind}${c.head ? `<br>${c.head}` : ""}</th>`;
     }).join("");
     $("recordBody").innerHTML = list.length
       ? list.slice(0, state.recordShown).map(({ it, r }) =>
