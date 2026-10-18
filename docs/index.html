@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#08080c" media="(prefers-color-scheme: dark)">
 <title>台股觀測站｜價格、產業與估值</title>
 <meta name="description" content="台灣股市上市、上櫃、興櫃的估值、營收、合約負債與存貨趨勢追蹤，資料取自證交所、櫃買中心與公開資訊觀測站官方公開資料。">
-<link rel="stylesheet" href="assets/style.css?v=20261018-rectable2">
+<link rel="stylesheet" href="assets/style.css?v=20261019-recpicker">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='12' height='12' rx='1' fill='%236b7280'/><path d='M3 6h10M3 10h10M7 3v10' stroke='white'/></svg>">
 </head>
 <body class="off-hours">
@@ -91,6 +91,10 @@
     <div class="card">
       <h3 class="card-h" id="recordTitle">股價創歷史新高</h3>
       <p class="note" id="recordRule"></p>
+      <div class="column-picker" aria-label="自訂榜單欄位">
+        <div class="column-picker-heading"><strong>可選欄位</strong><span>點選或拖入下方表格即可加入，把表頭拖回此區即可移除。</span></div>
+        <div id="recordPool" class="column-zone" role="group" aria-label="可選欄位，拖回此處移除"></div>
+      </div>
       <div class="table-shell"><div class="table-scroll" tabindex="0" role="region" aria-label="榜單表格，可上下左右捲動">
         <table class="rec-table"><thead><tr id="recordHead"></tr></thead><tbody id="recordBody"></tbody></table>
       </div></div>
@@ -182,7 +186,7 @@
 <div class="counterapi" ns="roseamyclara.github.io" action="view" key="tw-stock-valuation" invisible="true" aria-hidden="true"></div>
 <div class="counterapi" ns="roseamyclara.github.io" action="visitor" key="tw-stock-valuation" unique="true" invisible="true" aria-hidden="true"></div>
 
-<script src="assets/app.js?v=20261018-rectable2"></script>
+<script src="assets/app.js?v=20261019-recpicker"></script>
 <script src="assets/op-ui.js?v=20261007-select-redraw-fix"></script>
 <script src="assets/insider.js?v=20261018-finhist"></script>
 <script src="assets/op-layout-fix.js?v=20261008-insider-visible"></script>
