@@ -38,7 +38,7 @@
     // sorts: [{k, dir}]，最多 3 個，陣列順序就是優先序（索引 0 最優先）
     // 空陣列代表沒設任何條件，套用 DEFAULT_SORTS
     sorts: [], filterMarket: "", industry: "", tag: "", q: "",
-    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up",
+    shown: 200, period: "d1", moverMarket: "listed", moverDir: "up", records: null, recordKind: "price_high", recordMarket: "", recordShown: 50,
   };
 
   const tagsOf = (code) => state.tags[code] || [];
@@ -1275,6 +1275,67 @@
     );
   }
 
+  // ---------------------------------------------------------------- 創新高／新低榜
+  const RECORD_KINDS = {
+    price_high: ["股價創歷史新高", "最新收盤 ≥ 所有可得歷史收盤（2013 起每月底收盤＋近期每日收盤，未還原權息；股數變動逾 20% 只比較變動後）。", "price"],
+    price_low: ["股價創歷史新低", "最新收盤 ≤ 所有可得歷史收盤（口徑同上）。", "price"],
+    gpm_high: ["毛利率創歷史新高", "最新一季毛利率高於 2013Q1 起所有前期。", "pct"],
+    opm_high: ["營業利益率創歷史新高", "最新一季營業利益率高於 2013Q1 起所有前期。", "pct"],
+    npm_high: ["淨利率創歷史新高", "最新一季稅後純益率高於 2013Q1 起所有前期。", "pct"],
+    revenue_high: ["單月營收創歷史新高", "最新月份單月營收金額高於 2013-01 起所有月份。", "amt"],
+    contract_high: ["合約負債創歷史新高", "最新一季合約負債（總額；未揭露總額時用流動部分）高於 2022Q1 起所有前期。", "amt"],
+    ps_high: ["P/S 創歷史新高", "目前股價營收比高於 2013 起每月 P/S 的最大值。", "ps"],
+    ps_q95: ["P/S ≥ 第 95 百分位上界", "目前股價營收比 ≥ 2013 起每月 P/S 的第 95 百分位（不含本月）。", "ps"],
+    ps_q05: ["P/S ≤ 第 5 百分位下界", "目前股價營收比 ≤ 2013 起每月 P/S 的第 5 百分位（不含本月）。", "ps"],
+  };
+
+  async function loadRecords() {
+    if (state.records) return;
+    state.records = await getJSON("data/records.json", { lists: {}, counts: {}, asOf: {} });
+    const sel = $("recordKind");
+    sel.innerHTML = Object.entries(RECORD_KINDS).map(([k, [t]]) =>
+      `<option value="${k}">${esc(t)}（${(state.records.counts || {})[k] ?? 0}）</option>`).join("");
+    sel.value = state.recordKind;
+    renderRecords();
+  }
+
+  function recordValue(it, unit) {
+    if (unit === "pct") return [`${fmt(it.v, 2)}%`, `前高 ${fmt(it.prev, 2)}%（${it.prevPeriod}）`];
+    if (unit === "amt") return [human(it.v), `前高 ${human(it.prev)}（${it.prevPeriod}）`];
+    if (unit === "ps") return [`${fmt(it.v, 2)} 倍`,
+      `P95 ${fmt(it.q95, 2)} · P5 ${fmt(it.q05, 2)} · 最高 ${fmt(it.max, 2)}`];
+    const word = state.recordKind === "price_low" ? "前低" : "前高";
+    return [fmt(it.v, 2), `${word} ${fmt(it.prev, 2)}（${it.period}）`];
+  }
+
+  function renderRecords() {
+    const rec = state.records;
+    if (!rec) return;
+    const [title, rule, unit] = RECORD_KINDS[state.recordKind];
+    const a = rec.asOf || {};
+    $("recordsNote").textContent = `股價 ${a.price || "—"}、月營收 ${a.revenue || "—"}、財報 ${a.quarter || "—"}、合約負債 ${a.contract || "—"}；依市值由大到小排列。`;
+    const all = (rec.lists || {})[state.recordKind] || [];
+    const list = all.filter((it) => !state.recordMarket || it.m === state.recordMarket);
+    $("recordTitle").textContent = `${title}（${list.length} 檔）`;
+    $("recordRule").textContent = rule;
+    $("recordList").innerHTML = list.length
+      ? list.slice(0, state.recordShown).map((it) => {
+          const [v, sub] = recordValue(it, unit);
+          const ts = tagsOf(it.c).slice(0, 3);
+          return `<li data-c="${it.c}">
+            <div class="rinfo">
+              <div class="rhead"><span class="rc">${it.c}</span><span class="rn">${esc(it.n)}</span><span class="tag static">${LABEL[it.m] || ""}</span></div>
+              ${ts.length ? `<div class="rt">${ts.map((t) => `<span class="tag static">${esc(t)}</span>`).join("")}</div>` : ""}
+            </div>
+            <span class="rr">${esc(v)}<small style="display:block;font-size:11px;font-weight:500;color:var(--muted)">${esc(sub)}</small></span>
+          </li>`;
+        }).join("")
+      : '<li class="empty">目前沒有符合的個股。</li>';
+    $("recordMore").style.display = list.length > state.recordShown ? "" : "none";
+    $("recordList").querySelectorAll("li[data-c]").forEach((li) =>
+      li.addEventListener("click", () => openStock(li.dataset.c)));
+  }
+
   function draw() { renderMovers(); }
 
   // ---------------------------------------------------------------- 啟動
@@ -1354,6 +1415,10 @@
     bindSeg("periodSeg", "period", "period", renderMovers);
     bindSeg("moverMarketSeg", "mm", "moverMarket", renderMovers);
     bindSeg("moverDirSeg", "dir", "moverDir", renderMovers);
+    bindSeg("recordMarketSeg", "rm", "recordMarket", () => { state.recordShown = 50; renderRecords(); });
+    $("recordKind").addEventListener("change", (e) => { state.recordKind = e.target.value; state.recordShown = 50; renderRecords(); });
+    $("recordMore").addEventListener("click", () => { state.recordShown += 100; renderRecords(); });
+    $("recordsSection").addEventListener("toggle", (e) => { if (e.target.open) loadRecords(); });
 
     // 桌機／手機切換時重畫圖表尺寸
     MOBILE.addEventListener("change", () => draw());
