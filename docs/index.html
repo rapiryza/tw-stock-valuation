@@ -77,6 +77,30 @@
     </div>
   </details>
 
+  <!-- ============ 創新高與新低榜 ============ -->
+  <details class="section worksheet-analysis" id="recordsSection">
+    <summary>展開創新高／新低榜</summary>
+    <div class="section-head">
+      <h2>創新高與新低榜</h2>
+      <p class="note" id="recordsNote">載入中…</p>
+    </div>
+    <div class="seg-scroll">
+      <div class="select"><select id="recordKind" aria-label="選擇榜單"><option>載入中…</option></select></div>
+      <div class="seg" id="recordMarketSeg" role="group" aria-label="選擇市場" style="--n:4">
+        <button type="button" data-rm="" aria-pressed="true">全部</button>
+        <button type="button" data-rm="listed" aria-pressed="false">上市</button>
+        <button type="button" data-rm="otc" aria-pressed="false">上櫃</button>
+        <button type="button" data-rm="esb" aria-pressed="false">興櫃</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="card-h" id="recordTitle">股價創歷史新高</h3>
+      <p class="note" id="recordRule"></p>
+      <ol class="rank" id="recordList"></ol>
+      <button type="button" class="more" id="recordMore" style="display:none">顯示更多</button>
+    </div>
+  </details>
+
   <!-- ============ 個股表 ============ -->
   <section class="section" id="stocks">
     <!-- 標題與篩選列釘住，捲個股清單時一直看得到 -->
@@ -162,7 +186,7 @@
 <div class="counterapi" ns="roseamyclara.github.io" action="view" key="tw-stock-valuation" invisible="true" aria-hidden="true"></div>
 <div class="counterapi" ns="roseamyclara.github.io" action="visitor" key="tw-stock-valuation" unique="true" invisible="true" aria-hidden="true"></div>
 
-<script src="assets/app.js?v=20261018-finhist2"></script>
+<script src="assets/app.js?v=20261018-records"></script>
 <script src="assets/op-ui.js?v=20261007-select-redraw-fix"></script>
 <script src="assets/insider.js?v=20261018-finhist"></script>
 <script src="assets/op-layout-fix.js?v=20261008-insider-visible"></script>
