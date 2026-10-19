@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>登入分析後台｜台股觀測站</title>
+<link rel="stylesheet" href="assets/style.css?v=20261020-admin">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  .adm-wrap { max-width: 1280px; margin: 0 auto; padding: 18px 20px 60px; }
+  .adm-gate { max-width: 420px; margin: 60px auto; text-align: center; color: var(--text-secondary); line-height: 1.8; }
+  .adm-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
+  .adm-filters input, .adm-filters select { font: inherit; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-1); color: var(--text-primary); }
+  .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 6px 0 16px; }
+  .adm-kpi { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; background: var(--surface-1); }
+  .adm-kpi .k { font-size: 12px; color: var(--muted); }
+  .adm-kpi .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+  #admMap { height: 380px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
+  .adm-table { width: 100%; }
+  .adm-table td, .adm-table th { text-align: left !important; padding: 8px 10px; }
+  .adm-table td.num, .adm-table th.num { text-align: right !important; }
+  .adm-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); }
+  .adm-btn { font: inherit; font-size: 12.5px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary); cursor: pointer; }
+  .adm-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .adm-btn:hover { border-color: var(--accent); }
+  .adm-ex-form { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+  .adm-ex-form input { font: inherit; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-1); color: var(--text-primary); }
+  .adm-msg { font-size: 13px; color: var(--muted); min-height: 1.3em; }
+  .adm-msg.err { color: var(--up); }
+  .adm-section[hidden] { display: none; }
+  .adm-ua { max-width: 280px; white-space: normal; font-size: 11.5px; color: var(--muted); }
+</style>
+</head>
+<body class="off-hours">
+<header class="topbar" id="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">TW</span><span class="brand-txt">台股觀測站</span></a>
+    <span class="asof">登入分析後台</span>
+  </div>
+</header>
+
+<div class="adm-wrap">
+  <div id="admGate" class="adm-gate">載入中…</div>
+
+  <div id="admApp" hidden>
+    <nav class="page-tabs" aria-label="後台分頁">
+      <a href="#events" data-tab="events" aria-current="page">登入紀錄與地點</a>
+      <a href="#frequency" data-tab="frequency">登入頻率</a>
+      <a href="#exclusions" data-tab="exclusions">IP 排除名單</a>
+      <a href="./" class="ext">回網站 ↗</a>
+    </nav>
+
+    <div class="adm-filters">
+      <label>期間
+        <select id="admPeriod">
+          <option value="7">過去 7 天</option>
+          <option value="30" selected>過去 30 天</option>
+          <option value="90">過去 90 天</option>
+          <option value="custom">自訂</option>
+        </select>
+      </label>
+      <span id="admCustom" hidden><input type="date" id="admFrom"> 至 <input type="date" id="admTo"></span>
+      <input type="search" id="admEmail" placeholder="篩選使用者 Email">
+      <label id="admShowExWrap"><input type="checkbox" id="admShowEx"> 顯示被排除的 IP</label>
+      <button type="button" class="adm-btn" id="admReload">重新整理</button>
+    </div>
+
+    <!-- 1. 登入地理位置 -->
+    <section class="adm-section" data-section="events">
+      <div class="adm-kpis" id="admKpis"></div>
+      <div id="admMap" role="img" aria-label="登入地點地圖"></div>
+      <div class="table-scroll"><table class="adm-table">
+        <thead><tr><th>時間</th><th>使用者</th><th>IP</th><th>國家</th><th>城市</th><th>裝置</th><th></th></tr></thead>
+        <tbody id="admEvents"></tbody>
+      </table></div>
+      <p class="adm-msg" id="admEventsMsg"></p>
+    </section>
+
+    <!-- 2. 登入頻率 -->
+    <section class="adm-section" data-section="frequency" hidden>
+      <p class="note">統計已扣除排除名單內的 IP。平均間隔＝期間內相鄰兩次登入相隔時間的平均；只有 1 次登入時無法計算。</p>
+      <div class="table-scroll"><table class="adm-table">
+        <thead><tr><th>使用者</th><th class="num">期間登入次數</th><th class="num">平均登入間隔</th><th>期間首次登入</th><th>期間最後登入</th><th>歷史最後登入</th><th>登入國家</th></tr></thead>
+        <tbody id="admFreq"></tbody>
+      </table></div>
+      <p class="adm-msg" id="admFreqMsg"></p>
+    </section>
+
+    <!-- 3. IP 排除名單 -->
+    <section class="adm-section" data-section="exclusions" hidden>
+      <p class="note">名單內的 IP（可填單一 IP，或 CIDR 網段例如 192.168.0.0/16）登入時仍會被記錄，但不計入任何統計、地圖與頻率報表。新增或刪除後，歷史統計會立即重算。</p>
+      <form class="adm-ex-form" id="admExForm">
+        <input id="admExIp" placeholder="IP 或網段，例如 203.0.113.5 或 10.0.0.0/8" required size="34">
+        <input id="admExNote" placeholder="備註，例如：公司內網、管理員家裡" size="26">
+        <button type="submit" class="adm-btn primary">加入排除名單</button>
+        <button type="button" class="adm-btn" id="admExMine">加入我目前的 IP</button>
+      </form>
+      <p class="adm-msg" id="admExMsg"></p>
+      <div class="table-scroll"><table class="adm-table">
+        <thead><tr><th>IP／網段</th><th>備註</th><th class="num">已排除登入次數</th><th>加入時間</th><th></th></tr></thead>
+        <tbody id="admExList"></tbody>
+      </table></div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="assets/supabase-config.js?v=20261020"></script>
+<script src="assets/auth.js?v=20261020"></script>
+<script src="assets/admin.js?v=20261020"></script>
+</body>
+</html>
