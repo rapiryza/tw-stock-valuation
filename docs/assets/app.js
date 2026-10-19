@@ -876,7 +876,11 @@
       getJSON(`data/stock/${code}.json`, null),
       getJSON(`data/operating/${code}.json`, null),
       getJSON(`data/fin_history/${code}.json`, null),
+      ensureRecords(),
     ]);
+    // 出現在創新高與新低榜的項目，在詳細頁最上方醒目標注；可同時多個
+    const recordHits = Object.keys(RECORD_KINDS).filter((k) =>
+      ((state.records.lists || {})[k] || []).some((it) => it.c === code));
     const fh = fhRaw || {};
     const revMonths = Object.keys(fh.rev || {}).sort();
     const marginQuarters = Object.keys(fh.margin || {}).sort();
@@ -941,6 +945,8 @@
         <span class="ind-lbl">${esc(base.i || "")}</span>
         <button class="close" type="button" aria-label="關閉">${CLOSE_ICON}</button>
       </div>
+      ${recordHits.length ? `<div class="record-badges" aria-label="創新高與新低榜">${recordHits.map((k) =>
+        `<a class="record-badge${k === "price_low" || k === "ps_q05" ? " low" : ""}" href="#records" data-kind="${k}">${esc(RECORD_KINDS[k][0])}</a>`).join("")}</div>` : ""}
       ${tagsOf(base.c).length
         ? `<div class="panel-tags">${tagsOf(base.c).map((t) => `<span class="tag static">${esc(t)}</span>`).join("")}</div>`
         : ""}
@@ -1041,6 +1047,12 @@
     };
     function esc2(e) { if (e.key === "Escape") close(); }
     ov.querySelector(".close").addEventListener("click", close);
+    ov.querySelectorAll(".record-badge").forEach((a) => a.addEventListener("click", () => {
+      state.recordKind = a.dataset.kind; state.recordShown = 50; state.recordSort = null;
+      if ($("recordKind").options.length > 1) $("recordKind").value = a.dataset.kind;
+      close();
+      if (location.hash === "#records") renderRecords();
+    }));
     ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
     document.addEventListener("keydown", esc2);
     ov.querySelector(".close").focus();
@@ -1270,9 +1282,14 @@
     ps_q05: ["P/S ≤ 第 5 百分位下界", "目前股價營收比 ≤ 2013 起每月 P/S 的第 5 百分位（不含本月）。", "ps"],
   };
 
+  async function ensureRecords() {
+    if (!state.records) state.records = await getJSON("data/records.json", { lists: {}, counts: {}, asOf: {} });
+    return state.records;
+  }
+
   async function loadRecords() {
-    if (state.records) return;
-    state.records = await getJSON("data/records.json", { lists: {}, counts: {}, asOf: {} });
+    if ($("recordKind").options.length > 1) return renderRecords();
+    await ensureRecords();
     const sel = $("recordKind");
     sel.innerHTML = Object.entries(RECORD_KINDS).map(([k, [t]]) =>
       `<option value="${k}">${esc(t)}（${(state.records.counts || {})[k] ?? 0}）</option>`).join("");
