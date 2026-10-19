@@ -83,6 +83,11 @@ jobs:
         run: python build_insider_flows.py
         continue-on-error: true
 
+      - name: 最新法說會
+        working-directory: scripts
+        run: python -m unittest test_conferences && python build_conferences.py
+        continue-on-error: true
+
       - name: 創新高／新低榜
         working-directory: scripts
         run: python -m unittest test_records && python build_records.py
