@@ -1585,3 +1585,12 @@ th[data-k="rev_note"] { cursor: grab; }
 .rec-table .rec-tags { display: grid; grid-template-columns: repeat(2, max-content); gap: 4px; }
 .rec-table td.revenue-note-cell { min-width: 220px; max-width: 320px; }
 #recordsSection .table-scroll { width: fit-content; max-width: 100%; }
+
+/* 個股詳細頁：創新高與新低榜標注 */
+.record-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
+.record-badge { display: inline-flex; align-items: center; gap: 4px; padding: 6px 13px; border-radius: 999px; font-size: 13.5px; font-weight: 700; text-decoration: none;
+  color: var(--up); background: var(--up-soft); border: 1px solid color-mix(in srgb, var(--up) 40%, transparent); }
+.record-badge::before { content: "▲"; font-size: 10px; }
+.record-badge.low { color: var(--down); background: var(--down-soft); border-color: color-mix(in srgb, var(--down) 40%, transparent); }
+.record-badge.low::before { content: "▼"; }
+.record-badge:hover { filter: brightness(.95); }
