@@ -26,13 +26,13 @@
   "esb": {
    "label": "興櫃",
    "count": 372,
-   "cap": 1725304891726,
+   "cap": 1735973794988,
    "pe": null,
-   "ps": 2.58,
+   "ps": 2.59,
    "peWeighted": null,
-   "psWeighted": 3.55,
+   "psWeighted": 3.57,
    "withPE": 0,
-   "withPS": 346
+   "withPS": 347
   }
  }
 }
