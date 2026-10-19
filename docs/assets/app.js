@@ -877,7 +877,14 @@
       getJSON(`data/operating/${code}.json`, null),
       getJSON(`data/fin_history/${code}.json`, null),
       ensureRecords(),
+      state.conferences || getJSON("data/conferences.json", { stocks: {} }).then((v) => (state.conferences = v)),
     ]);
+    // 最新一期法說會：優先連到官方簡報檔，沒有簡報檔再連公司網站的法說會資訊
+    const conf = ((state.conferences || {}).stocks || {})[code];
+    const confHref = conf && (conf[1] ? `https://mopsov.twse.com.tw/nas/STR/${encodeURIComponent(conf[1])}` : conf[3]);
+    const confLink = confHref
+      ? `<a href="${esc(confHref)}" target="_blank" rel="noopener">最新法說會${conf[1] ? "簡報" : ""}（${esc(conf[0])}）</a>`
+      : "";
     // 出現在創新高與新低榜的項目，在詳細頁最上方醒目標注；可同時多個
     const recordHits = Object.keys(RECORD_KINDS).filter((k) =>
       ((state.records.lists || {})[k] || []).some((it) => it.c === code));
@@ -958,7 +965,7 @@
         <div><div class="k">市值</div><div class="v">${human(base.cap) ?? "—"}</div></div>
       </div>
       <div class="links">
-        <a href="${mopsUrl(base)}" target="_blank" rel="noopener">公開資訊觀測站</a>
+        ${confLink}
         ${chainUrl(base.i) ? `<a href="${chainUrl(base.i)}" target="_blank" rel="noopener">${esc(base.i)}產業鏈說明</a>` : ""}
       </div>
       <h4>營收</h4>
