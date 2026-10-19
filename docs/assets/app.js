@@ -964,10 +964,7 @@
         <div><div class="k">淨值比</div><div class="v">${fmt(base.pb) ?? "—"}</div></div>
         <div><div class="k">市值</div><div class="v">${human(base.cap) ?? "—"}</div></div>
       </div>
-      <div class="links">
-        ${confLink}
-        ${chainUrl(base.i) ? `<a href="${chainUrl(base.i)}" target="_blank" rel="noopener">${esc(base.i)}產業鏈說明</a>` : ""}
-      </div>
+      ${confLink ? `<div class="links">${confLink}</div>` : ""}
       <h4>營收</h4>
       <p class="note">最新月份 ${rev.ym || "—"}${
         base.i && base.i.includes("金融") ? "。金融保險業的營收認列基礎與一般產業不同，成長率的擺盪幅度天生就大。" : ""
