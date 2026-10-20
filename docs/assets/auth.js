@@ -96,7 +96,7 @@
     try { const { data } = await sb.rpc("is_login_admin"); isAdmin = !!data; } catch (_) {}
     holder.innerHTML = `<button type="button" class="auth-btn" aria-haspopup="true">${esc(session.user.email.split("@")[0])} ▾</button>
       <div class="auth-pop" hidden><div class="who">${esc(session.user.email)}</div>
-      ${isAdmin ? '<a href="admin.html">登入分析後台</a>' : ""}<button type="button" data-out>登出</button></div>`;
+      ${isAdmin ? '<a href="admin.html">訪客分析後台</a>' : ""}<button type="button" data-out>登出</button></div>`;
     const pop = holder.querySelector(".auth-pop");
     holder.querySelector(".auth-btn").addEventListener("click", (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; });
     document.addEventListener("click", () => { pop.hidden = true; });
