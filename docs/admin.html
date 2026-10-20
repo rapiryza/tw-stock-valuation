@@ -3,23 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow">
 <title>訪客分析後台｜台股觀測站</title>
 <link rel="stylesheet" href="assets/style.css?v=20261020-admin">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
   .adm-wrap { max-width: 1280px; margin: 0 auto; padding: 18px 20px 60px; }
   .adm-gate { max-width: 420px; margin: 60px auto; text-align: center; color: var(--text-secondary); line-height: 1.8; }
   .adm-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
   .adm-filters input, .adm-filters select { font: inherit; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-1); color: var(--text-primary); }
-  .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 6px 0 16px; }
+  .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 6px 0 16px; }
   .adm-kpi { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; background: var(--surface-1); }
   .adm-kpi .k { font-size: 12px; color: var(--muted); }
-  .adm-kpi .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
-  #admMap { height: 380px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
-  .adm-table { width: 100%; }
-  .adm-table td, .adm-table th { text-align: left !important; padding: 8px 10px; }
-  .adm-table td.num, .adm-table th.num { text-align: right !important; }
+  .adm-kpi .v { font-size: 24px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .adm-kpi .s { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .adm-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .adm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .adm-table td, .adm-table th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; }
+  .adm-table th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .adm-table td.num, .adm-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .adm-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); }
   .adm-btn { font: inherit; font-size: 12.5px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary); cursor: pointer; }
   .adm-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
@@ -30,6 +31,63 @@
   .adm-msg.err { color: var(--up); }
   .adm-section[hidden] { display: none; }
   .adm-ua { max-width: 280px; white-space: normal; font-size: 11.5px; color: var(--muted); }
+
+  /* ---- 客群分析圖表 ---- */
+  .viz-root {
+    --viz-1: #2a78d6; --viz-2: #eb6834;
+    --seq-0: #cde2fb; --seq-1: #9ec5f4; --seq-2: #6da7ec; --seq-3: #3987e5; --seq-4: #256abf; --seq-5: #184f95; --seq-6: #0d366b;
+    --cell-empty: #f0f0f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      --viz-1: #3987e5; --viz-2: #d95926;
+      --seq-0: #0d366b; --seq-1: #104281; --seq-2: #184f95; --seq-3: #256abf; --seq-4: #3987e5; --seq-5: #6da7ec; --seq-6: #b7d3f6;
+      --cell-empty: #1a1a22;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    --viz-1: #3987e5; --viz-2: #d95926;
+    --seq-0: #0d366b; --seq-1: #104281; --seq-2: #184f95; --seq-3: #256abf; --seq-4: #3987e5; --seq-5: #6da7ec; --seq-6: #b7d3f6;
+    --cell-empty: #1a1a22;
+  }
+  .viz-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .viz-grid .wide { grid-column: 1 / -1; }
+  @media (max-width: 860px) { .viz-grid { grid-template-columns: 1fr; } }
+  .viz-card { border: 1px solid var(--border); border-radius: 14px; background: var(--surface-1); padding: 14px 16px 12px; min-width: 0; }
+  .viz-card h3 { margin: 0; font-size: 14.5px; color: var(--text-primary); }
+  .viz-card .sub { margin: 3px 0 10px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .viz-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--text-secondary); margin: 0 0 6px; }
+  .viz-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .viz-legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; }
+  .viz-legend i.box { width: 10px; height: 10px; border-radius: 3px; }
+  .viz-svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .viz-svg text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .viz-svg .grid { stroke: var(--grid); stroke-width: 1; }
+  .viz-svg .axis { stroke: var(--axis); stroke-width: 1; }
+  .viz-empty { font-size: 13px; color: var(--muted); padding: 24px 0; text-align: center; }
+  .hbar { display: grid; grid-template-columns: minmax(70px, 34%) 1fr auto; align-items: center; gap: 4px 10px; font-size: 12.5px; }
+  .hbar .lab { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hbar .track { height: 14px; position: relative; }
+  .hbar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; background: var(--viz-1); min-width: 2px; }
+  .hbar .row:hover .fill, .hbar .fill.hl { filter: brightness(1.12); }
+  .hbar .val { color: var(--text-primary); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .hbar .val small { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  .hbar .row { display: contents; }
+  .viz-tip { position: fixed; z-index: 90; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+    box-shadow: var(--shadow-2); border-radius: 10px; padding: 8px 10px; font-size: 12px; line-height: 1.55; min-width: 120px; }
+  .viz-tip .t { color: var(--muted); font-size: 11.5px; margin-bottom: 2px; }
+  .viz-tip .r { display: flex; align-items: center; gap: 8px; }
+  .viz-tip .r i { width: 12px; height: 3px; border-radius: 2px; }
+  .viz-tip .r b { font-variant-numeric: tabular-nums; }
+  .viz-tip .r span { color: var(--text-secondary); }
+  .heat { display: grid; grid-template-columns: 34px repeat(24, minmax(0, 1fr)); gap: 2px; font-size: 10.5px; color: var(--muted); }
+  .heat .c { aspect-ratio: 1 / 1; border-radius: 3px; background: var(--cell-empty); }
+  .heat .c:hover { outline: 2px solid var(--text-primary); outline-offset: -1px; }
+  .heat .h { text-align: center; }
+  .heat .d { display: flex; align-items: center; }
+  .heat-scale { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .heat-scale i { width: 16px; height: 10px; border-radius: 2px; display: inline-block; }
+  .viz-loading { opacity: .5; transition: opacity .2s; }
 </style>
 </head>
 <body class="off-hours">
@@ -45,7 +103,8 @@
 
   <div id="admApp" hidden>
     <nav class="page-tabs" aria-label="後台分頁">
-      <a href="#events" data-tab="events" aria-current="page">訪客紀錄與地點</a>
+      <a href="#audience" data-tab="audience" aria-current="page">客群分析</a>
+      <a href="#events" data-tab="events">訪客紀錄</a>
       <a href="#frequency" data-tab="frequency">各 IP 造訪次數</a>
       <a href="#exclusions" data-tab="exclusions">IP 排除名單</a>
       <a href="./" class="ext">回網站 ↗</a>
@@ -57,39 +116,71 @@
           <option value="7">過去 7 天</option>
           <option value="30" selected>過去 30 天</option>
           <option value="90">過去 90 天</option>
+          <option value="365">過去 1 年</option>
           <option value="custom">自訂</option>
         </select>
       </label>
       <span id="admCustom" hidden><input type="date" id="admFrom"> 至 <input type="date" id="admTo"></span>
       <input type="search" id="admEmail" placeholder="篩選 IP、國家或城市">
-      <label id="admShowExWrap"><input type="checkbox" id="admShowEx"> 顯示被排除的 IP</label>
+      <label id="admShowExWrap" hidden><input type="checkbox" id="admShowEx"> 顯示被排除的 IP</label>
       <button type="button" class="adm-btn" id="admReload">重新整理</button>
+      <span class="adm-msg" id="admLoadMsg"></span>
     </div>
 
-    <!-- 1. 訪客地理位置 -->
-    <section class="adm-section" data-section="events">
-      <div class="adm-kpis" id="admKpis"></div>
-      <div id="admMap" role="img" aria-label="訪客地點地圖"></div>
-      <div class="table-scroll"><table class="adm-table">
-        <thead><tr><th>時間</th><th>IP</th><th>國家</th><th>城市</th><th>裝置</th><th>頁面</th><th></th></tr></thead>
+    <!-- 1. 客群分析 -->
+    <section class="adm-section viz-root" data-section="audience">
+      <div class="adm-kpis" id="vizKpis"></div>
+      <div class="viz-grid">
+        <div class="viz-card wide">
+          <h3>每日造訪趨勢</h3>
+          <p class="sub">每天的造訪次數與不同訪客數（台北時間；同一瀏覽器 30 分鐘內只算一次造訪）。</p>
+          <div class="viz-legend"><span><i style="background:var(--viz-1)"></i>造訪次數</span><span><i style="background:var(--viz-2)"></i>不同訪客</span></div>
+          <div id="vizDaily"></div>
+        </div>
+        <div class="viz-card wide">
+          <h3>新訪客與回訪客</h3>
+          <p class="sub">新訪客＝這個瀏覽器第一次造訪本站；回訪客＝之前來過。回訪比例越高，代表內容越黏人。</p>
+          <div class="viz-legend"><span><i class="box" style="background:var(--viz-1)"></i>新訪客</span><span><i class="box" style="background:var(--viz-2)"></i>回訪客</span></div>
+          <div id="vizNewRet"></div>
+        </div>
+        <div class="viz-card wide">
+          <h3>造訪時段熱度</h3>
+          <p class="sub">星期 × 小時（台北時間）的造訪次數，顏色越深越多。可以看出訪客習慣在盤中、盤後還是晚上來。</p>
+          <div id="vizHeat"></div>
+        </div>
+        <div class="viz-card"><h3>國家／地區</h3><p class="sub">依造訪次數，前 10 名，其餘併入「其他」。</p><div id="vizCountry"></div></div>
+        <div class="viz-card"><h3>城市</h3><p class="sub">依造訪次數，前 10 名。</p><div id="vizCity"></div></div>
+        <div class="viz-card"><h3>裝置類型</h3><p class="sub">手機、平板或電腦。</p><div id="vizDevice"></div></div>
+        <div class="viz-card"><h3>作業系統</h3><p class="sub">&nbsp;</p><div id="vizOs"></div></div>
+        <div class="viz-card"><h3>瀏覽器／App</h3><p class="sub">LINE、Facebook 等代表從該 App 內建瀏覽器點進來。</p><div id="vizBrowser"></div></div>
+        <div class="viz-card"><h3>流量來源</h3><p class="sub">訪客從哪個網站點進來；「直接進站」＝輸入網址、書籤或 App 未提供來源。</p><div id="vizRef"></div></div>
+        <div class="viz-card"><h3>進站頁面</h3><p class="sub">訪客打開網站時的第一個頁面。</p><div id="vizPage"></div></div>
+        <div class="viz-card"><h3>訪客忠誠度</h3><p class="sub">期間內每位訪客（瀏覽器）造訪幾次的人數分布。</p><div id="vizLoyal"></div></div>
+      </div>
+    </section>
+
+    <!-- 2. 訪客紀錄 -->
+    <section class="adm-section" data-section="events" hidden>
+      <div class="adm-scroll"><table class="adm-table">
+        <thead><tr><th>時間</th><th>IP</th><th>國家</th><th>城市</th><th>裝置</th><th>進站頁面</th><th>來源</th><th></th></tr></thead>
         <tbody id="admEvents"></tbody>
       </table></div>
       <p class="adm-msg" id="admEventsMsg"></p>
     </section>
 
-    <!-- 2. 各 IP 造訪次數 -->
+    <!-- 3. 各 IP 造訪次數 -->
     <section class="adm-section" data-section="frequency" hidden>
       <p class="note">一次造訪＝同一瀏覽器在同一 IP 上，距離上次超過 30 分鐘才再算一次（重新整理不會重複計算）。統計已扣除排除名單內的 IP。平均間隔＝期間內相鄰兩次造訪相隔時間的平均；只有 1 次時無法計算。</p>
-      <div class="table-scroll"><table class="adm-table">
+      <div class="adm-scroll"><table class="adm-table">
         <thead><tr><th>IP</th><th>國家</th><th>城市</th><th class="num">期間造訪次數</th><th class="num">瀏覽器數</th><th class="num">平均造訪間隔</th><th>期間首次</th><th>期間最後</th><th>歷史最後</th><th>裝置</th><th></th></tr></thead>
         <tbody id="admFreq"></tbody>
       </table></div>
       <p class="adm-msg" id="admFreqMsg"></p>
     </section>
 
-    <!-- 3. IP 排除名單 -->
+    <!-- 4. IP 排除名單 -->
     <section class="adm-section" data-section="exclusions" hidden>
-      <p class="note">名單內的 IP（可填單一 IP，或 CIDR 網段例如 192.168.0.0/16）造訪時仍會被記錄，但不計入任何統計、地圖與次數報表。新增或刪除後，歷史統計會立即重算。</p>
+      <p class="note">名單內的 IP（可填單一 IP，或 CIDR 網段例如 192.168.0.0/16）造訪時仍會被記錄，但不計入任何統計、圖表與次數報表。新增或刪除後，歷史統計會立即重算。</p>
       <form class="adm-ex-form" id="admExForm">
         <input id="admExIp" placeholder="IP 或網段，例如 203.0.113.5 或 10.0.0.0/8" required size="34">
         <input id="admExNote" placeholder="備註，例如：公司內網、管理員家裡" size="26">
@@ -97,18 +188,18 @@
         <button type="button" class="adm-btn" id="admExMine">加入我目前的 IP</button>
       </form>
       <p class="adm-msg" id="admExMsg"></p>
-      <div class="table-scroll"><table class="adm-table">
+      <div class="adm-scroll"><table class="adm-table">
         <thead><tr><th>IP／網段</th><th>備註</th><th class="num">已排除造訪次數</th><th>加入時間</th><th></th></tr></thead>
         <tbody id="admExList"></tbody>
       </table></div>
     </section>
   </div>
 </div>
+<div class="viz-tip" id="vizTip" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="assets/supabase-config.js?v=20261020-live"></script>
 <script src="assets/auth.js?v=20261020-visits"></script>
-<script src="assets/admin.js?v=20261020-visits"></script>
+<script src="assets/admin.js?v=20261020-audience"></script>
 </body>
 </html>
