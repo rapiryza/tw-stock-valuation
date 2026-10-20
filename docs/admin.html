@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>登入分析後台｜台股觀測站</title>
+<title>訪客分析後台｜台股觀測站</title>
 <link rel="stylesheet" href="assets/style.css?v=20261020-admin">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
@@ -36,7 +36,7 @@
 <header class="topbar" id="topbar">
   <div class="topbar-in">
     <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">TW</span><span class="brand-txt">台股觀測站</span></a>
-    <span class="asof">登入分析後台</span>
+    <span class="asof">訪客分析後台</span>
   </div>
 </header>
 
@@ -45,8 +45,8 @@
 
   <div id="admApp" hidden>
     <nav class="page-tabs" aria-label="後台分頁">
-      <a href="#events" data-tab="events" aria-current="page">登入紀錄與地點</a>
-      <a href="#frequency" data-tab="frequency">登入頻率</a>
+      <a href="#events" data-tab="events" aria-current="page">訪客紀錄與地點</a>
+      <a href="#frequency" data-tab="frequency">各 IP 造訪次數</a>
       <a href="#exclusions" data-tab="exclusions">IP 排除名單</a>
       <a href="./" class="ext">回網站 ↗</a>
     </nav>
@@ -61,27 +61,27 @@
         </select>
       </label>
       <span id="admCustom" hidden><input type="date" id="admFrom"> 至 <input type="date" id="admTo"></span>
-      <input type="search" id="admEmail" placeholder="篩選使用者 Email">
+      <input type="search" id="admEmail" placeholder="篩選 IP、國家或城市">
       <label id="admShowExWrap"><input type="checkbox" id="admShowEx"> 顯示被排除的 IP</label>
       <button type="button" class="adm-btn" id="admReload">重新整理</button>
     </div>
 
-    <!-- 1. 登入地理位置 -->
+    <!-- 1. 訪客地理位置 -->
     <section class="adm-section" data-section="events">
       <div class="adm-kpis" id="admKpis"></div>
-      <div id="admMap" role="img" aria-label="登入地點地圖"></div>
+      <div id="admMap" role="img" aria-label="訪客地點地圖"></div>
       <div class="table-scroll"><table class="adm-table">
-        <thead><tr><th>時間</th><th>使用者</th><th>IP</th><th>國家</th><th>城市</th><th>裝置</th><th></th></tr></thead>
+        <thead><tr><th>時間</th><th>IP</th><th>國家</th><th>城市</th><th>裝置</th><th>頁面</th><th></th></tr></thead>
         <tbody id="admEvents"></tbody>
       </table></div>
       <p class="adm-msg" id="admEventsMsg"></p>
     </section>
 
-    <!-- 2. 登入頻率 -->
+    <!-- 2. 各 IP 造訪次數 -->
     <section class="adm-section" data-section="frequency" hidden>
-      <p class="note">統計已扣除排除名單內的 IP。平均間隔＝期間內相鄰兩次登入相隔時間的平均；只有 1 次登入時無法計算。</p>
+      <p class="note">一次造訪＝同一瀏覽器在同一 IP 上，距離上次超過 30 分鐘才再算一次（重新整理不會重複計算）。統計已扣除排除名單內的 IP。平均間隔＝期間內相鄰兩次造訪相隔時間的平均；只有 1 次時無法計算。</p>
       <div class="table-scroll"><table class="adm-table">
-        <thead><tr><th>使用者</th><th class="num">期間登入次數</th><th class="num">平均登入間隔</th><th>期間首次登入</th><th>期間最後登入</th><th>歷史最後登入</th><th>登入國家</th></tr></thead>
+        <thead><tr><th>IP</th><th>國家</th><th>城市</th><th class="num">期間造訪次數</th><th class="num">瀏覽器數</th><th class="num">平均造訪間隔</th><th>期間首次</th><th>期間最後</th><th>歷史最後</th><th>裝置</th><th></th></tr></thead>
         <tbody id="admFreq"></tbody>
       </table></div>
       <p class="adm-msg" id="admFreqMsg"></p>
@@ -89,7 +89,7 @@
 
     <!-- 3. IP 排除名單 -->
     <section class="adm-section" data-section="exclusions" hidden>
-      <p class="note">名單內的 IP（可填單一 IP，或 CIDR 網段例如 192.168.0.0/16）登入時仍會被記錄，但不計入任何統計、地圖與頻率報表。新增或刪除後，歷史統計會立即重算。</p>
+      <p class="note">名單內的 IP（可填單一 IP，或 CIDR 網段例如 192.168.0.0/16）造訪時仍會被記錄，但不計入任何統計、地圖與次數報表。新增或刪除後，歷史統計會立即重算。</p>
       <form class="adm-ex-form" id="admExForm">
         <input id="admExIp" placeholder="IP 或網段，例如 203.0.113.5 或 10.0.0.0/8" required size="34">
         <input id="admExNote" placeholder="備註，例如：公司內網、管理員家裡" size="26">
@@ -98,7 +98,7 @@
       </form>
       <p class="adm-msg" id="admExMsg"></p>
       <div class="table-scroll"><table class="adm-table">
-        <thead><tr><th>IP／網段</th><th>備註</th><th class="num">已排除登入次數</th><th>加入時間</th><th></th></tr></thead>
+        <thead><tr><th>IP／網段</th><th>備註</th><th class="num">已排除造訪次數</th><th>加入時間</th><th></th></tr></thead>
         <tbody id="admExList"></tbody>
       </table></div>
     </section>
@@ -108,7 +108,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="assets/supabase-config.js?v=20261020-live"></script>
-<script src="assets/auth.js?v=20261020-live"></script>
-<script src="assets/admin.js?v=20261020"></script>
+<script src="assets/auth.js?v=20261020-visits"></script>
+<script src="assets/admin.js?v=20261020-visits"></script>
 </body>
 </html>
