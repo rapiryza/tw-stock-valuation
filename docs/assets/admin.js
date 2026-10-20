@@ -1,4 +1,4 @@
-/* 登入分析與審計後台：登入地點（列表＋地圖）、登入頻率、IP 排除名單。
+/* 訪客分析後台：訪客地點（列表＋地圖）、各 IP 造訪次數、IP 排除名單。訪客不需登入；後台本身需管理員登入。
  * 資料權限由 Supabase RLS 控制：只有 login_admins 內的帳號讀得到。 */
 (function () {
   const $ = (id) => document.getElementById(id);
@@ -39,42 +39,43 @@
     return [new Date(to.getTime() - Number(p) * 86400000), to];
   }
 
-  // ---------------------------------------------------------------- 1. 登入紀錄與地點
+  const filterText = () => $("admEmail").value.trim().toLowerCase();
+  const matches = (x, f) => !f || [x.ip, x.country, x.city, x.region].some((v) => String(v || "").toLowerCase().includes(f));
+
+  // ---------------------------------------------------------------- 1. 訪客紀錄與地點
   async function loadEvents() {
     const r = range(); if (!r) return;
     $("admEventsMsg").textContent = "載入中…";
-    let q = sb.from("login_events_v").select("*").gte("created_at", r[0].toISOString()).lt("created_at", r[1].toISOString())
-      .order("created_at", { ascending: false }).limit(2000);
-    const email = $("admEmail").value.trim();
-    if (email) q = q.ilike("email", `%${email}%`);
+    let q = sb.from("visit_events_v").select("*").gte("created_at", r[0].toISOString()).lt("created_at", r[1].toISOString())
+      .order("created_at", { ascending: false }).limit(5000);
     if (!$("admShowEx").checked) q = q.eq("excluded", false);
     const { data, error } = await q;
     if (error) { $("admEventsMsg").textContent = error.message; return; }
-    state.events = data || [];
+    const f = filterText();
+    state.events = (data || []).filter((x) => matches(x, f));
+    state.truncated = (data || []).length >= 5000;
     renderEvents();
   }
 
   function renderEvents() {
     const ev = state.events;
     const counted = ev.filter((e) => !e.excluded);
-    const users = new Set(counted.map((e) => e.user_id)).size;
+    const browsers = new Set(counted.map((e) => e.visitor_id || e.ip)).size;
     const countries = new Set(counted.map((e) => e.country).filter(Boolean)).size;
     const ips = new Set(counted.map((e) => e.ip)).size;
-    $("admKpis").innerHTML = [["登入次數（不含排除 IP）", counted.length], ["使用者數", users], ["不同 IP", ips], ["國家數", countries]]
+    $("admKpis").innerHTML = [["造訪次數（不含排除 IP）", counted.length], ["不同 IP", ips], ["不同瀏覽器", browsers], ["國家數", countries]]
       .map(([k, v]) => `<div class="adm-kpi"><div class="k">${k}</div><div class="v">${v.toLocaleString()}</div></div>`).join("");
     $("admEvents").innerHTML = ev.map((e) => `<tr>
         <td>${esc(fmtTime(e.created_at))}</td>
-        <td>${esc(e.email || e.user_id)}</td>
         <td><code>${esc(e.ip)}</code>${e.excluded ? ' <span class="adm-badge">已排除</span>' : ""}</td>
         <td>${esc(e.country || "—")}</td>
         <td>${esc([e.city, e.region].filter(Boolean).join("，") || "—")}</td>
         <td class="adm-ua" title="${esc(e.user_agent)}">${esc(device(e.user_agent))}</td>
+        <td class="adm-ua">${esc(pageLabel(e.path))}</td>
         <td>${e.excluded ? "" : `<button type="button" class="adm-btn" data-ex="${esc(e.ip)}">排除此 IP</button>`}</td>
-      </tr>`).join("") || '<tr><td colspan="7">這段期間沒有登入紀錄。</td></tr>';
-    $("admEventsMsg").textContent = ev.length >= 2000 ? "只顯示最近 2,000 筆；縮短期間或篩選使用者可看更早的紀錄。" : "";
-    $("admEvents").querySelectorAll("[data-ex]").forEach((b) => b.addEventListener("click", () => {
-      $("admExIp").value = b.dataset.ex; showTab("exclusions"); $("admExNote").focus();
-    }));
+      </tr>`).join("") || '<tr><td colspan="7">這段期間沒有造訪紀錄。</td></tr>';
+    $("admEventsMsg").textContent = state.truncated ? "只顯示最近 5,000 筆；縮短期間可看更早的紀錄。" : "";
+    bindExclude($("admEvents"));
     renderMap(counted.length ? counted : []);
   }
 
@@ -92,36 +93,52 @@
       if (e.lat == null || e.lon == null) continue;
       const key = `${e.lat.toFixed(2)},${e.lon.toFixed(2)}`;
       const s = spots.get(key) || { lat: e.lat, lon: e.lon, label: [e.city, e.country].filter(Boolean).join("，"), n: 0, users: new Set() };
-      s.n += 1; s.users.add(e.email || e.user_id); spots.set(key, s);
+      s.n += 1; s.users.add(e.ip); spots.set(key, s);
     }
     state.layer = L.layerGroup(
       [...spots.values()].map((s) => L.circleMarker([s.lat, s.lon], {
         radius: Math.min(26, 5 + Math.sqrt(s.n) * 3), color: "#087f8c", weight: 1.5, fillOpacity: 0.35,
-      }).bindPopup(`<b>${esc(s.label || "未知地點")}</b><br>${s.n} 次登入・${s.users.size} 位使用者`))
+      }).bindPopup(`<b>${esc(s.label || "未知地點")}</b><br>${s.n} 次造訪・${s.users.size} 個 IP`))
     ).addTo(state.map);
     const pts = [...spots.values()].map((s) => [s.lat, s.lon]);
     if (pts.length) state.map.fitBounds(pts, { padding: [30, 30], maxZoom: 6 });
     setTimeout(() => state.map.invalidateSize(), 50);
   }
 
-  // ---------------------------------------------------------------- 2. 登入頻率
+  // ---------------------------------------------------------------- 2. 各 IP 造訪次數
   async function loadFrequency() {
     const r = range(); if (!r) return;
     $("admFreqMsg").textContent = "計算中…";
-    const { data, error } = await sb.rpc("login_frequency", { p_from: r[0].toISOString(), p_to: r[1].toISOString(), p_user: null });
+    const { data, error } = await sb.rpc("visit_stats", { p_from: r[0].toISOString(), p_to: r[1].toISOString() });
     if (error) { $("admFreqMsg").textContent = error.message; return; }
-    const email = $("admEmail").value.trim().toLowerCase();
-    const rows = (data || []).filter((x) => !email || (x.email || "").toLowerCase().includes(email));
+    const f = filterText();
+    const rows = (data || []).filter((x) => matches(x, f));
     $("admFreq").innerHTML = rows.map((x) => `<tr>
-        <td>${esc(x.email || x.user_id)}</td>
-        <td class="num">${x.logins}</td>
+        <td><code>${esc(x.ip)}</code></td>
+        <td>${esc(x.country || "—")}</td>
+        <td>${esc(x.city || "—")}</td>
+        <td class="num">${x.visits}</td>
+        <td class="num">${x.browsers}</td>
         <td class="num">${esc(fmtGap(x.avg_interval_seconds))}</td>
-        <td>${esc(fmtTime(x.first_login))}</td>
-        <td>${esc(fmtTime(x.last_login))}</td>
-        <td>${esc(fmtTime(x.last_login_any))}</td>
-        <td>${esc((x.countries || []).join("、") || "—")}</td>
-      </tr>`).join("") || '<tr><td colspan="7">這段期間沒有（未被排除的）登入紀錄。</td></tr>';
-    $("admFreqMsg").textContent = `${rows.length} 位使用者`;
+        <td>${esc(fmtTime(x.first_visit))}</td>
+        <td>${esc(fmtTime(x.last_visit))}</td>
+        <td>${esc(fmtTime(x.last_visit_any))}</td>
+        <td class="adm-ua" title="${esc(x.user_agent)}">${esc(device(x.user_agent))}</td>
+        <td><button type="button" class="adm-btn" data-ex="${esc(x.ip)}">排除此 IP</button></td>
+      </tr>`).join("") || '<tr><td colspan="11">這段期間沒有（未被排除的）造訪紀錄。</td></tr>';
+    const total = rows.reduce((a, x) => a + Number(x.visits), 0);
+    $("admFreqMsg").textContent = `${rows.length} 個 IP，共 ${total.toLocaleString()} 次造訪`;
+    bindExclude($("admFreq"));
+  }
+  function bindExclude(root) {
+    root.querySelectorAll("[data-ex]").forEach((b) => b.addEventListener("click", () => {
+      $("admExIp").value = b.dataset.ex; showTab("exclusions"); $("admExNote").focus();
+    }));
+  }
+  function pageLabel(p) {
+    if (!p) return "—";
+    const h = (p.split("#")[1] || "").split(/[?&]/)[0];
+    return { "": "個股指標", stocks: "個股指標", movers: "漲跌幅排行", records: "創新高與新低榜" }[h] || p;
   }
 
   // ---------------------------------------------------------------- 3. IP 排除名單
@@ -140,7 +157,7 @@
         <td><button type="button" class="adm-btn" data-del="${x.id}">刪除</button></td>
       </tr>`).join("") || '<tr><td colspan="5">尚未設定任何排除 IP。</td></tr>';
     $("admExList").querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", async () => {
-      if (!window.confirm("確定要從排除名單刪除？刪除後這個 IP 的登入會重新計入統計。")) return;
+      if (!window.confirm("確定要從排除名單刪除？刪除後這個 IP 的造訪會重新計入統計。")) return;
       const { error: e } = await sb.from("ip_exclusions").delete().eq("id", Number(b.dataset.del));
       setExMsg(e ? e.message : "已刪除", !!e);
       loadExclusions();
@@ -193,7 +210,7 @@
   async function boot(session) {
     if (!session) {
       gate.hidden = false; app.hidden = true;
-      gate.innerHTML = "請先用右上角的「登入」按鈕登入管理員帳號。";
+      gate.innerHTML = "這裡是管理員專用的訪客分析後台。<br>請用右上角的「登入」按鈕登入管理員帳號（第一次使用請先按「註冊」）。";
       return;
     }
     const { data: isAdmin } = await sb.rpc("is_login_admin");
