@@ -194,27 +194,6 @@ SEC 要求 User-Agent 帶得到人的聯絡方式。GitHub Actions 會讀 repo v
 `SEC_CONTACT`（Settings → Secrets and variables → Actions → Variables）。
 **沒設定的話 SEC 會擋，第一次跑之前記得先設。**
 
-## 登入分析與審計後台（docs/admin.html）
-
-網站可選擇性開放會員登入（Supabase Auth），後台提供三個功能：
-
-1. **登入地理位置追蹤**：每次登入記錄 IP，由伺服器端（Edge Function `record-login`）從連線標頭取得，前端無法偽造；再用 ipwho.is 解析成國家、城市與經緯度，顯示在列表與地圖上。
-2. **登入頻率統計**：指定期間（過去 7／30／90 天或自訂）每位使用者的登入次數、平均登入間隔、期間最後登入與歷史最後登入（資料庫函式 `login_frequency`）。
-3. **IP 排除名單**：後台可新增單一 IP 或 CIDR 網段（例如公司內網）。名單內的登入仍會記錄，但不計入列表統計、地圖與頻率報表；排除在查詢時比對，所以新增或刪除後歷史統計會立即重算。
-
-只有 `login_admins` 資料表內的帳號能讀取紀錄（Row Level Security）。登入視窗會告知使用者登入時會記錄 IP 與大略地點。
-
-**啟用步驟**
-
-1. 建立 Supabase 專案，在 SQL Editor 執行 `supabase/migrations/20261020000000_login_analytics.sql`。
-2. 部署 Edge Function：`supabase functions deploy record-login`（或在 Dashboard 的 Edge Functions 貼上 `supabase/functions/record-login/index.ts`）。
-3. 在 `docs/assets/supabase-config.js` 填入 Project URL 與 anon public key（不要放 service_role key）。
-4. 到 Authentication → URL Configuration 把網站網址加入 Site URL／Redirect URLs。
-5. 註冊自己的帳號後，在 SQL Editor 執行：
-   `insert into public.login_admins (user_id) select id from auth.users where email = '你的 email';`
-
-未填設定檔時，登入按鈕與後台都不會出現，網站其他功能不受影響。
-
 ## 什麼會自動更新，什麼不會
 
 「每日更新」workflow 在**台北時間 13:37、14:37、15:07、16:37、19:23**（週一至五）分批抓取。
