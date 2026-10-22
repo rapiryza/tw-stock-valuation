@@ -1,12 +1,12 @@
 {
- "asOf": "2026-10-21",
- "updatedAt": "2026-10-22T00:01:43",
+ "asOf": "2026-10-22",
+ "updatedAt": "2026-10-22T18:33:55",
  "counts": {
   "listed": 1088,
   "otc": 892,
-  "esb": 374
+  "esb": 376
  },
- "total": 2354,
+ "total": 2356,
  "sources": {
   "listed_daily": 1084,
   "listed_profile": 1097,
@@ -18,7 +18,7 @@
    },
    "currentMonthCount": 1089,
    "olderMonthCount": 0,
-   "checkedAt": "2026-10-21T23:59:59+08:00",
+   "checkedAt": "2026-10-22T18:31:04+08:00",
    "sources": [
     {
      "url": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
@@ -38,19 +38,19 @@
    ]
   },
   "listed_income": 1082,
-  "otc_quotes": 12950,
-  "otc_profile": 893,
-  "otc_pe": 890,
-  "otc_revenue": 895,
+  "otc_quotes": 13032,
+  "otc_profile": 894,
+  "otc_pe": 891,
+  "otc_revenue": 896,
   "otc_revenue_details": {
    "targetMonth": "2026-09",
    "months": {
     "2026-08": 1,
-    "2026-09": 894
+    "2026-09": 895
    },
-   "currentMonthCount": 894,
+   "currentMonthCount": 895,
    "olderMonthCount": 1,
-   "checkedAt": "2026-10-22T00:01:31+08:00",
+   "checkedAt": "2026-10-22T18:33:42+08:00",
    "sources": [
     {
      "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
@@ -59,29 +59,29 @@
     },
     {
      "url": "https://mopsov.twse.com.tw/nas/t21/otc/t21sc03_115_8.csv",
-     "rows": 893,
+     "rows": 894,
      "status": "ok"
     },
     {
      "url": "https://mopsov.twse.com.tw/nas/t21/otc/t21sc03_115_9.csv",
-     "rows": 893,
+     "rows": 894,
      "status": "ok"
     }
    ]
   },
   "otc_income": 895,
   "esb_quotes": 366,
-  "esb_profile": 366,
-  "esb_revenue": 372,
+  "esb_profile": 365,
+  "esb_revenue": 373,
   "esb_revenue_details": {
    "targetMonth": "2026-09",
    "months": {
     "2026-08": 5,
-    "2026-09": 367
+    "2026-09": 368
    },
-   "currentMonthCount": 367,
+   "currentMonthCount": 368,
    "olderMonthCount": 5,
-   "checkedAt": "2026-10-22T00:01:43+08:00",
+   "checkedAt": "2026-10-22T18:33:55+08:00",
    "sources": [
     {
      "url": "https://www.tpex.org.tw/openapi/v1/t187ap05_R",
@@ -102,7 +102,7 @@
   }
  },
  "withPE": 1541,
- "withPS": 2312,
- "withRevenue": 2349,
+ "withPS": 2305,
+ "withRevenue": 2350,
  "withFinancials": 1968
 }
