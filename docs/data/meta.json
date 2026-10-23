@@ -1,12 +1,12 @@
 {
  "asOf": "2026-10-22",
- "updatedAt": "2026-10-22T23:57:53",
+ "updatedAt": "2026-10-23T18:26:57",
  "counts": {
   "listed": 1088,
   "otc": 892,
-  "esb": 376
+  "esb": 377
  },
- "total": 2356,
+ "total": 2357,
  "sources": {
   "listed_daily": 1084,
   "listed_profile": 1097,
@@ -18,7 +18,7 @@
    },
    "currentMonthCount": 1089,
    "olderMonthCount": 0,
-   "checkedAt": "2026-10-22T23:56:02+08:00",
+   "checkedAt": "2026-10-23T18:26:04+08:00",
    "sources": [
     {
      "url": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
@@ -41,16 +41,16 @@
   "otc_quotes": 13032,
   "otc_profile": 894,
   "otc_pe": 891,
-  "otc_revenue": 897,
+  "otc_revenue": 898,
   "otc_revenue_details": {
    "targetMonth": "2026-09",
    "months": {
     "2026-08": 1,
-    "2026-09": 896
+    "2026-09": 897
    },
-   "currentMonthCount": 896,
+   "currentMonthCount": 897,
    "olderMonthCount": 1,
-   "checkedAt": "2026-10-22T23:57:34+08:00",
+   "checkedAt": "2026-10-23T18:26:44+08:00",
    "sources": [
     {
      "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
@@ -59,19 +59,19 @@
     },
     {
      "url": "https://mopsov.twse.com.tw/nas/t21/otc/t21sc03_115_8.csv",
-     "rows": 895,
+     "rows": 896,
      "status": "ok"
     },
     {
      "url": "https://mopsov.twse.com.tw/nas/t21/otc/t21sc03_115_9.csv",
-     "rows": 895,
+     "rows": 896,
      "status": "ok"
     }
    ]
   },
-  "otc_income": 895,
+  "otc_income": 898,
   "esb_quotes": 366,
-  "esb_profile": 365,
+  "esb_profile": 366,
   "esb_revenue": 373,
   "esb_revenue_details": {
    "targetMonth": "2026-09",
@@ -81,7 +81,7 @@
    },
    "currentMonthCount": 368,
    "olderMonthCount": 5,
-   "checkedAt": "2026-10-22T23:57:53+08:00",
+   "checkedAt": "2026-10-23T18:26:56+08:00",
    "sources": [
     {
      "url": "https://www.tpex.org.tw/openapi/v1/t187ap05_R",
@@ -90,19 +90,19 @@
     },
     {
      "url": "https://mopsov.twse.com.tw/nas/t21/rotc/t21sc03_115_8.csv",
-     "rows": 356,
+     "rows": 355,
      "status": "ok"
     },
     {
      "url": "https://mopsov.twse.com.tw/nas/t21/rotc/t21sc03_115_9.csv",
-     "rows": 363,
+     "rows": 362,
      "status": "ok"
     }
    ]
   }
  },
  "withPE": 1541,
- "withPS": 2305,
+ "withPS": 2303,
  "withRevenue": 2350,
  "withFinancials": 1968
 }
