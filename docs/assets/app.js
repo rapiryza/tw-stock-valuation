@@ -864,8 +864,111 @@
     });
   }
 
+  // ---------------------------------------------------------------- 隊友調查（法說會重點、興櫃新登錄）
+  // meta.json 列出有資料的代號；只對清單內的代號抓單檔，不產生 404。
+  // 文字一律原樣顯示（含「（推論）」與頁碼），只做跳脫與網址轉連結。
+  const RS_SOURCE = { drive_deck: "雲端簡報", biggo: "BigGo 法說彙整", web: "網路", websearch: "WebSearch" };
+  const rsMeta = () => state.researchMeta ||
+    (state.researchMeta = getJSON("data/research/meta.json", null).then((m) => {
+      if (m) for (const k of ["captain", "ryza"]) if (m[k]) m[k].codeSet = new Set(m[k].codes || []);
+      return m;
+    }));
+  const rsLink = (s) => esc(s).replace(/https?:\/\/[^\s<>"'，；、。）)]+/g,
+    (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+  const rsWhen = (iso) => (iso ? String(iso).slice(0, 16).replace("T", " ") : "—");
+  const rsBlock = (label, body) => (body ? `<div class="rs-block"><div class="rs-label">${esc(label)}</div>${body}</div>` : "");
+  const rsPara = (s) => (s == null || s === "" ? "" : `<p class="rs-text">${rsLink(s)}</p>`);
+  const rsTags = (list) => (Array.isArray(list) && list.length
+    ? `<div class="panel-tags">${list.map((t) => `<span class="tag static">${esc(t)}</span>`).join("")}</div>` : "");
+  const rsTable = (head, rows) => (rows.length
+    ? `<div class="rs-table-wrap"><table class="rs-table"><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${
+        rows.map((r) => `<tr>${r.map((c) => `<td>${rsLink(c ?? "")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>` : "");
+  const rsCustomers = (list) => rsTable(["產業別", "客戶", "供應產品"],
+    (list || []).map((x) => [x.sector, x.names, x.supply]));
+  const rsEvents = (list) => (Array.isArray(list) && list.length
+    ? `<ul class="rs-events">${list.map((e) => `<li><span class="rs-ev-date">${esc(e.date)}</span>${e.type ? `<span class="tag static">${esc(e.type)}</span>` : ""}<div class="rs-text">${rsLink(e.description ?? e.text ?? "")}</div>${
+        e.source ? `<div class="rs-src">來源：${rsLink(e.source)}</div>` : ""}</li>`).join("")}</ul>`
+    : `<p class="rs-text na">無</p>`);
+  const rsPipeline = (list) => {
+    if (!Array.isArray(list)) return "";
+    if (!list.length) return `<p class="rs-text na">無</p>`;
+    return rsTable(["代號", "標的", "適應症", "進度"], list.flatMap((p) => {
+      const items = p.items && p.items.length ? p.items : [{}];
+      return items.map((it, i) => [i ? "" : p.code, i ? "" : p.target, it.indication, it.stage]);
+    })) + list.filter((p) => p.note).map((p) => `<p class="rs-src">${esc(p.code)}：${rsLink(p.note)}</p>`).join("");
+  };
+  const rsLicenses = (list) => (!Array.isArray(list) ? "" : !list.length ? `<p class="rs-text na">無</p>`
+    : rsTable(["藥品", "地區", "被授權方", "條件"], list.map((x) => [x.drug, x.territory, x.licensee, x.terms])));
+  const rsBiotech = (r) => [
+    rsBlock("臨床管線", rsPipeline(r.pipeline)),
+    rsBlock("臨床前管線", rsPipeline(r.preclinical)),
+    rsBlock("授權", rsLicenses(r.licenses)),
+    rsBlock("其他產品", rsTags(r.otherProducts)),
+  ].join("");
+
+  function renderCaptain(r, m) {
+    const head = `<h4>法說會重點</h4><p class="note">資料來源：${esc(m.source || "船長 · 法說助理")}；法說會／簡報日期 ${esc(r.dataDate || "未載")}；彙整時間 ${esc(rsWhen(m.generatedAt))}。</p>`;
+    if (r.nodata || r.template === "nodata") return `${head}<p class="note">尚無法說會資料（${esc(r.deck || "雲端無簡報")}）。</p>`;
+    const src = (r.sources || []).map((s) => {
+      const label = esc(RS_SOURCE[s.type] || s.type || "來源");
+      if (s.url) return `<li>${label}：<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></li>`;
+      return `<li>${label}：${esc(s.filename || s.note || "")}</li>`;
+    }).join("");
+    return head + [
+      rsBlock("產業及產品", rsTags(r["產業及產品"])),
+      rsBlock("新領域", (r["新領域摘要"] ? `<p class="rs-text rs-sum">${rsLink(r["新領域摘要"])}</p>` : "") + rsPara(r["新領域"])),
+      rsBlock("客戶及供應產品", rsCustomers(r["客戶及供應產品"]) + (r["客戶備註"] ? `<p class="rs-src">${rsLink(r["客戶備註"])}</p>` : "")),
+      rsBlock("業績展望", (r["業績展望摘要"] ? `<p class="rs-text rs-sum">${rsLink(r["業績展望摘要"])}</p>` : "") + rsPara(r["業績展望"])),
+      rsBlock("重大事件", rsEvents(r["重大事件"])),
+      r.template === "biotech" ? rsBiotech(r) : "",
+      rsBlock("簡報", rsPara(r.deck)),
+      src ? rsBlock("資料來源", `<ul class="rs-sources">${src}</ul>`) : "",
+    ].join("");
+  }
+
+  function renderRyza(r, m) {
+    const dd = m.data_dates || {};
+    const ps = r.ps_ratio == null ? "—" : fmt(r.ps_ratio);
+    const page = m.page ? `；<a href="${esc(m.page)}" target="_blank" rel="noopener">調查頁 ↗</a>` : "";
+    return `<h4>興櫃新登錄調查</h4>
+      <p class="note">資料來源：${esc(m.source_agent || "Ryza")}${page}；研究期間 ${esc(dd.research || "—")}；彙整時間 ${esc(rsWhen(m.generated_at))}。</p>
+      <div class="kv">
+        <div><div class="k">評分（暫定）</div><div class="v">${r.score == null ? "—" : `${esc(r.score)}<small class="rs-of">/10</small>`}</div></div>
+        <div><div class="k">股價營收比（估算）</div><div class="v">${ps}</div></div>
+        <div><div class="k">興櫃登錄日</div><div class="v rs-date">${esc(r.regDate || "—")}</div></div>
+      </div>
+      <p class="note">${esc((m.fields || {}).score || "評分（滿分10，暫定）")}。股價營收比以 ${esc(dd.ps_ratio_price || "—")} 股價、${esc(dd.ps_ratio_revenue || "—")} 營收估算。</p>` + [
+      rsBlock("評價", rsPara(r.review)),
+      rsBlock("產業及產品", rsTags(r.tags)),
+      rsBlock("新領域", rsPara(r.expansion)),
+      rsBlock("業績展望", rsPara(r.outlook)),
+      rsBlock("客戶及供應產品", rsCustomers(r.customers) + (r.customerNote ? `<p class="rs-src">${rsLink(r.customerNote)}</p>` : "")),
+      rsBlock("重大事件", rsEvents(r.majorEvents)),
+      r.kind === "biotech" ? rsBiotech(r) : "",
+      rsBlock("簡報", rsPara(r.deck ?? "雲端無法說簡報")),
+      rsBlock("資料來源", `<ul class="rs-sources">${(m.sources || []).map((s) => `<li>${rsLink(s)}</li>`).join("")}</ul>${m.notes ? `<p class="rs-src">${esc(m.notes)}</p>` : ""}`),
+    ].join("");
+  }
+
+  async function loadResearch(code, box) {
+    if (!box) return;
+    try {
+      const m = await rsMeta();
+      if (!m) return;
+      const has = (k) => m[k] && m[k].codeSet.has(code);
+      const [cap, ryz] = await Promise.all([
+        has("captain") ? getJSON(`data/research/captain/${code}.json`, null) : null,
+        has("ryza") ? getJSON(`data/research/ryza/${code}.json`, null) : null,
+      ]);
+      if (!box.isConnected) return;
+      box.innerHTML = (cap ? renderCaptain(cap, m.captain) : "") + (ryz ? renderRyza(ryz, m.ryza) : "");
+    } catch (_) {
+      box.innerHTML = "";
+    }
+  }
+
   // ---------------------------------------------------------------- 個股面板
-  const CLOSE_ICON = '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5.5 5.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+  const CLOSE_ICON ='<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5.5 5.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
 
   async function openStock(code) {
     window.openStock = openStock;
@@ -1040,6 +1143,7 @@
         <div class="chart-scroll"><svg class="chart" id="stockPsChart" role="img" aria-label="${esc(base.n)} 歷年股價營收比"></svg></div>
         <div class="tooltip" id="stockPsTip" hidden></div>
       </div></div>
+      <div class="research"></div>
     </div>`;
     document.body.appendChild(ov);
     document.body.style.overflow = "hidden";
@@ -1060,6 +1164,8 @@
     ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
     document.addEventListener("keydown", esc2);
     ov.querySelector(".close").focus();
+    // 隊友調查只在面板開啟後按需載入，不擋住數字與圖表
+    loadResearch(code, ov.querySelector(".research"));
 
     const opSeries = (field, mode) => opLabels.map(period => {
       const raw = opPeriods[period] && opPeriods[period][field];

@@ -1063,6 +1063,40 @@ td.ind { white-space: normal; max-width: 280px; }
 .links a { color: var(--accent); text-decoration: none; font-weight: 550; }
 .links a:hover { text-decoration: underline; }
 
+/* ============================================================ 隊友調查（法說會重點、興櫃新登錄） */
+.research a { color: var(--accent); text-decoration: none; word-break: break-all; }
+.research a:hover { text-decoration: underline; }
+.rs-block { margin: 14px 0 0; }
+.rs-label { font-size: 11.5px; font-weight: 600; color: var(--muted); }
+.rs-text { margin: 4px 0 0; font-size: 13.5px; line-height: 1.68; color: var(--text-primary); }
+.rs-text.na { color: var(--muted); }
+.rs-sum { font-weight: 600; }
+.rs-src { margin: 6px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+.rs-of { font-size: 12px; font-weight: 550; color: var(--muted); margin-left: 2px; }
+.kv .v.rs-date { font-size: 16px; }
+.rs-table-wrap {
+  margin-top: 6px; overflow-x: auto;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+}
+.rs-table { font-size: 13px; }
+.rs-table thead th {
+  position: static; cursor: default; text-align: left; padding: 9px 11px; white-space: nowrap;
+}
+.rs-table thead th:hover { color: var(--muted); }
+.rs-table tbody td {
+  text-align: left; vertical-align: top; white-space: normal; line-height: 1.6;
+  padding: 9px 11px; font-variant-numeric: normal;
+}
+.rs-table tbody tr { cursor: default; }
+.rs-table tbody tr:hover { background: none; }
+.rs-table tbody td:first-child { min-width: 4.5em; color: var(--text-secondary); font-weight: 550; }
+.rs-events, .rs-sources { list-style: none; margin: 6px 0 0; padding: 0; }
+.rs-events li { padding: 10px 0; border-top: 1px solid var(--border); }
+.rs-events li:first-child { border-top: 0; padding-top: 4px; }
+.rs-events .tag { margin-left: 8px; vertical-align: 1px; }
+.rs-ev-date { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.rs-sources li { font-size: 12.5px; line-height: 1.6; color: var(--muted); margin-top: 3px; }
+
 /* ============================================================ 營運先行指標 */
 .op-summary {
   display: grid;
