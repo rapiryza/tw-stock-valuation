@@ -866,8 +866,8 @@
 
   // ---------------------------------------------------------------- 隊友調查（法說會重點、興櫃新登錄）
   // meta.json 列出有資料的代號；只對清單內的代號抓單檔，不產生 404。
-  // 文字一律原樣顯示（含「（推論）」與頁碼），只做跳脫與網址轉連結。
-  const RS_SOURCE = { drive_deck: "雲端簡報", biggo: "BigGo 法說彙整", web: "網路", websearch: "WebSearch" };
+  // 文字一律原樣顯示（含「（推論）」與頁碼），只做跳脫與網址轉連結；不顯示資料來源、彙整時間與簡報說明。
+  // 放在「最新法說會簡報」連結正下方（沒有該連結時放在估值數字下方的同一位置）。
   const rsMeta = () => state.researchMeta ||
     (state.researchMeta = getJSON("data/research/meta.json", null).then((m) => {
       if (m) for (const k of ["captain", "ryza"]) if (m[k]) m[k].codeSet = new Set(m[k].codes || []);
@@ -875,7 +875,6 @@
     }));
   const rsLink = (s) => esc(s).replace(/https?:\/\/[^\s<>"'，；、。）)]+/g,
     (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
-  const rsWhen = (iso) => (iso ? String(iso).slice(0, 16).replace("T", " ") : "—");
   const rsBlock = (label, body) => (body ? `<div class="rs-block"><div class="rs-label">${esc(label)}</div>${body}</div>` : "");
   const rsPara = (s) => (s == null || s === "" ? "" : `<p class="rs-text">${rsLink(s)}</p>`);
   const rsTags = (list) => (Array.isArray(list) && list.length
@@ -906,14 +905,9 @@
     rsBlock("其他產品", rsTags(r.otherProducts)),
   ].join("");
 
-  function renderCaptain(r, m) {
-    const head = `<h4>法說會重點</h4><p class="note">資料來源：${esc(m.source || "船長 · 法說助理")}；法說會／簡報日期 ${esc(r.dataDate || "未載")}；彙整時間 ${esc(rsWhen(m.generatedAt))}。</p>`;
-    if (r.nodata || r.template === "nodata") return `${head}<p class="note">尚無法說會資料（${esc(r.deck || "雲端無簡報")}）。</p>`;
-    const src = (r.sources || []).map((s) => {
-      const label = esc(RS_SOURCE[s.type] || s.type || "來源");
-      if (s.url) return `<li>${label}：<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></li>`;
-      return `<li>${label}：${esc(s.filename || s.note || "")}</li>`;
-    }).join("");
+  function renderCaptain(r) {
+    const head = `<h4>法說會重點</h4>`;
+    if (r.nodata || r.template === "nodata") return `${head}<p class="note">尚無法說會資料。</p>`;
     return head + [
       rsBlock("產業及產品", rsTags(r["產業及產品"])),
       rsBlock("新領域", (r["新領域摘要"] ? `<p class="rs-text rs-sum">${rsLink(r["新領域摘要"])}</p>` : "") + rsPara(r["新領域"])),
@@ -921,17 +915,13 @@
       rsBlock("業績展望", (r["業績展望摘要"] ? `<p class="rs-text rs-sum">${rsLink(r["業績展望摘要"])}</p>` : "") + rsPara(r["業績展望"])),
       rsBlock("重大事件", rsEvents(r["重大事件"])),
       r.template === "biotech" ? rsBiotech(r) : "",
-      rsBlock("簡報", rsPara(r.deck)),
-      src ? rsBlock("資料來源", `<ul class="rs-sources">${src}</ul>`) : "",
     ].join("");
   }
 
   function renderRyza(r, m) {
     const dd = m.data_dates || {};
     const ps = r.ps_ratio == null ? "—" : fmt(r.ps_ratio);
-    const page = m.page ? `；<a href="${esc(m.page)}" target="_blank" rel="noopener">調查頁 ↗</a>` : "";
     return `<h4>興櫃新登錄調查</h4>
-      <p class="note">資料來源：${esc(m.source_agent || "Ryza")}${page}；研究期間 ${esc(dd.research || "—")}；彙整時間 ${esc(rsWhen(m.generated_at))}。</p>
       <div class="kv">
         <div><div class="k">評分（暫定）</div><div class="v">${r.score == null ? "—" : `${esc(r.score)}<small class="rs-of">/10</small>`}</div></div>
         <div><div class="k">股價營收比（估算）</div><div class="v">${ps}</div></div>
@@ -945,8 +935,6 @@
       rsBlock("客戶及供應產品", rsCustomers(r.customers) + (r.customerNote ? `<p class="rs-src">${rsLink(r.customerNote)}</p>` : "")),
       rsBlock("重大事件", rsEvents(r.majorEvents)),
       r.kind === "biotech" ? rsBiotech(r) : "",
-      rsBlock("簡報", rsPara(r.deck ?? "雲端無法說簡報")),
-      rsBlock("資料來源", `<ul class="rs-sources">${(m.sources || []).map((s) => `<li>${rsLink(s)}</li>`).join("")}</ul>${m.notes ? `<p class="rs-src">${esc(m.notes)}</p>` : ""}`),
     ].join("");
   }
 
@@ -961,7 +949,7 @@
         has("ryza") ? getJSON(`data/research/ryza/${code}.json`, null) : null,
       ]);
       if (!box.isConnected) return;
-      box.innerHTML = (cap ? renderCaptain(cap, m.captain) : "") + (ryz ? renderRyza(ryz, m.ryza) : "");
+      box.innerHTML = (cap ? renderCaptain(cap) : "") + (ryz ? renderRyza(ryz, m.ryza) : "");
     } catch (_) {
       box.innerHTML = "";
     }
@@ -1068,6 +1056,7 @@
         <div><div class="k">市值</div><div class="v">${human(base.cap) ?? "—"}</div></div>
       </div>
       ${confLink ? `<div class="links">${confLink}</div>` : ""}
+      <div class="research"></div>
       <h4>營收</h4>
       <p class="note">最新月份 ${rev.ym || "—"}${
         base.i && base.i.includes("金融") ? "。金融保險業的營收認列基礎與一般產業不同，成長率的擺盪幅度天生就大。" : ""
@@ -1143,7 +1132,6 @@
         <div class="chart-scroll"><svg class="chart" id="stockPsChart" role="img" aria-label="${esc(base.n)} 歷年股價營收比"></svg></div>
         <div class="tooltip" id="stockPsTip" hidden></div>
       </div></div>
-      <div class="research"></div>
     </div>`;
     document.body.appendChild(ov);
     document.body.style.overflow = "hidden";

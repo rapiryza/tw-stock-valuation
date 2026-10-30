@@ -1090,12 +1090,11 @@ td.ind { white-space: normal; max-width: 280px; }
 .rs-table tbody tr { cursor: default; }
 .rs-table tbody tr:hover { background: none; }
 .rs-table tbody td:first-child { min-width: 4.5em; color: var(--text-secondary); font-weight: 550; }
-.rs-events, .rs-sources { list-style: none; margin: 6px 0 0; padding: 0; }
+.rs-events { list-style: none; margin: 6px 0 0; padding: 0; }
 .rs-events li { padding: 10px 0; border-top: 1px solid var(--border); }
 .rs-events li:first-child { border-top: 0; padding-top: 4px; }
 .rs-events .tag { margin-left: 8px; vertical-align: 1px; }
 .rs-ev-date { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-.rs-sources li { font-size: 12.5px; line-height: 1.6; color: var(--muted); margin-top: 3px; }
 
 /* ============================================================ 營運先行指標 */
 .op-summary {
