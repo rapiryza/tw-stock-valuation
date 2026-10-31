@@ -1688,3 +1688,13 @@ th[data-k="rev_note"] { cursor: grab; }
 .scr-lag { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--muted); background: var(--chip); vertical-align: 1px; }
 .scr-lag.ahead { background: none; border: 1px solid var(--border); }
 #screener .table-scroll { max-height: min(72svh, 760px); }
+/* 三率篩選頁滿版：.rec-table 的 width:auto 會讓表格縮在左側，這裡撐滿；版心不設上限。 */
+#screener .scr-table { width: 100%; }
+body.scr-page .wrap, body.scr-page .topbar-in { max-width: none; }
+@media (min-width: 861px) {
+  body.scr-page .wrap, body.scr-page .topbar-in { padding-left: clamp(20px, 2.5vw, 40px); padding-right: clamp(20px, 2.5vw, 40px); }
+}
+/* 手機版共用規則會隱藏表格（首頁改用卡片），篩選頁沒有卡片版，改為保留表格並左右捲動。 */
+@media (max-width: 860px) {
+  #screener .table-shell, #screener .table-scroll { display: block; }
+}
