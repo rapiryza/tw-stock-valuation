@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#08080c" media="(prefers-color-scheme: dark)">
 <title>台股觀測站｜價格、產業與估值</title>
 <meta name="description" content="台灣股市上市、上櫃、興櫃的估值、營收、合約負債與存貨趨勢追蹤，資料取自證交所、櫃買中心與公開資訊觀測站官方公開資料。">
-<link rel="stylesheet" href="assets/style.css?v=20261031-screener">
+<link rel="stylesheet" href="assets/style.css?v=20261031-panel">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='12' height='12' rx='1' fill='%236b7280'/><path d='M3 6h10M3 10h10M7 3v10' stroke='white'/></svg>">
 </head>
 <body class="off-hours">
@@ -186,46 +186,13 @@
 <div class="counterapi" ns="roseamyclara.github.io" action="view" key="tw-stock-valuation" invisible="true" aria-hidden="true"></div>
 <div class="counterapi" ns="roseamyclara.github.io" action="visitor" key="tw-stock-valuation" unique="true" invisible="true" aria-hidden="true"></div>
 
-<script src="assets/app.js?v=20261031-screener"></script>
+<script src="assets/stock-panel.js?v=20261031-panel"></script>
+<script src="assets/app.js?v=20261031-panel"></script>
 <script src="assets/op-ui.js?v=20261007-select-redraw-fix"></script>
 <script src="assets/insider.js?v=20261018-finhist"></script>
 <script src="assets/op-layout-fix.js?v=20261008-insider-visible"></script>
 <script src="assets/supabase-config.js?v=20261020-live"></script>
 <script src="assets/visit.js?v=20261020"></script>
-<script>
-(() => {
-  const label = "\u5ba2\u6236\u66ab\u6536\u6b3e";
-  const hiddenKeys = new Set(["customer_receipts", "customer_receipts_qoq", "customer_receipts_yoy"]);
-  function ensureStyle() {
-    let style = document.getElementById("customer-receipts-rerender-hide");
-    if (!style) {
-      style = document.createElement("style");
-      style.id = "customer-receipts-rerender-hide";
-      document.head.appendChild(style);
-    }
-    return style;
-  }
-  function hideTableColumn() {
-    const table = document.getElementById("tbl");
-    if (!table) return;
-    const indexes = [...table.querySelectorAll("thead th")]
-      .map((th, index) => ({ th, index }))
-      .filter(({ th }) => hiddenKeys.has(th.dataset.k) || th.textContent.includes(label))
-      .map(({ index }) => index);
-    if (indexes.length) table.dataset.hiddenReceiptIndexes = indexes.join(",");
-    const finalIndexes = (table.dataset.hiddenReceiptIndexes || "").split(",").filter(Boolean).map(Number);
-    ensureStyle().textContent = finalIndexes.map((i) => `#tbl th:nth-child(${i + 1}),#tbl td:nth-child(${i + 1}){display:none!important}`).join("\n");
-  }
-  function clean(root = document) {
-    hideTableColumn();
-    root.querySelectorAll(".column-chip,#sortMobile option,#opMetric option,.scard-metrics .m,.op-summary .op-kpi").forEach((el) => {
-      const key = el.dataset?.column || el.value || "";
-      if (hiddenKeys.has(key) || key === "customerReceiptsTotal" || key === "contractAndReceipts" || el.textContent.includes(label)) el.remove();
-    });
-  }
-  new MutationObserver(() => clean()).observe(document.body, { childList: true, subtree: true });
-  clean();
-})();
-</script>
+<script src="assets/receipts-hide.js?v=20261031-panel"></script>
 </body>
 </html>

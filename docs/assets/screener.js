@@ -114,7 +114,8 @@
     for (const [id, key] of Object.entries(CHECKS)) if ($(id).checked) p.set(key, "1");
     if (state.sort.k !== "cap" || state.sort.dir !== -1) p.set("sort", (state.sort.dir < 0 ? "-" : "") + state.sort.k);
     const qs = p.toString();
-    history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+    // 保留開著的個股面板（#stock=代號）與其歷史狀態
+    history.replaceState(history.state, "", (qs ? `?${qs}` : location.pathname) + location.hash);
   }
 
   // ---------------------------------------------------------------- 市值雙滑桿（對數刻度）
@@ -254,7 +255,7 @@
   function cellHtml(col, r) {
     const newest = state.data.asOf.quarter;
     switch (col.k) {
-      case "c": return `<td class="code"><a href="./?stock=${encodeURIComponent(r.c)}">${esc(r.c)}</a></td>`;
+      case "c": return `<td class="code"><a href="#stock=${encodeURIComponent(r.c)}">${esc(r.c)}</a></td>`;
       case "name": {
         const lag = r.q !== newest
           ? ` <span class="scr-lag${r.q < newest ? "" : " ahead"}" title="${r.q < newest ? "財報落後：最新只有" : "已公布較新一季："}${esc(r.q)}">${esc(r.q)}</span>` : "";
@@ -299,7 +300,58 @@
     render();
   }
 
-  const openRow = (code) => { location.href = `./?stock=${encodeURIComponent(code)}`; };
+  // ---------------------------------------------------------------- 個股面板（stock-panel.js，與首頁共用）
+  // 在本頁直接開面板，篩選結果留在底下。開啟時 pushState 加上 #stock=代號（保留篩選查詢字串），
+  // 上一頁只會關閉面板；關閉鈕、Esc、點背景則回到開面板前的那一筆歷史。
+  StockPanel.setAddons([
+    "assets/op-ui.js?v=20261007-select-redraw-fix",
+    "assets/insider.js?v=20261018-finhist",
+    "assets/op-layout-fix.js?v=20261008-insider-visible",
+    "assets/receipts-hide.js?v=20261031-panel",
+  ]);
+  const hashStock = () => (/^#stock=([0-9A-Za-z]+)$/.exec(location.hash) || [])[1] || null;
+  const urlFor = (code) => location.pathname + location.search + (code ? `#stock=${encodeURIComponent(code)}` : "");
+  let panel = null, opening = false;
+
+  /** 移除網址的 #stock：本頁 push 的就回上一頁，直接開連結進來的則改寫網址 */
+  function leaveStock() {
+    if (!hashStock()) return;
+    if (history.state && history.state.scrStock) history.back();
+    else history.replaceState(null, "", urlFor(null));
+  }
+
+  async function showStock(code, push) {
+    if (panel || opening) return;
+    opening = true;
+    const opener = document.activeElement;
+    if (push) history.pushState({ scrStock: code }, "", urlFor(code));
+    let h = null;
+    try {
+      h = await StockPanel.open(code, {
+        recordsHref: "./#records",
+        onRecordBadge: () => {}, // 照連結前往首頁榜單；回上一頁會回到這個面板
+        onClose: () => {
+          const byUser = panel !== null; // popstate 關閉時已先清掉 panel
+          panel = null;
+          if (byUser) leaveStock();
+          if (opener && opener.isConnected && opener.focus) opener.focus();
+        },
+      });
+    } finally {
+      opening = false;
+    }
+    if (!h) { leaveStock(); return; } // 代號不在個股資料內
+    if (hashStock() !== code) { h.close(); return; } // 載入期間已按上一頁
+    panel = h;
+  }
+
+  window.addEventListener("popstate", () => {
+    const code = hashStock();
+    if (panel && panel.code !== code) { const h = panel; panel = null; h.close(); }
+    if (code && !panel) showStock(code, false);
+  });
+
+  const openRow = (code) => showStock(code, true);
 
   // ---------------------------------------------------------------- 啟動
   function syncMetricSeg() {
@@ -367,16 +419,22 @@
       if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); sortBy(th.dataset.k); }
     });
     $("scrBody").addEventListener("click", (e) => {
-      if (e.target.closest("a")) return;
+      const a = e.target.closest("a");
+      // 代號連結：一般點擊在本頁開面板；Ctrl/⌘/中鍵照連結開新分頁（新分頁同樣直接開面板）
+      if (a && (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)) return;
       const tr = e.target.closest("tr[data-c]");
-      if (tr) openRow(tr.dataset.c);
+      if (!tr) return;
+      if (a) e.preventDefault();
+      openRow(tr.dataset.c);
     });
     $("scrBody").addEventListener("keydown", (e) => {
       const tr = e.target.closest("tr[data-c]");
-      if (tr && e.key === "Enter") openRow(tr.dataset.c);
+      if (tr && e.key === "Enter" && !e.target.closest("a")) openRow(tr.dataset.c);
     });
     $("more").addEventListener("click", () => { state.shown += 300; render(); });
 
     applyFilters();
+    // 直接開 screener.html?…#stock=代號 時打開該股面板
+    if (hashStock()) showStock(hashStock(), false);
   })();
 })();
