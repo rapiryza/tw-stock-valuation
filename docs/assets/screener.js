@@ -355,8 +355,14 @@
 
   // ---------------------------------------------------------------- 啟動
   function syncMetricSeg() {
-    document.querySelectorAll("#metricSeg button").forEach((b) =>
-      b.setAttribute("aria-pressed", String(b.dataset.metric === state.metric)));
+    const seg = $("metricSeg");
+    const buttons = [...seg.querySelectorAll("button")];
+    seg.style.setProperty("--n", buttons.length);
+    buttons.forEach((b, i) => {
+      const on = b.dataset.metric === state.metric;
+      b.setAttribute("aria-pressed", String(on));
+      if (on) seg.style.setProperty("--i", i);
+    });
   }
 
   (async function init() {
