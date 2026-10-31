@@ -1641,6 +1641,10 @@
     bindRecordDrop();
     showPage();
 
+    // 其他頁（例如三率篩選）以 index.html?stock=代號 連過來時，直接打開該股詳細面板
+    const deepLink = new URLSearchParams(location.search).get("stock");
+    if (deepLink && state.rows.some((r) => r.c === deepLink)) openStock(deepLink);
+
     // 桌機／手機切換時重畫圖表尺寸
     MOBILE.addEventListener("change", () => draw());
   })();

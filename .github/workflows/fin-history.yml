@@ -48,6 +48,11 @@ jobs:
         run: python -m unittest test_records && python build_records.py
         continue-on-error: true
 
+      - name: 三率篩選彙整
+        working-directory: scripts
+        run: python -m unittest test_screener && python build_screener.py
+        continue-on-error: true
+
       - name: commit 資料
         shell: bash
         run: |
@@ -56,6 +61,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/data/fin_history
           git add docs/data/records.json 2>/dev/null || true
+          git add docs/data/screener.json 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "歷年月營收與利潤率無變化"
             exit 0

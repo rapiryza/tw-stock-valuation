@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f4f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#08080c" media="(prefers-color-scheme: dark)">
+<title>三率篩選｜台股觀測站</title>
+<meta name="description" content="依毛利率、營業利益率、淨利率的季增、年增、連續成長與轉虧為盈篩選台股，資料取自公開資訊觀測站官方公開資料。">
+<link rel="stylesheet" href="assets/style.css?v=20261031-screener">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='12' height='12' rx='1' fill='%236b7280'/><path d='M3 6h10M3 10h10M7 3v10' stroke='white'/></svg>">
+</head>
+<body class="off-hours">
+
+<header class="topbar" id="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="./">
+      <span class="brand-mark" aria-hidden="true">TW</span>
+      <span class="brand-txt">台股觀測站</span>
+    </a>
+    <span class="asof" id="asof">載入中…</span>
+    <button class="icon-btn" id="themeToggle" type="button" aria-label="切換深淺色"></button>
+  </div>
+</header>
+
+<div class="wrap" id="top">
+
+  <nav class="page-tabs" aria-label="頁面">
+    <a href="./#stocks">個股指標</a>
+    <a href="./#movers">漲跌幅排行與族群</a>
+    <a href="./#records">創新高與新低榜</a>
+    <a href="screener.html" aria-current="page">三率篩選</a>
+  </nav>
+
+  <section class="section page" id="screener">
+    <div class="section-head">
+      <h2>三率篩選</h2>
+      <p class="note" id="scrNote">載入中…</p>
+    </div>
+
+    <form class="card scr-form" id="scrForm" autocomplete="off" onsubmit="return false">
+      <div class="scr-row">
+        <span class="scr-lbl" id="metricLbl">比較指標</span>
+        <div class="seg" id="metricSeg" role="group" aria-labelledby="metricLbl" style="--n:4">
+          <button type="button" data-metric="g" aria-pressed="true">毛利率</button>
+          <button type="button" data-metric="o" aria-pressed="false">營業利益率</button>
+          <button type="button" data-metric="n" aria-pressed="false">淨利率</button>
+          <button type="button" data-metric="all" aria-pressed="false">三率同步</button>
+        </div>
+      </div>
+
+      <div class="scr-grid">
+        <fieldset class="scr-field">
+          <legend>對比上季（相對變化 %）</legend>
+          <div class="scr-range">
+            <input type="number" id="qmin" min="-100" max="100" step="any" placeholder="下限" aria-label="對比上季下限 %">
+            <span aria-hidden="true">～</span>
+            <input type="number" id="qmax" min="-100" max="100" step="any" placeholder="上限" aria-label="對比上季上限 %">
+          </div>
+        </fieldset>
+
+        <fieldset class="scr-field">
+          <legend>對比去年同季（相對變化 %）</legend>
+          <div class="scr-range">
+            <input type="number" id="ymin" min="-100" max="100" step="any" placeholder="下限" aria-label="對比去年同季下限 %">
+            <span aria-hidden="true">～</span>
+            <input type="number" id="ymax" min="-100" max="100" step="any" placeholder="上限" aria-label="對比去年同季上限 %">
+          </div>
+        </fieldset>
+
+        <fieldset class="scr-field">
+          <legend>連續成長季數</legend>
+          <div class="scr-range">
+            <input type="number" id="grow" min="1" max="8" step="1" placeholder="例：3" aria-label="連續成長季數">
+            <span class="scr-unit">季</span>
+          </div>
+        </fieldset>
+
+        <fieldset class="scr-field">
+          <legend>單季營收下限</legend>
+          <div class="scr-range">
+            <input type="number" id="rev" min="0" step="any" placeholder="不限" aria-label="單季營收下限（億元）">
+            <span class="scr-unit">億元</span>
+          </div>
+        </fieldset>
+
+        <fieldset class="scr-field">
+          <legend>轉虧為盈（上季虧損、本季獲利）</legend>
+          <label class="scr-check"><input type="checkbox" id="tOp"> 營業利益</label>
+          <label class="scr-check"><input type="checkbox" id="tNet"> 淨利</label>
+        </fieldset>
+
+        <fieldset class="scr-field">
+          <legend>本季比率下限</legend>
+          <label class="scr-check"><input type="checkbox" id="fgOn"> 毛利率至少 <input type="number" id="fg" step="any" aria-label="毛利率下限 %"> %</label>
+          <label class="scr-check"><input type="checkbox" id="foOn"> 營業利益率至少 <input type="number" id="fo" step="any" aria-label="營業利益率下限 %"> %</label>
+          <label class="scr-check"><input type="checkbox" id="fnOn"> 淨利率至少 <input type="number" id="fn" step="any" aria-label="淨利率下限 %"> %</label>
+        </fieldset>
+
+        <fieldset class="scr-field scr-cap">
+          <legend>市值（億元，滑桿為對數刻度）</legend>
+          <div class="dual-range" id="capSlider">
+            <div class="dual-track"><div class="dual-fill" id="capFill"></div></div>
+            <input type="range" id="capLo" min="0" max="1000" step="1" value="0" aria-label="市值下限滑桿">
+            <input type="range" id="capHi" min="0" max="1000" step="1" value="1000" aria-label="市值上限滑桿">
+          </div>
+          <div class="scr-range">
+            <input type="number" id="cmin" min="0" step="any" placeholder="0" aria-label="市值下限（億元）">
+            <span aria-hidden="true">～</span>
+            <input type="number" id="cmax" min="0" step="any" placeholder="最大" aria-label="市值上限（億元）">
+          </div>
+        </fieldset>
+
+        <fieldset class="scr-field">
+          <legend>財報季別</legend>
+          <label class="scr-check"><input type="checkbox" id="same"> 只看最新季（排除季別不同的公司）</label>
+        </fieldset>
+      </div>
+
+      <div class="scr-actions">
+        <button type="button" class="more" id="reset">清除條件</button>
+      </div>
+
+      <details class="scr-rule">
+        <summary>計算規則</summary>
+        <ul>
+          <li>相對變化 ＝（本季 − 比較季）÷ |比較季| × 100%，例：毛利率 30% → 33% 為 +10%，不是 +3 個百分點。</li>
+          <li><strong>基期為負/近零</strong>：比較季比率 ≤ 0 或 |比較季| &lt; 1 個百分點時，相對變化沒有意義，不計算，改顯示百分點差並加註標記；只要設定了該項上下限，這類公司一律不納入（找轉虧為盈請用「轉虧為盈」條件）。</li>
+          <li>連續成長 N 季：最近 N 季每一季都高於前一季（缺季即中斷），最多 8 季。</li>
+          <li>三率同步：選定的上季、去年同季、連續成長條件，毛利率、營業利益率、淨利率三者都要符合。</li>
+          <li>轉虧為盈：上季營業利益率（淨利率）&lt; 0，本季 &gt; 0。</li>
+          <li>每家公司以自己最新公布的一季為本季；季別與全市場最新季不同者在名稱旁標示。單季營收為該季三個月月營收加總（任一月缺漏則空白）。</li>
+          <li>空白欄位代表不設限；比率缺值的公司在設有該條件時不納入。</li>
+        </ul>
+      </details>
+    </form>
+
+    <div class="scr-result-head">
+      <span class="count" id="count"></span>
+      <span class="scr-legend" aria-label="走勢圖圖例">
+        <i style="--c:var(--series-1)"></i>毛利率
+        <i style="--c:var(--series-2)"></i>營業利益率
+        <i style="--c:var(--series-3)"></i>淨利率
+      </span>
+    </div>
+    <div class="table-shell">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="篩選結果表格，可上下左右捲動">
+        <table class="rec-table scr-table">
+          <thead><tr id="scrHead"></tr></thead>
+          <tbody id="scrBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <button class="more" id="more" type="button" hidden>顯示更多</button>
+  </section>
+
+  <footer>
+    <p>
+      資料來源：<a href="https://mopsfin.twse.com.tw/" rel="noopener">公開資訊觀測站－財務比較 E 點通</a>（單季毛利率、營業利益率、稅後純益率）、
+      公開資訊觀測站每月營業收入彙總、<a href="https://openapi.twse.com.tw/" rel="noopener">臺灣證券交易所</a>與<a href="https://www.tpex.org.tw/openapi/" rel="noopener">證券櫃檯買賣中心</a> OpenAPI（市值）。
+      本站僅整理公開資料，不構成投資建議。
+    </p>
+  </footer>
+</div>
+
+<script src="assets/screener.js?v=20261031-screener"></script>
+</body>
+</html>

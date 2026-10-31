@@ -93,6 +93,12 @@ jobs:
         run: python -m unittest test_records && python build_records.py
         continue-on-error: true
 
+      # 市值每日變動；三率與營收由「歷年月營收與利潤率」更新後也會重建
+      - name: 三率篩選彙整
+        working-directory: scripts
+        run: python -m unittest test_screener && python build_screener.py
+        continue-on-error: true
+
       - name: commit 資料
         run: |
           git config user.name  "github-actions[bot]"

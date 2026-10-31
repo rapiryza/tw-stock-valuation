@@ -1627,3 +1627,64 @@ th[data-k="rev_note"] { cursor: grab; }
 .record-badge.low { color: var(--down); background: var(--down-soft); border-color: color-mix(in srgb, var(--down) 40%, transparent); }
 .record-badge.low::before { content: "▼"; }
 .record-badge:hover { filter: brightness(.95); }
+
+/* ============================================================ 三率篩選 */
+.scr-form { display: grid; gap: 14px; margin-bottom: 14px; }
+.scr-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.scr-lbl { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.scr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.scr-field { margin: 0; padding: 10px 12px 12px; border: 1px solid var(--border); border-radius: var(--r-md); min-width: 0; display: grid; gap: 8px; align-content: start; }
+.scr-field legend { padding: 0 4px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+.scr-cap { grid-column: span 2; }
+@media (max-width: 560px) { .scr-cap { grid-column: auto; } }
+.scr-range { display: flex; align-items: center; gap: 8px; }
+.scr-unit { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.scr-form input[type="number"] {
+  width: 100%; min-width: 0; height: 36px; padding: 0 10px; font: inherit; font-size: 14px; font-variant-numeric: tabular-nums;
+  color: var(--text-primary); background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-sm);
+}
+.scr-form input[type="number"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.scr-check { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-secondary); min-height: 32px; }
+.scr-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+.scr-check input[type="number"] { width: 5.5em; height: 30px; }
+.scr-actions { display: flex; justify-content: flex-end; }
+.scr-actions .more { margin: 0; }
+.scr-rule { font-size: 12.5px; color: var(--muted); }
+.scr-rule summary { cursor: pointer; color: var(--text-secondary); font-weight: 600; }
+.scr-rule ul { margin: 8px 0 0; padding-left: 1.3em; display: grid; gap: 4px; line-height: 1.6; }
+.scr-rule strong { color: var(--text-secondary); }
+
+/* 雙滑桿：兩個 range 疊在同一條軌道上，只有把手接收指標事件 */
+.dual-range { position: relative; height: 28px; }
+.dual-track { position: absolute; left: 0; right: 0; top: 12px; height: 4px; border-radius: 999px; background: var(--surface-3); }
+.dual-fill { position: absolute; top: 0; bottom: 0; left: 0; right: 0; border-radius: 999px; background: var(--accent); }
+.dual-range input[type="range"] { position: absolute; inset: 0; width: 100%; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.dual-range input[type="range"]::-webkit-slider-runnable-track { background: none; height: 28px; }
+.dual-range input[type="range"]::-moz-range-track { background: none; }
+.dual-range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; pointer-events: auto; width: 22px; height: 22px; margin-top: 3px; border-radius: 50%;
+  background: var(--surface-1); border: 2px solid var(--accent); box-shadow: var(--shadow-1); cursor: grab;
+}
+.dual-range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--surface-1); border: 2px solid var(--accent); box-shadow: var(--shadow-1); cursor: grab;
+}
+.dual-range input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.scr-result-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 0 0 10px; }
+.scr-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 12.5px; color: var(--text-secondary); }
+.scr-legend i { display: inline-block; width: 14px; height: 2px; border-radius: 2px; background: var(--c); margin-right: -6px; }
+.scr-table td.code a { color: inherit; text-decoration: none; }
+.scr-table td.code a:hover { color: var(--accent); text-decoration: underline; }
+.scr-table td.scr-hl { font-weight: 650; }
+.scr-table th.nosort { cursor: default; text-align: left; }
+.scr-table td.spark-cell { padding-top: 4px; padding-bottom: 4px; }
+.scr-table tr.empty td { text-align: center; color: var(--muted); padding: 28px; cursor: default; }
+.scr-table tbody tr:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.spark { display: block; overflow: visible; }
+.spark path { fill: none; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.spark-zero { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 2 2; }
+.scr-flag { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); background: var(--chip); border: 1px dashed var(--border); }
+.scr-lag { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--muted); background: var(--chip); vertical-align: 1px; }
+.scr-lag.ahead { background: none; border: 1px solid var(--border); }
+#screener .table-scroll { max-height: min(72svh, 760px); }
